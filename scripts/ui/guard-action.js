@@ -1,3 +1,5 @@
+import { returnToCommand } from "./menu-utils.js";
+
 export async function executeGuard(actor, ui) {
   if (!actor) {
     console.error("GUARD: ator não encontrado.");
@@ -15,19 +17,7 @@ export async function executeGuard(actor, ui) {
 
   await actionHandler.handleAction("guard", false);
 
-  const commandMenu = ui.querySelector(".fabula-command");
-
-  if (!commandMenu) {
-    return;
-  }
-
-  commandMenu.classList.remove("attack-menu-open", "skill-menu-open");
-
-  commandMenu.classList.add("ui-focused");
-
-  commandMenu.tabIndex = 0;
-
-  commandMenu.focus();
+  returnToCommand(ui);
 
   console.log("GUARD: UI retornou para COMMAND.");
 }

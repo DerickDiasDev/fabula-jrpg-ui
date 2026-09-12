@@ -4,6 +4,7 @@ import { executeHinder } from "./hinder-action.js";
 import { executeObjective } from "./objective-action.js";
 import { executeStudy } from "./study-action.js";
 import { executeEquipment } from "./equipment-action.js";
+import { getActiveSubmenu } from "./menu-utils.js";
 
 export function setupCommandMenu(ui) {
   const commandMenu = ui.querySelector(".fabula-command");
@@ -23,7 +24,7 @@ export function setupCommandMenu(ui) {
   }
 
   function executeCommand() {
-    const activeSubmenu = ui.querySelector(".fabula-submenu:not([hidden])");
+    const activeSubmenu = getActiveSubmenu(ui);
 
     if (activeSubmenu) {
       return;
@@ -138,7 +139,7 @@ export function setupCommandMenu(ui) {
   }
 
   commandMenu.addEventListener("keydown", (event) => {
-    const activeSubmenu = ui.querySelector(".fabula-submenu:not([hidden])");
+    const activeSubmenu = getActiveSubmenu(ui);
 
     if (activeSubmenu) {
       return;

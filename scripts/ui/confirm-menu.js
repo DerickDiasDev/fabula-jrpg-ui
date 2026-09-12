@@ -23,7 +23,13 @@ export function openConfirmMenu({
     .map((id) => combatants.find((combatant) => combatant.id === id))
     .filter((combatant) => combatant?.actor);
 
-  const actionLabel = actionType === "skill" ? "Skill" : "Attack";
+  const actionLabels = {
+    attack: "Attack",
+    skill: "Skill",
+    item: "Item",
+  };
+
+  const actionLabel = actionLabels[actionType] ?? actionType.toUpperCase();
 
   confirmMenu.innerHTML = `
     <div class="fabula-command-title">
@@ -90,7 +96,12 @@ export function openConfirmMenu({
     showMenu(previousMenu);
   }
 
+  let isExecuting = false;
   async function executeConfirm() {
+    if (isExecuting) {
+      return;
+    }
+
     const button = buttons[selectedIndex];
 
     if (!button) return;
@@ -101,6 +112,8 @@ export function openConfirmMenu({
       closeConfirmMenu();
       return;
     }
+
+    isExecuting = true;
 
     await executeAction({
       actor,

@@ -1,16 +1,9 @@
 import { openTargetSelectMenu } from "./target-select-menu.js";
-import { showMenu, hideMenu } from "./menu-utils.js";
+import { showMenu, hideMenu, getActiveSubmenu } from "./menu-utils.js";
 
-export function openTargetCountMenu({
-  actor,
-  action,
-  actionType,
-  ui,
-  onConfirm,
-}) {
+export function openTargetCountMenu({ actor, action, actionType, ui }) {
   const previousMenu =
-    ui.querySelector(".fabula-submenu:not([hidden])") ||
-    ui.querySelector(".fabula-command");
+    getActiveSubmenu(ui) || ui.querySelector(".fabula-command");
 
   if (!previousMenu) return;
 

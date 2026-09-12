@@ -1,3 +1,5 @@
+import { returnToCommand } from "./menu-utils.js";
+
 export async function executeObjective(actor, ui) {
   if (!actor) {
     console.error("OBJECTIVE: ator não encontrado.");
@@ -15,23 +17,7 @@ export async function executeObjective(actor, ui) {
 
   await actionHandler.handleAction("objective", false);
 
-  const commandMenu = ui.querySelector(".fabula-command");
-
-  if (!commandMenu) {
-    return;
-  }
-
-  commandMenu.classList.remove(
-    "attack-menu-open",
-    "skill-menu-open",
-    "item-menu-open",
-  );
-
-  commandMenu.classList.add("ui-focused");
-
-  commandMenu.tabIndex = 0;
-
-  commandMenu.focus();
+  returnToCommand(ui);
 
   console.log("OBJECTIVE: UI retornou para COMMAND.");
 }

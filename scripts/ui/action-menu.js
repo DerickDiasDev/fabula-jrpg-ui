@@ -1,5 +1,5 @@
 import { openTargetCountMenu } from "./target-menu.js";
-import { showMenu, hideMenu } from "./menu-utils.js";
+import { showMenu, hideMenu, returnToCommand } from "./menu-utils.js";
 
 export function openActionMenu({ actor, actions, actionType, ui }) {
   const commandMenu = ui.querySelector(".fabula-command");
@@ -138,13 +138,7 @@ export function openActionMenu({ actor, actions, actionType, ui }) {
   }
 
   function closeActionMenu() {
-    hideMenu(actionMenu);
-
-    commandMenu.classList.remove(openClass);
-
-    commandMenu.classList.add("ui-focused");
-
-    commandMenu.focus();
+    returnToCommand(ui);
   }
 
   function executeSelectedAction() {

@@ -1,3 +1,5 @@
+import { returnToCommand } from "./menu-utils.js";
+
 export async function executeEquipment(actor, ui) {
   if (!actor) {
     console.error("EQUIPMENT: ator não encontrado.");
@@ -15,16 +17,7 @@ export async function executeEquipment(actor, ui) {
 
   await actionHandler.equipment();
 
-  const commandMenu = ui.querySelector(".fabula-command");
-
-  if (!commandMenu) {
-    return;
-  }
-
-  commandMenu.classList.add("ui-focused");
-
-  commandMenu.tabIndex = 0;
-  commandMenu.focus();
+  returnToCommand(ui);
 
   console.log("EQUIPMENT: UI retornou para COMMAND.");
 }

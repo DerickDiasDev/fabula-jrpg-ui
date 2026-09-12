@@ -138,7 +138,15 @@ export function openTargetSelectMenu({
     }
   }
 
+  let isTransitioning = false;
+
   function openConfirmation() {
+    if (isTransitioning) {
+      return;
+    }
+
+    isTransitioning = true;
+
     if (actionType === "study") {
       executeAction({
         actor,
