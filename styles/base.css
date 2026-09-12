@@ -1,0 +1,23 @@
+#fabula-jrpg-ui {
+  position: fixed;
+  inset: 0;
+
+  z-index: 10000;
+
+  pointer-events: none;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+@keyframes focus-pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}

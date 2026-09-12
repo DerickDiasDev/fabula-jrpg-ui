@@ -1,0 +1,191 @@
+/* =========================================
+   COMMAND MENU
+   ========================================= */
+
+.fabula-command {
+  position: absolute;
+
+  left: 24px;
+  bottom: 30px;
+
+  width: 190px;
+
+  box-sizing: border-box;
+
+  padding: 12px;
+
+  background: rgba(20, 16, 27, 0.92);
+
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 10px;
+
+  backdrop-filter: blur(8px);
+
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+
+  pointer-events: auto;
+}
+
+/* =========================================
+   COMMAND FOCUS
+   ========================================= */
+
+.fabula-command.ui-focused {
+  border-color: rgba(255, 255, 255, 0.75);
+
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.4),
+    0 0 0 2px rgba(255, 255, 255, 0.16);
+}
+
+/* =========================================
+   TITLE
+   ========================================= */
+
+.fabula-command .fabula-command-title {
+  height: 20px;
+
+  margin-bottom: 8px;
+
+  padding: 0 8px;
+
+  box-sizing: border-box;
+
+  font-size: 13px;
+  font-weight: bold;
+
+  line-height: 20px;
+
+  letter-spacing: 2px;
+
+  opacity: 0.65;
+}
+
+/* =========================================
+   FOCUS INDICATOR
+   ========================================= */
+
+.fabula-command.ui-focused .fabula-command-title::after {
+  content: "●";
+
+  margin-left: 8px;
+
+  font-size: 8px;
+
+  vertical-align: middle;
+
+  opacity: 0.9;
+
+  animation: focus-pulse 1.2s ease-in-out infinite;
+}
+
+/* =========================================
+   COMMAND BUTTONS
+   ========================================= */
+
+.fabula-command > .command-button {
+  position: relative;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: flex-start;
+
+  gap: 10px;
+
+  width: 100%;
+  height: 38px;
+
+  box-sizing: border-box;
+
+  padding-left: 12px;
+  padding-right: 12px;
+
+  background: transparent;
+
+  border: none;
+  border-radius: 6px;
+
+  color: white;
+
+  font-size: 14px;
+
+  text-align: left;
+
+  cursor: pointer;
+
+  transition:
+    background 0.12s ease,
+    transform 0.12s ease;
+}
+
+/* =========================================
+   COMMAND HOVER
+   ========================================= */
+
+.fabula-command > .command-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* =========================================
+   COMMAND ACTIVE / SELECTED
+   ========================================= */
+
+.fabula-command > .command-button.active {
+  background: rgba(255, 255, 255, 0.12);
+
+  transform: translateX(4px);
+}
+
+/* =========================================
+   ICONS
+   ========================================= */
+
+.fabula-command > .command-button .command-icon {
+  width: 20px;
+  height: 20px;
+
+  flex: 0 0 20px;
+
+  object-fit: contain;
+}
+
+/* =========================================
+   COMMAND CURSOR
+   ========================================= */
+
+.fabula-command > .command-button.active::before {
+  content: "";
+
+  position: absolute;
+
+  left: -28px;
+  top: 50%;
+
+  width: 20px;
+  height: 20px;
+
+  background-image: url("../assets/cursor.png");
+
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+
+  transform: translateY(-50%);
+}
+
+/* =========================================
+   HIDE CURSOR WHEN SUBMENU IS OPEN
+   ========================================= */
+
+.fabula-command.attack-menu-open > .command-button.active::before,
+.fabula-command.skill-menu-open > .command-button.active::before,
+.fabula-command.item-menu-open > .command-button.active::before,
+.fabula-command.submenu-open > .command-button.active::before {
+  display: none;
+}
+
+/* =========================================
+   COMMAND BLOCKED
+   ========================================= */

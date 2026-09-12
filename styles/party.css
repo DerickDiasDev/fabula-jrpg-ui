@@ -1,0 +1,216 @@
+/* =========================================
+   PARTY
+   ========================================= */
+
+.fabula-party {
+  position: absolute;
+
+  left: 50%;
+  bottom: 24px;
+
+  transform: translateX(-50%);
+
+  display: flex;
+
+  gap: 10px;
+
+  width: min(850px, calc(100vw - 450px));
+
+  pointer-events: auto;
+}
+
+/* =========================================
+   CHARACTER CARD
+   ========================================= */
+
+.fabula-character {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  flex: 1;
+  min-width: 0;
+
+  padding: 10px;
+
+  background: transparent;
+  border: none;
+  border-radius: 0;
+
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
+}
+
+/* =========================================
+   PORTRAIT
+   ========================================= */
+
+.character-portrait {
+  width: 90px;
+  height: 110px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  overflow: hidden;
+
+  background: rgba(20, 16, 27, 0.75);
+
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.character-portrait img {
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+}
+
+/* =========================================
+   NAME
+   ========================================= */
+
+.character-name {
+  margin-top: 6px;
+
+  font-size: 15px;
+  font-weight: bold;
+
+  text-align: center;
+}
+
+/* =========================================
+   LEVEL
+   ========================================= */
+
+.character-level {
+  margin-top: 2px;
+
+  font-size: 10px;
+
+  opacity: 0.6;
+}
+
+/* =========================================
+   RESOURCES
+   ========================================= */
+
+.character-resource {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+
+  gap: 5px;
+
+  margin-top: 5px;
+
+  font-size: 9px;
+}
+
+.character-resource > span:first-child {
+  width: 18px;
+
+  font-weight: bold;
+
+  opacity: 0.6;
+}
+
+/* =========================================
+   RESOURCE BAR
+   ========================================= */
+
+.resource-bar {
+  flex: 1;
+
+  height: 5px;
+
+  overflow: hidden;
+
+  background: rgba(255, 255, 255, 0.12);
+
+  border-radius: 10px;
+}
+
+.resource-fill {
+  height: 100%;
+
+  border-radius: inherit;
+
+  transition: width 0.3s ease;
+}
+
+/* =========================================
+   RESOURCE COLORS
+   ========================================= */
+
+.resource-fill.hp {
+  background: #e74c3c;
+}
+
+.resource-fill.mp {
+  background: #4d8cff;
+}
+
+.resource-fill.ip {
+  background: #f1c40f;
+}
+
+/* =========================================
+   PI
+   ========================================= */
+
+.character-resource-ip {
+  margin-top: 6px;
+}
+
+.ip-points {
+  display: flex;
+
+  gap: 4px;
+
+  flex: 1;
+}
+
+.ip-point {
+  font-size: 10px;
+
+  opacity: 0.2;
+
+  color: #f1c40f;
+
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+
+.ip-point.active {
+  opacity: 1;
+}
+
+/* =========================================
+   ACTIVE TURN
+   ========================================= */
+
+.fabula-character.active-turn {
+  transform: translateY(-8px);
+}
+
+.fabula-character.active-turn .character-portrait {
+  border: 2px solid gold;
+}
+
+.fabula-character.active-turn::before {
+  content: "▶";
+
+  position: absolute;
+
+  left: -16px;
+  top: 55px;
+
+  font-size: 11px;
+}

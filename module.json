@@ -1,0 +1,33 @@
+{
+  "id": "fabula-jrpg-ui",
+  "title": "Fabula JRPG UI",
+  "description": "Interface JRPG personalizada para o Project FU.",
+  "version": "1.0.0",
+  "authors": [
+    {
+      "name": "Derick Dias"
+    }
+  ],
+  "compatibility": {
+    "minimum": "14",
+    "verified": "14"
+  },
+  "relationships": {
+    "systems": [
+      {
+        "id": "projectfu",
+        "type": "system"
+      }
+    ]
+  },
+  "esmodules": ["scripts/main.js"],
+  "styles": [
+    "styles/base.css",
+    "styles/command.css",
+    "styles/action.css",
+    "styles/party.css",
+    "styles/target.css",
+    "styles/target-select.css",
+    "styles/confirm.css"
+  ]
+}
