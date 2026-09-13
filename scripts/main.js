@@ -4,7 +4,7 @@ import {
   updateActiveCombatant,
 } from "./ui/character-card.js";
 
-import { setupCommandMenu } from "./ui/command-menu.js";
+import { setupCommandMenu, updateCommandActor } from "./ui/command-menu.js";
 
 export function createFabulaUI() {
   if (document.querySelector("#fabula-jrpg-ui")) {
@@ -15,6 +15,8 @@ export function createFabulaUI() {
     .map((combatant) => combatant.actor)
     .filter((actor) => actor?.type === "character");
 
+  const currentActorName = game.combat?.combatant?.actor?.name ?? "";
+
   const ui = document.createElement("div");
 
   ui.id = "fabula-jrpg-ui";
@@ -23,54 +25,42 @@ export function createFabulaUI() {
 
   ui.innerHTML = `
     <!-- COMMAND MENU -->
-    <div class="fabula-command">
-      <div class="fabula-command-title">
-        COMMAND
-      </div>
-
+    <div class="fabula-command" data-actor-name="${currentActorName}">
       <button class="command-button active">
-        <span class="command-icon">⚔</span>
         <span>Attack</span>
       </button>
 
       <button class="command-button">
-        <span class="command-icon">✦</span>
         <span>Skill</span>
       </button>
 
       <button class="command-button">
-        <span class="command-icon">◉</span>
         <span>Study</span>
       </button>
 
       <button class="command-button">
-        <span class="command-icon">🛡</span>
         <span>Guard</span>
       </button>
 
       <button class="command-button">
-        <span class="command-icon">🎒</span>
         <span>Item</span>
       </button>
 
       <button class="command-button">
-        <span class="command-icon">⚙</span>
         <span>Equipment</span>
       </button>
 
       <button class="command-button">
-        <span class="command-icon">◆</span>
         <span>Hinder</span>
       </button>
 
       <button class="command-button">
-        <span class="command-icon">◇</span>
         <span>Objective</span>
       </button>
     </div>
 
     <!-- PARTY -->
-    <div class="fabula-party">
+    <div class="fabula-party-stats">
       ${actors.map(createCharacterCard).join("")}
     </div>
   `;
@@ -113,10 +103,12 @@ export function createFabulaUI() {
 
   Hooks.on("updateCombat", (combat) => {
     updateActiveCombatant(combat, ui);
+    updateCommandActor(combat, ui);
   });
 
   if (game.combat) {
     updateActiveCombatant(game.combat, ui);
+    updateCommandActor(game.combat, ui);
   }
 }
 

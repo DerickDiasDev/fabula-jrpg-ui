@@ -1,8 +1,10 @@
+@import url("https://fonts.googleapis.com/css2?family=Gabriela&display=swap");
+
 /* =========================================
-   PARTY
+   PARTY STATS (outer glass frame)
    ========================================= */
 
-.fabula-party {
+.fabula-party-stats {
   position: absolute;
 
   left: 50%;
@@ -11,37 +13,178 @@
   transform: translateX(-50%);
 
   display: flex;
+  align-items: flex-end;
 
-  gap: 10px;
+  gap: 16px;
 
-  width: min(850px, calc(100vw - 450px));
+  width: min(1040px, calc(100vw - 340px));
+
+  padding: 22px 16px 14px;
+
+  box-sizing: border-box;
+
+  background: rgba(12, 16, 24, 0.4);
+
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+
+  border: 1px solid transparent;
+
+  border-image: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.85) 0%,
+      rgba(255, 255, 255, 0.05) 35%,
+      rgba(255, 255, 255, 0.05) 65%,
+      rgba(255, 255, 255, 0.45) 100%
+    )
+    1;
+
+  border-radius: 6px;
+
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
 
   pointer-events: auto;
 }
 
 /* =========================================
-   CHARACTER CARD
+   PARTY STATS BANNER
+   (sem blur — em texto pequeno o blur cria
+   um risco/artefato no meio)
    ========================================= */
 
-.fabula-character {
+.fabula-party-stats::after {
+  content: "PARTY";
+
+  position: absolute;
+
+  top: -13px;
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  padding: 4px 26px;
+
+  font-family: "Gabriela", serif;
+  font-size: 12px;
+  font-weight: 700;
+
+  letter-spacing: 0.16em;
+
+  color: #eef1f7;
+
+  background: rgb(20, 24, 34);
+
+  border: 1px solid transparent;
+
+  border-image: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.8) 0%,
+      rgba(255, 255, 255, 0.05) 35%,
+      rgba(255, 255, 255, 0.05) 65%,
+      rgba(255, 255, 255, 0.4) 100%
+    )
+    1;
+
+  border-radius: 4px;
+
+  box-shadow: 0 0 12px rgba(140, 180, 255, 0.25);
+
+  pointer-events: none;
+}
+
+/* =========================================
+   CHARACTER CARD (sem background próprio)
+   ========================================= */
+
+.fabula-character-card {
   position: relative;
 
   display: flex;
   flex-direction: column;
-  align-items: center;
 
-  flex: 1;
-  min-width: 0;
+  flex: 1 1 150px;
+  max-width: 190px;
 
-  padding: 10px;
+  padding: 8px;
+
+  box-sizing: border-box;
 
   background: transparent;
   border: none;
-  border-radius: 0;
 
-  transition:
-    transform 0.2s ease,
-    opacity 0.2s ease;
+  transition: transform 0.2s ease;
+}
+
+/* =========================================
+   MOLDURA (todos os cards)
+   ========================================= */
+
+.fabula-character-card::before {
+  content: "";
+
+  position: absolute;
+
+  inset: -8px;
+
+  z-index: -1;
+
+  background-image: url("../assets/moldura.svg");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+
+  pointer-events: none;
+}
+
+/* =========================================
+   ACTIVE TURN
+   ========================================= */
+
+.fabula-character-card.active-turn {
+  transform: translateY(-8px);
+}
+
+.fabula-character-card.active-turn::before {
+  background-image: url("../assets/moldura-active.svg");
+}
+
+/* =========================================
+   CHARACTER NAME + LEVEL
+   ========================================= */
+
+.character-name-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.character-name {
+  font-family: "Gabriela", serif;
+  font-size: 14px;
+  font-weight: 600;
+
+  letter-spacing: 0.02em;
+
+  line-height: 1.1;
+
+  color: #f2f4fa;
+
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+}
+
+.character-level {
+  font-family: "Gabriela", serif;
+  font-size: 11px;
+  font-weight: 700;
+
+  letter-spacing: 0.04em;
+
+  line-height: 1.1;
+
+  color: rgba(238, 241, 247, 0.7);
+
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
 }
 
 /* =========================================
@@ -49,21 +192,46 @@
    ========================================= */
 
 .character-portrait {
-  width: 90px;
-  height: 110px;
+  position: relative;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 100%;
+  aspect-ratio: 1 / 1;
 
   overflow: hidden;
 
-  background: rgba(20, 16, 27, 0.75);
+  box-sizing: border-box;
 
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.3);
+
+  border: 1px solid transparent;
+
+  border-image: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.7) 0%,
+      rgba(255, 255, 255, 0.05) 35%,
+      rgba(255, 255, 255, 0.05) 65%,
+      rgba(255, 255, 255, 0.35) 100%
+    )
+    1;
+
+  border-radius: 3px;
+}
+
+.character-portrait::after {
+  content: "";
+
+  position: absolute;
+
+  inset: 0;
+
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+
+  pointer-events: none;
 }
 
 .character-portrait img {
+  display: block;
+
   width: 100%;
   height: 100%;
 
@@ -71,53 +239,71 @@
 }
 
 /* =========================================
-   NAME
-   ========================================= */
-
-.character-name {
-  margin-top: 6px;
-
-  font-size: 15px;
-  font-weight: bold;
-
-  text-align: center;
-}
-
-/* =========================================
-   LEVEL
-   ========================================= */
-
-.character-level {
-  margin-top: 2px;
-
-  font-size: 10px;
-
-  opacity: 0.6;
-}
-
-/* =========================================
    RESOURCES
    ========================================= */
 
-.character-resource {
+.character-resources {
+  display: flex;
+  flex-direction: column;
+
   width: 100%;
 
-  display: flex;
-  align-items: center;
+  margin-top: 7px;
 
   gap: 5px;
-
-  margin-top: 5px;
-
-  font-size: 9px;
 }
 
-.character-resource > span:first-child {
-  width: 18px;
+.character-resource {
+  display: flex;
+  flex-direction: column;
 
-  font-weight: bold;
+  width: 100%;
 
-  opacity: 0.6;
+  gap: 2px;
+
+  font-family: "Gabriela", serif;
+
+  color: #eef1f7;
+}
+
+.resource-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.resource-label {
+  font-size: 11px;
+  font-weight: 400;
+
+  letter-spacing: 0.06em;
+
+  color: rgba(238, 241, 247, 0.75);
+
+  line-height: 1;
+
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+}
+
+.resource-value {
+  font-size: 20px;
+  font-weight: 700;
+
+  line-height: 1;
+
+  white-space: nowrap;
+
+  font-variant-numeric: tabular-nums;
+
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+}
+
+.resource-value-max,
+.resource-value-sep {
+  font-size: 0.75em;
+  font-weight: 600;
+
+  color: rgba(238, 241, 247, 0.7);
 }
 
 /* =========================================
@@ -125,92 +311,125 @@
    ========================================= */
 
 .resource-bar {
-  flex: 1;
+  position: relative;
 
-  height: 5px;
+  width: 100%;
+  height: 8px;
 
   overflow: hidden;
 
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.1);
 
-  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+
+  border-radius: 2px;
+
+  box-sizing: border-box;
 }
 
 .resource-fill {
   height: 100%;
 
-  border-radius: inherit;
-
   transition: width 0.3s ease;
 }
 
 /* =========================================
-   RESOURCE COLORS
+   HP
    ========================================= */
 
 .resource-fill.hp {
-  background: #e74c3c;
-}
+  background: linear-gradient(90deg, #3fdb6c 0%, #7ef29a 100%);
 
-.resource-fill.mp {
-  background: #4d8cff;
-}
-
-.resource-fill.ip {
-  background: #f1c40f;
+  box-shadow: 0 0 6px rgba(63, 219, 108, 0.7);
 }
 
 /* =========================================
-   PI
+   HP CRISIS MARKER
    ========================================= */
 
-.character-resource-ip {
-  margin-top: 6px;
+.resource-crisis-marker {
+  position: absolute;
+
+  left: 50%;
+  top: 0;
+  bottom: 0;
+
+  width: 1px;
+
+  z-index: 2;
+
+  background: rgba(255, 255, 255, 0.6);
 }
+
+/* =========================================
+   CRISIS
+   ========================================= */
+
+.character-resource.resource-critical .resource-fill.hp {
+  background: linear-gradient(90deg, #b8c93f 0%, #d9e37e 100%);
+
+  box-shadow: 0 0 6px rgba(184, 201, 63, 0.7);
+}
+
+/* =========================================
+   MP
+   ========================================= */
+
+.resource-fill.mp {
+  background: linear-gradient(90deg, #3f9fdb 0%, #7ecbff 100%);
+
+  box-shadow: 0 0 6px rgba(63, 159, 219, 0.7);
+}
+
+/* =========================================
+   PI (bright glowing yellow)
+   ========================================= */
 
 .ip-points {
   display: flex;
+  align-items: center;
 
-  gap: 4px;
+  gap: 3px;
 
-  flex: 1;
+  min-width: 0;
+
+  margin-top: 2px;
 }
 
 .ip-point {
-  font-size: 10px;
+  display: inline-flex;
 
-  opacity: 0.2;
+  align-items: center;
+  justify-content: center;
 
-  color: #f1c40f;
+  font-size: 13px;
+  line-height: 1;
 
-  transition:
-    opacity 0.2s ease,
-    transform 0.2s ease;
+  color: rgba(255, 255, 255, 0.25);
 }
 
 .ip-point.active {
-  opacity: 1;
+  color: #ffe066;
+
+  text-shadow:
+    0 0 4px #ffe066,
+    0 0 8px rgba(255, 224, 102, 0.8);
 }
 
 /* =========================================
-   ACTIVE TURN
+   STATUS EFFECTS
    ========================================= */
 
-.fabula-character.active-turn {
-  transform: translateY(-8px);
-}
-
-.fabula-character.active-turn .character-portrait {
-  border: 2px solid gold;
-}
-
-.fabula-character.active-turn::before {
-  content: "▶";
-
+.character-status-effects {
   position: absolute;
 
-  left: -16px;
-  top: 55px;
+  right: -22px;
+  top: 8px;
 
-  font-size: 11px;
+  display: flex;
+  flex-direction: column;
+
+  gap: 3px;
+
+  pointer-events: none;
 }

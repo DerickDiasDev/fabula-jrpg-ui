@@ -14,6 +14,7 @@ export function setupCommandMenu(ui) {
   }
 
   const buttons = commandMenu.querySelectorAll(".command-button");
+  const tooltip = ui.querySelector(".fabula-command-tooltip"); // NOVO
 
   let selectedIndex = 0;
 
@@ -21,6 +22,11 @@ export function setupCommandMenu(ui) {
     buttons.forEach((button, index) => {
       button.classList.toggle("active", index === selectedIndex);
     });
+
+    // NOVO
+    if (tooltip) {
+      tooltip.textContent = buttons[selectedIndex]?.dataset.description ?? "";
+    }
   }
 
   function executeCommand() {
@@ -187,4 +193,16 @@ export function setupCommandMenu(ui) {
   });
 
   updateSelection();
+}
+
+export function updateCommandActor(combat, ui) {
+  const commandMenu = ui.querySelector(".fabula-command");
+
+  if (!commandMenu) {
+    return;
+  }
+
+  const actor = combat?.combatant?.actor;
+
+  commandMenu.dataset.actorName = actor?.name ?? "";
 }

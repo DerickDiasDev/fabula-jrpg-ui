@@ -4,165 +4,179 @@ export function createCharacterCard(actor) {
   const ip = actor.system.resources.ip;
 
   return `
-        <div class="fabula-character" data-actor-id="${actor.id}">
-            <div class="character-portrait">
-                <img src="${actor.img}" alt="${actor.name}">
-            </div>
+    <div
+      class="fabula-character-card"
+      data-actor-id="${actor.id}"
+    >
+      <div class="character-portrait">
+        <img
+          src="${actor.img}"
+          alt="${actor.name}"
+        />
+      </div>
 
-            <div class="character-name">
-                ${actor.name}
-            </div>
-
-            <div class="character-level">
-                LV ${actor.system.level.value}
-            </div>
-
-            <div class="character-resources">
-                ${createResource("hp", hp)}
-                ${createResource("mp", mp)}
-                ${createResource("ip", ip)}
-            </div>
+      <div class="character-resources">
+        <div class="character-name-row">
+          <span class="character-name">${actor.name}</span>
+          <span class="character-level">NV. ${actor.system.level.value}</span>
         </div>
-    `;
+
+        ${createBarResource("hp", hp)}
+        ${createBarResource("mp", mp)}
+        ${createIpResource(ip)}
+      </div>
+
+      <div class="character-status-effects"></div>
+    </div>
+  `;
 }
 
-function createResource(type, resource) {
-  if (type === "ip") {
-    const points = Array.from({ length: resource.max }, (_, index) => {
-      const active = index < resource.value;
-
-      return `
-                    <span class="ip-point ${active ? "active" : ""}">
-                        ◆
-                    </span>
-                `;
-    }).join("");
-
-    return `
-            <div
-                class="character-resource character-resource-ip"
-                data-resource="ip"
-            >
-                <span>PI</span>
-
-                <div class="ip-points">
-                    ${points}
-                </div>
-
-                <span class="resource-value">
-                    ${resource.value}/${resource.max}
-                </span>
-            </div>
-        `;
-  }
-
-  const percentage = (resource.value / resource.max) * 100;
+function createBarResource(type, resource) {
+  const percentage =
+    resource.max > 0 ? (resource.value / resource.max) * 100 : 0;
 
   return `
+    <div
+      class="character-resource character-resource-${type}"
+      data-resource="${type}"
+    >
+      <div class="resource-header">
+        <span class="resource-label">${type.toUpperCase()}</span>
+        <span class="resource-value">
+          <span class="resource-value-current">${resource.value}</span
+          ><span class="resource-value-sep">/</span
+          ><span class="resource-value-max">${resource.max}</span>
+        </span>
+      </div>
+
+      <div class="resource-bar">
+        ${type === "hp" ? `<div class="resource-crisis-marker"></div>` : ""}
+
         <div
-            class="character-resource"
-            data-resource="${type}"
-        >
-            <span>${type.toUpperCase()}</span>
-
-            <div class="resource-bar">
-                <div
-                    class="resource-fill ${type}"
-                    style="width: ${percentage}%"
-                ></div>
-            </div>
-
-            <span class="resource-value">
-                ${resource.value}/${resource.max}
-            </span>
-        </div>
-    `;
+          class="resource-fill ${type}"
+          style="width: ${percentage}%"
+        ></div>
+      </div>
+    </div>
+  `;
 }
 
-function updateResource(card, type, resource) {
+function createIpResource(resource) {
+  const points = Array.from({ length: resource.max }, (_, index) => {
+    const active = index < resource.value;
+
+    return `
+        <span class="ip-point ${active ? "active" : ""}">${active ? "◆" : "◇"}</span>
+      `;
+  }).join("");
+
+  return `
+    <div
+      class="character-resource character-resource-ip"
+      data-resource="ip"
+    >
+      <div class="resource-header">
+        <span class="resource-label">PI</span>
+      </div>
+
+      <div class="ip-points">
+        ${points}
+      </div>
+    </div>
+  `;
+}
+
+function updateBarResource(card, type, resource) {
   const resourceElement = card.querySelector(`[data-resource="${type}"]`);
 
-  // PI usa pontos individuais
-  if (type === "ip") {
-    const pointsContainer = card.querySelector(".ip-points");
-
-    if (!pointsContainer) return;
-
-    pointsContainer.innerHTML = Array.from(
-      { length: resource.max },
-      (_, index) => {
-        const active = index < resource.value;
-
-        return `
-                    <span class="ip-point ${active ? "active" : ""}">
-                        ◆
-                    </span>
-                `;
-      },
-    ).join("");
-
-    const value = resourceElement?.querySelector(".resource-value");
-
-    if (value) {
-      value.textContent = `${resource.value}/${resource.max}`;
-    }
-
+  if (!resourceElement) {
     return;
   }
 
-  // HP / MP usam barra
-  if (!resourceElement) return;
-
-  const percentage = (resource.value / resource.max) * 100;
+  const percentage =
+    resource.max > 0 ? (resource.value / resource.max) * 100 : 0;
 
   const fill = resourceElement.querySelector(".resource-fill");
-  const value = resourceElement.querySelector(".resource-value");
+  const current = resourceElement.querySelector(".resource-value-current");
+  const max = resourceElement.querySelector(".resource-value-max");
 
   if (fill) {
     fill.style.width = `${percentage}%`;
   }
 
-  if (value) {
-    value.textContent = `${resource.value}/${resource.max}`;
+  if (current) {
+    current.textContent = resource.value;
+  }
+
+  if (max) {
+    max.textContent = resource.max;
+  }
+
+  resourceElement.classList.toggle(
+    "resource-critical",
+    type === "hp" && resource.max > 0 && resource.value <= resource.max / 2,
+  );
+}
+
+function updateIpResource(card, resource) {
+  const resourceElement = card.querySelector(`[data-resource="ip"]`);
+
+  if (!resourceElement) {
+    return;
+  }
+
+  const pointsContainer = resourceElement.querySelector(".ip-points");
+
+  if (pointsContainer) {
+    pointsContainer.innerHTML = Array.from(
+      { length: resource.max },
+      (_, index) => {
+        const active = index < resource.value;
+
+        return `<span class="ip-point ${active ? "active" : ""}">${active ? "◆" : "◇"}</span>`;
+      },
+    ).join("");
   }
 }
 
 export function updateCharacterCard(actor, ui) {
   const card = ui.querySelector(`[data-actor-id="${actor.id}"]`);
 
-  if (!card) return;
+  if (!card) {
+    return;
+  }
 
   const hp = actor.system.resources.hp;
   const mp = actor.system.resources.mp;
   const ip = actor.system.resources.ip;
 
-  card.querySelector(".character-name").textContent = actor.name;
-
-  card.querySelector(".character-level").textContent =
-    `LV ${actor.system.level.value}`;
-
-  updateResource(card, "hp", hp);
-  updateResource(card, "mp", mp);
-  updateResource(card, "ip", ip);
+  updateBarResource(card, "hp", hp);
+  updateBarResource(card, "mp", mp);
+  updateIpResource(card, ip);
 }
 
 export function updateActiveCombatant(combat, ui) {
-  // Remove o destaque anterior
-  ui.querySelectorAll(".fabula-character").forEach((card) => {
+  ui.querySelectorAll(".fabula-character-card").forEach((card) => {
     card.classList.remove("active-turn");
   });
 
   const combatantId = combat.current?.combatantId;
 
-  if (!combatantId) return;
+  if (!combatantId) {
+    return;
+  }
 
   const combatant = combat.combatants.get(combatantId);
 
-  if (!combatant?.actor) return;
+  if (!combatant?.actor) {
+    return;
+  }
 
   const card = ui.querySelector(`[data-actor-id="${combatant.actor.id}"]`);
 
-  if (!card) return;
+  if (!card) {
+    return;
+  }
 
   card.classList.add("active-turn");
 }
