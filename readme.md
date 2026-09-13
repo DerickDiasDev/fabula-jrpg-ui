@@ -1,4 +1,3 @@
-````md
 # Fabula JRPG UI
 
 A custom JRPG-style combat interface for **Fabula Ultima** running on **Foundry Virtual Tabletop**.
@@ -27,7 +26,6 @@ COMMAND
  ├── HINDER
  └── OBJECTIVE
 ```
-````
 
 Actions that require targets continue through a target-selection flow:
 
@@ -275,18 +273,3 @@ License information will be added once the project's distribution and licensing 
 - **Fabula Ultima** — tabletop roleplaying game by Need Games
 - **Project FU** — Foundry VTT system implementation for Fabula Ultima
 - **Foundry Virtual Tabletop** — virtual tabletop platform
-
-````
-
-Uma observação importante: no seu pedido você escreveu `assets/screnshots/...`, mas usei `assets/screenshots/...`, que é a grafia correta. Portanto, a pasta física precisa ser:
-
-```text
-assets/
-└── screenshots/
-    ├── jrpg-ui-command-focus.png
-    └── jrpg-ui-full-view.png
-````
-
-Se sua pasta realmente se chama `screnshots`, você precisa ou renomeá-la para `screenshots`, ou alterar os dois caminhos no README.
-
-Também retirei do roadmap coisas que já foram implementadas no redesign e separei `Visual Design` de `Combat UI`. Isso deixa o README mais coerente com o estado atual do projeto.
