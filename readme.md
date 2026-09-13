@@ -1,3 +1,4 @@
+````md
 # Fabula JRPG UI
 
 A custom JRPG-style combat interface for **Fabula Ultima** running on **Foundry Virtual Tabletop**.
@@ -16,28 +17,44 @@ The main interaction flow is:
 
 ```text
 COMMAND
-  ├── ATTACK
-  ├── SKILL
-  ├── STUDY
-  ├── EQUIPMENT
-  ├── GUARD
-  ├── ITEM
-  ├── HINDER
-  └── OBJECTIVE
+
+ ├── ATTACK
+ ├── SKILL
+ ├── STUDY
+ ├── EQUIPMENT
+ ├── GUARD
+ ├── ITEM
+ ├── HINDER
+ └── OBJECTIVE
 ```
+````
 
 Actions that require targets continue through a target-selection flow:
 
 ```text
 COMMAND
-  → ACTION
-  → TARGET COUNT
-  → TARGET SELECT
-  → CONFIRM
-  → EXECUTE
+ → ACTION
+ → TARGET COUNT
+ → TARGET SELECT
+ → CONFIRM
+ → EXECUTE
 ```
 
 The UI is responsible for presenting and collecting player input. Project FU remains responsible for executing the underlying Fabula Ultima rules whenever possible.
+
+## Screenshots
+
+### Command Menu
+
+The Command menu provides keyboard-driven access to the character's available combat actions.
+
+![Fabula JRPG UI - Command Menu](assets/screenshots/jrpg-ui-command-focus.png)
+
+### Full Combat UI
+
+The current interface combines the Command menu with the Party HUD and character combat information.
+
+![Fabula JRPG UI - Full View](assets/screenshots/jrpg-ui-full-view.png)
 
 ## Features
 
@@ -59,6 +76,17 @@ The UI is responsible for presenting and collecting player input. Project FU rem
 - Consumable Item selection
 - Skill resource cost display
 - Item IP cost display
+
+### Party HUD
+
+- Character portraits pulled directly from Project FU Actors
+- Character name and level display
+- HP and MP resource bars
+- HP Crisis indicator
+- PI point display
+- Active combatant indication
+- Glass-panel visual design
+- SVG-based ornamental frames
 
 ### Target Selection
 
@@ -100,8 +128,15 @@ The project currently follows a lightweight modular structure:
 
 ```text
 fabula-jrpg-ui/
+
 ├── assets/
-│   └── cursor.png
+│   ├── cursor.png
+│   ├── moldura.svg
+│   ├── moldura-active.svg
+│   ├── moldura-command.svg
+│   └── screenshots/
+│       ├── jrpg-ui-command-focus.png
+│       └── jrpg-ui-full-view.png
 │
 ├── scripts/
 │   ├── main.js
@@ -156,7 +191,17 @@ The architecture may evolve as the UI becomes more complex, but complexity shoul
 
 ### JRPG-Inspired, Not JRPG-Restricted
 
-The interface takes inspiration from JRPG combat systems, but visual consistency should not take priority over correct Fabula Ultima behavior.
+The interface takes inspiration from classic and modern JRPG combat interfaces, particularly their focus on clear action selection, character status presentation, and keyboard-driven navigation.
+
+Visual consistency should not take priority over correct Fabula Ultima behavior.
+
+### Visual Direction
+
+The current interface uses a glass-panel aesthetic combined with ornamental fantasy framing and JRPG-inspired interaction patterns.
+
+The visual language is inspired by games such as **Octopath Traveler II**, while remaining adapted to the needs of a tabletop RPG interface.
+
+The goal is not to reproduce a specific game's interface, but to create a coherent JRPG-inspired combat HUD for Fabula Ultima.
 
 ## Roadmap
 
@@ -178,12 +223,30 @@ The interface takes inspiration from JRPG combat systems, but visual consistency
 - [x] Keyboard navigation
 - [x] Escape-based menu navigation
 
+### Visual Design
+
+- [x] Party HUD redesign
+- [x] Command menu redesign
+- [x] Glass-panel UI
+- [x] SVG ornamental frames
+- [x] Character portrait integration
+- [x] HP/MP resource display
+- [x] PI point display
+- [x] HP Crisis indicator
+- [x] Focused Command menu state
+- [x] Dynamic active character display
+
 ### Future Work
 
-- [ ] Improve combat UI visual design
+- [ ] Refine glow and cursor effects
 - [ ] Improve target selection presentation
+- [ ] Apply the visual language to Attack and Skill menus
+- [ ] Apply the visual language to Target Count
+- [ ] Apply the visual language to Target Select
+- [ ] Apply the visual language to Confirm
 - [ ] Add richer combat feedback
-- [ ] Improve character cards
+- [ ] Add status effect indicators
+- [ ] Add visual indicators for Poder Zero
 - [ ] Support individual Command UI states for each player character
 - [ ] Improve turn-state handling
 - [ ] Expand Project FU integration
@@ -212,3 +275,18 @@ License information will be added once the project's distribution and licensing 
 - **Fabula Ultima** — tabletop roleplaying game by Need Games
 - **Project FU** — Foundry VTT system implementation for Fabula Ultima
 - **Foundry Virtual Tabletop** — virtual tabletop platform
+
+````
+
+Uma observação importante: no seu pedido você escreveu `assets/screnshots/...`, mas usei `assets/screenshots/...`, que é a grafia correta. Portanto, a pasta física precisa ser:
+
+```text
+assets/
+└── screenshots/
+    ├── jrpg-ui-command-focus.png
+    └── jrpg-ui-full-view.png
+````
+
+Se sua pasta realmente se chama `screnshots`, você precisa ou renomeá-la para `screenshots`, ou alterar os dois caminhos no README.
+
+Também retirei do roadmap coisas que já foram implementadas no redesign e separei `Visual Design` de `Combat UI`. Isso deixa o README mais coerente com o estado atual do projeto.
