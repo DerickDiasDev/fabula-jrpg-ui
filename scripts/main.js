@@ -10,6 +10,9 @@ export function createFabulaUI() {
   if (document.querySelector("#fabula-jrpg-ui")) {
     return;
   }
+  if (!game.combat?.active) {
+    return;
+  }
 
   const actors = game.combat.combatants.contents
     .map((combatant) => combatant.actor)
@@ -20,12 +23,13 @@ export function createFabulaUI() {
   const ui = document.createElement("div");
 
   ui.id = "fabula-jrpg-ui";
-
   ui.tabIndex = 0;
 
   ui.innerHTML = `
     <!-- COMMAND MENU -->
+
     <div class="fabula-command" data-actor-name="${currentActorName}">
+
       <button class="command-button active">
         <span>Attack</span>
       </button>
@@ -57,9 +61,11 @@ export function createFabulaUI() {
       <button class="command-button">
         <span>Objective</span>
       </button>
+
     </div>
 
     <!-- PARTY -->
+
     <div class="fabula-party-stats">
       ${actors.map(createCharacterCard).join("")}
     </div>
@@ -68,6 +74,10 @@ export function createFabulaUI() {
   document.body.appendChild(ui);
 
   ui.focus();
+
+  // =========================
+  // KEYBOARD
+  // =========================
 
   document.addEventListener("keydown", (event) => {
     if (event.key.toLowerCase() !== "f") {
@@ -89,29 +99,65 @@ export function createFabulaUI() {
     }
 
     commandMenu.tabIndex = 0;
-
     commandMenu.focus();
 
     commandMenu.classList.add("ui-focused");
   });
 
+  // =========================
+  // COMMAND MENU
+  // =========================
+
   setupCommandMenu(ui);
+
+  // =========================
+  // ACTOR UPDATES
+  // =========================
 
   Hooks.on("updateActor", (updatedActor) => {
     updateCharacterCard(updatedActor, ui);
   });
 
+  // =========================
+  // COMBAT UPDATES
+  // =========================
+
   Hooks.on("updateCombat", (combat) => {
     updateActiveCombatant(combat, ui);
     updateCommandActor(combat, ui);
   });
-
-  if (game.combat) {
-    updateActiveCombatant(game.combat, ui);
-    updateCommandActor(game.combat, ui);
-  }
+  updateActiveCombatant(game.combat, ui);
+  updateCommandActor(game.combat, ui);
 }
 
+// =====================================================
+// FOUNDry READY
+// =====================================================
+
 Hooks.once("ready", () => {
+  if (game.combat?.active) {
+    createFabulaUI();
+  }
+});
+
+// =====================================================
+// COMBAT START
+// =====================================================
+
+Hooks.on("combatStart", (combat) => {
+  console.log("Fabula JRPG UI | Combat started");
+
   createFabulaUI();
+});
+
+// =====================================================
+// COMBAT END
+// =====================================================
+
+Hooks.on("deleteCombat", () => {
+  const ui = document.querySelector("#fabula-jrpg-ui");
+
+  if (ui) {
+    ui.remove();
+  }
 });

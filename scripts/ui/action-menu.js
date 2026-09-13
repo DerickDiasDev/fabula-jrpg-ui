@@ -9,133 +9,165 @@ export function openActionMenu({ actor, actions, actionType, ui }) {
   commandMenu.tabIndex = 0;
 
   const menuClass = `fabula-${actionType}-menu`;
-
   const openClass = `${actionType}-menu-open`;
-
   const existingMenu = ui.querySelector(`.${menuClass}`);
 
-  /*
-   * Se o menu já existe, apenas mostra novamente.
-   */
   if (existingMenu) {
     commandMenu.classList.add(openClass);
-
     commandMenu.classList.remove("ui-focused");
-
     showMenu(existingMenu);
-
     return;
   }
 
   commandMenu.classList.add(openClass);
-
   commandMenu.classList.remove("ui-focused");
 
   const actionMenu = document.createElement("div");
 
   actionMenu.className = `${menuClass} fabula-action-menu fabula-submenu`;
 
-  const title = actionType.toUpperCase();
-
-  function getActionCost(action) {
-    if (actionType === "skill") {
-      const cost = action.system.cost;
-
-      if (!cost) {
-        return "";
-      }
-
-      const amount = cost.amount;
-
-      const resource = cost.resource?.toUpperCase();
-
-      if (amount == null || !resource) {
-        return "";
-      }
-
-      return cost.perTarget
-        ? `${amount} ${resource} / alvo`
-        : `${amount} ${resource}`;
-    }
-
-    if (actionType === "item") {
-      const ipCost = action.system.ipCost?.value;
-
-      if (ipCost == null) {
-        return "";
-      }
-
-      return `${ipCost} IP`;
-    }
-
-    return "";
-  }
+  const title = actionType.charAt(0).toUpperCase() + actionType.slice(1);
 
   actionMenu.innerHTML = `
     <div class="fabula-command-title">
       ${title}
     </div>
 
-    ${actions
-      .map((action, index) => {
-        const cost = getActionCost(action);
+    <div class="action-subtitle">
+      Selecione um
+    </div>
 
-        return `
+    <div class="action-list">
+      ${actions
+        .map(
+          (action, index) => `
             <button
-              class="action-button ${index === 0 ? "active" : ""}"
+              class="fabula-command-button action-button ${
+                index === 0 ? "active" : ""
+              }"
               data-action-id="${action.id}"
             >
               <img
                 class="action-item-icon"
                 src="${action.img}"
-                alt=""
-              >
+              />
 
               <span class="action-name">
                 ${action.name}
               </span>
 
-              ${
-                cost
-                  ? `
-                    <span class="action-cost">
-                      ${cost}
-                    </span>
-                  `
-                  : ""
-              }
+              <span class="action-cost">
+                ${action.system.cost?.amount ?? ""}
+              </span>
             </button>
-          `;
-      })
-      .join("")}
+          `,
+        )
+        .join("")}
+    </div>
+
+    <div class="action-scrollbar">
+      <div
+        class="action-scrollbar-arrow action-scrollbar-arrow-up"
+      ></div>
+
+      <div class="action-scrollbar-track">
+        <div class="action-scrollbar-thumb"></div>
+      </div>
+
+      <div
+        class="action-scrollbar-arrow action-scrollbar-arrow-down"
+      ></div>
+    </div>
+
+    <div class="action-cursor"></div>
   `;
 
   ui.appendChild(actionMenu);
 
   actionMenu.tabIndex = 0;
 
-  /*
-   * Posiciona o submenu ao lado do COMMAND.
-   */
   const commandRect = commandMenu.getBoundingClientRect();
 
   actionMenu.style.position = "fixed";
-
   actionMenu.style.left = `${commandRect.right + 12}px`;
-
   actionMenu.style.top = `${commandRect.top}px`;
 
   showMenu(actionMenu);
 
+  const actionList = actionMenu.querySelector(".action-list");
+  const actionCursor = actionMenu.querySelector(".action-cursor");
   const actionButtons = actionMenu.querySelectorAll(".action-button");
 
+  const scrollbar = actionMenu.querySelector(".action-scrollbar");
+  const scrollbarTrack = actionMenu.querySelector(".action-scrollbar-track");
+  const scrollbarThumb = actionMenu.querySelector(".action-scrollbar-thumb");
+
   let selectedAction = 0;
+
+  function updateActionCursor() {
+    const button = actionButtons[selectedAction];
+
+    if (!button || !actionCursor || !actionList) {
+      return;
+    }
+
+    const top = actionList.offsetTop + button.offsetTop - actionList.scrollTop;
+
+    actionCursor.style.top = `${top}px`;
+    actionCursor.style.height = `${button.offsetHeight}px`;
+  }
+
+  function updateActionScrollbar() {
+    if (!actionList || !scrollbar || !scrollbarTrack || !scrollbarThumb) {
+      return;
+    }
+
+    const scrollHeight = actionList.scrollHeight;
+    const visibleHeight = actionList.clientHeight;
+
+    if (scrollHeight <= visibleHeight) {
+      scrollbar.style.opacity = "0";
+      return;
+    }
+
+    scrollbar.style.opacity = "";
+
+    const trackHeight = scrollbarTrack.clientHeight;
+
+    const thumbHeight = Math.max(
+      20,
+      (visibleHeight / scrollHeight) * trackHeight,
+    );
+
+    scrollbarThumb.style.height = `${thumbHeight}px`;
+
+    const maxThumbTop = trackHeight - thumbHeight;
+    const maxScrollTop = scrollHeight - visibleHeight;
+
+    const thumbTop = (actionList.scrollTop / maxScrollTop) * maxThumbTop;
+
+    scrollbarThumb.style.transform = `translateY(${thumbTop}px)`;
+  }
 
   function updateActionSelection() {
     actionButtons.forEach((button, index) => {
       button.classList.toggle("active", index === selectedAction);
     });
+
+    actionButtons[selectedAction]?.scrollIntoView({
+      block: "nearest",
+      inline: "nearest",
+    });
+
+    updateActionCursor();
+
+    requestAnimationFrame(updateActionScrollbar);
   }
+
+  actionList?.addEventListener("scroll", () => {
+    updateActionCursor();
+    updateActionScrollbar();
+  });
 
   function closeActionMenu() {
     returnToCommand(ui);
@@ -147,7 +179,6 @@ export function openActionMenu({ actor, actions, actionType, ui }) {
     if (!button) return;
 
     const actionId = button.dataset.actionId;
-
     const action = actor.items.get(actionId);
 
     if (!action) {
@@ -166,9 +197,7 @@ export function openActionMenu({ actor, actions, actionType, ui }) {
   actionButtons.forEach((button, index) => {
     button.addEventListener("click", () => {
       selectedAction = index;
-
       updateActionSelection();
-
       executeSelectedAction();
     });
   });
@@ -185,6 +214,7 @@ export function openActionMenu({ actor, actions, actionType, ui }) {
       selectedAction = (selectedAction + 1) % actionButtons.length;
 
       updateActionSelection();
+      return;
     }
 
     if (event.key === "ArrowUp") {
@@ -199,6 +229,7 @@ export function openActionMenu({ actor, actions, actionType, ui }) {
         (selectedAction - 1 + actionButtons.length) % actionButtons.length;
 
       updateActionSelection();
+      return;
     }
 
     if (event.key === "Enter") {
@@ -206,6 +237,7 @@ export function openActionMenu({ actor, actions, actionType, ui }) {
       event.stopPropagation();
 
       executeSelectedAction();
+      return;
     }
 
     if (event.key === "Escape") {
@@ -213,8 +245,14 @@ export function openActionMenu({ actor, actions, actionType, ui }) {
       event.stopPropagation();
 
       closeActionMenu();
+      return;
     }
   });
 
   updateActionSelection();
+
+  requestAnimationFrame(() => {
+    updateActionScrollbar();
+    updateActionCursor();
+  });
 }

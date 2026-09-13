@@ -27,7 +27,7 @@ export function openTargetCountMenu({ actor, action, actionType, ui }) {
 
   targetMenu.innerHTML = `
     <div class="fabula-command-title">
-        TARGET
+        Target
     </div>
 
     <div class="target-action">

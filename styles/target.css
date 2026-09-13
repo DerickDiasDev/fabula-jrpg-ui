@@ -1,101 +1,87 @@
 /* =========================================
-    TARGET COUNT MENU
-    ========================================= */
+   TARGET COUNT MENU
+   ========================================= */
 
 .fabula-target-menu {
   position: fixed;
+
   z-index: 10000;
 
-  width: 190px;
+  width: 220px;
+
   box-sizing: border-box;
-  padding: 12px;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 0;
+
+  padding: 22px 20px 16px;
 
   background: rgba(20, 16, 27, 0.92);
 
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  border-radius: 10px;
-
   backdrop-filter: blur(8px);
 
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  border-radius: 10px;
 
-  pointer-events: auto;
-
-  transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
-}
-
-/* =========================================
-   FOCUS
-   ========================================= */
-
-.fabula-target-menu.ui-focused {
-  border-color: rgba(255, 255, 255, 0.75);
+  outline: none;
 
   box-shadow:
     0 8px 24px rgba(0, 0, 0, 0.4),
-    0 0 0 2px rgba(255, 255, 255, 0.16);
+    0 0 0 2px rgba(255, 255, 255, 0.12);
+
+  pointer-events: auto;
+}
+
+.fabula-target-menu:focus,
+.fabula-target-menu:focus-visible {
+  outline: none;
 }
 
 /* =========================================
-   TITLE
+   TITLE (label flutuante, sem fundo)
    ========================================= */
 
 .fabula-target-menu .fabula-command-title {
-  display: flex;
-  align-items: center;
+  position: absolute;
 
-  height: 20px;
-  margin-bottom: 8px;
-  padding: 0 8px;
+  top: -18px;
+  left: 28px;
 
-  box-sizing: border-box;
+  padding: 0;
 
-  color: rgba(255, 255, 255, 0.8);
+  font-family: "Playpen Sans", cursive;
+  font-size: 20px;
+  font-weight: 600;
 
-  font-size: 13px;
-  font-weight: bold;
-  line-height: 20px;
-  letter-spacing: 2px;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
 
-  opacity: 0.65;
+  color: #eef1f7;
+
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+
+  background: none;
+  border: none;
+
+  pointer-events: none;
 }
 
 /* =========================================
-   FOCUS INDICATOR
-   ========================================= */
-
-.fabula-target-menu.ui-focused .fabula-command-title::after {
-  content: "●";
-
-  margin-left: 8px;
-
-  font-size: 8px;
-  vertical-align: middle;
-
-  opacity: 0.9;
-
-  animation: focus-pulse 1.2s ease-in-out infinite;
-}
-
-/* =========================================
-   ACTION
+   AÇÃO SELECIONADA (ex: "Attack / Broadaxe")
    ========================================= */
 
 .fabula-target-menu .target-action {
-  display: flex;
-  align-items: center;
-
-  min-height: 20px;
   margin-bottom: 8px;
-  padding: 0 8px;
 
-  color: rgba(255, 255, 255, 0.45);
+  padding: 0 4px;
 
-  font-size: 11px;
+  font-family: "Playpen Sans", cursive;
+  font-size: 13px;
   font-weight: 400;
-  line-height: 20px;
+
+  color: rgba(255, 255, 255, 0.55);
 
   white-space: nowrap;
   overflow: hidden;
@@ -103,75 +89,114 @@
 }
 
 /* =========================================
-   TARGET COUNT BUTTONS
+   BOTÕES DE QUANTIDADE (lista vertical)
    ========================================= */
 
 .fabula-target-menu .target-count-button {
   position: relative;
-
   display: flex;
   align-items: center;
   justify-content: flex-start;
 
   width: 100%;
-  height: 38px;
-
+  height: 40px;
   box-sizing: border-box;
+  padding: 0 18px;
 
-  padding-left: 12px;
-  padding-right: 12px;
+  border: 1px solid transparent;
+  border-radius: 12px;
 
-  background: transparent;
-  border: none;
-  border-radius: 6px;
+  background:
+    linear-gradient(
+        90deg,
+        rgba(22, 22, 22, 0.9) 0%,
+        rgba(117, 117, 117, 0) 100%
+      )
+      padding-box,
+    linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.8) 0%,
+        rgba(255, 255, 255, 0.05) 100%
+      )
+      border-box;
 
-  color: white;
+  color: rgba(255, 255, 255, 0.85);
+  font-family: "Playpen Sans", cursive;
+  font-size: 16px;
+  font-weight: 300;
+  letter-spacing: -0.06em;
 
-  font-size: 14px;
   text-align: left;
-
   cursor: pointer;
 
+  outline: none;
+
   transition:
-    background 0.12s ease,
-    transform 0.12s ease;
+    width 0.12s ease,
+    box-shadow 0.12s ease,
+    background 0.12s ease;
 }
 
-/* =========================================
-   HOVER
-   ========================================= */
-
-.fabula-target-menu .target-count-button:hover {
-  background: rgba(255, 255, 255, 0.1);
+.fabula-target-menu .target-count-button:focus,
+.fabula-target-menu .target-count-button:focus-visible {
+  outline: none;
 }
-
-/* =========================================
-   ACTIVE
-   ========================================= */
 
 .fabula-target-menu .target-count-button.active {
-  background: rgba(255, 255, 255, 0.14);
-
-  transform: translateX(4px);
+  box-shadow: none;
 }
 
 /* =========================================
-   CURSOR
+   HOVER / ACTIVE
    ========================================= */
 
-.fabula-target-menu .target-count-button.active::before {
+.fabula-target-menu.ui-focused .target-count-button:hover {
+  background:
+    linear-gradient(rgba(40, 40, 44, 0.9), rgba(40, 40, 44, 0.9)) padding-box,
+    linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 1) 0%,
+        rgba(255, 255, 255, 0.1) 100%
+      )
+      border-box;
+}
+
+.fabula-target-menu.ui-focused .target-count-button.active {
+  background:
+    linear-gradient(rgba(48, 48, 54, 0.95), rgba(48, 48, 54, 0.95)) padding-box,
+    linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 1) 0%,
+        rgba(255, 255, 255, 0.1) 100%
+      )
+      border-box;
+
+  color: #ffffff;
+}
+
+.fabula-target-menu.ui-focused .target-count-button:hover,
+.fabula-target-menu.ui-focused .target-count-button.active {
+  width: calc(100% + 14px);
+
+  box-shadow:
+    inset 0 0 13px 1px rgba(90, 130, 255, 0.65),
+    inset 0 0 10px 3px rgba(160, 90, 255, 0.5),
+    inset 0 2px 3px 1px rgba(255, 255, 255, 0.9);
+}
+
+.fabula-target-menu.ui-focused .target-count-button:hover::before,
+.fabula-target-menu.ui-focused .target-count-button.active::before {
   content: "";
 
   position: absolute;
 
-  left: -28px;
+  left: -24px;
   top: 50%;
 
-  width: 20px;
-  height: 20px;
+  width: 26px;
+  height: 26px;
 
   background-image: url("../assets/cursor.png");
-
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
