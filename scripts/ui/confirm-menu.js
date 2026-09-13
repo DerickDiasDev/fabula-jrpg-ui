@@ -15,7 +15,7 @@ export function openConfirmMenu({
 
   const confirmMenu = document.createElement("div");
 
-  confirmMenu.className = "fabula-confirm-menu fabula-submenu";
+  confirmMenu.className = "fui-confirm-menu fui-submenu";
 
   const combatants = game.combat?.combatants.contents ?? [];
 
@@ -32,23 +32,23 @@ export function openConfirmMenu({
   const actionLabel = actionLabels[actionType] ?? actionType.toUpperCase();
 
   confirmMenu.innerHTML = `
-    <div class="fabula-command-title">
+    <div class="fui-command-title">
         CONFIRM
     </div>
 
-    <div class="confirm-action">
+    <div class="fui-confirm-action">
         ${actionLabel} / ${action.name}
     </div>
 
-    <div class="confirm-targets-title">
+    <div class="fui-confirm-targets-title">
         TARGETS
     </div>
 
-    <div class="confirm-targets">
+    <div class="fui-confirm-targets">
         ${targets
           .map(
             (combatant) => `
-              <div class="confirm-target">
+              <div class="fui-confirm-target">
                   ${combatant.actor.name}
               </div>
             `,
@@ -57,14 +57,14 @@ export function openConfirmMenu({
     </div>
 
     <button
-      class="fabula-command-button confirm-button active"
+      class="fui-command-button fui-confirm-button fui-active"
       data-confirm="confirm"
     >
       Confirm
     </button>
 
     <button
-      class="fabula-command-button confirm-button"
+      class="fui-command-button fui-confirm-button"
       data-confirm="cancel"
     >
       Cancel
@@ -81,13 +81,13 @@ export function openConfirmMenu({
 
   showMenu(confirmMenu);
 
-  const buttons = confirmMenu.querySelectorAll(".confirm-button");
+  const buttons = confirmMenu.querySelectorAll(".fui-confirm-button");
 
   let selectedIndex = 0;
 
   function updateSelection() {
     buttons.forEach((button, index) => {
-      button.classList.toggle("active", index === selectedIndex);
+      button.classList.toggle("fui-active", index === selectedIndex);
     });
   }
 

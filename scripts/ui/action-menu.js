@@ -2,61 +2,61 @@ import { openTargetCountMenu } from "./target-menu.js";
 import { showMenu, hideMenu, returnToCommand } from "./menu-utils.js";
 
 export function openActionMenu({ actor, actions, actionType, ui }) {
-  const commandMenu = ui.querySelector(".fabula-command");
+  const commandMenu = ui.querySelector(".fui-command");
 
   if (!commandMenu) return;
 
   commandMenu.tabIndex = 0;
 
-  const menuClass = `fabula-${actionType}-menu`;
-  const openClass = `${actionType}-menu-open`;
+  const menuClass = `fui-${actionType}-menu`;
+  const openClass = `fui-${actionType}-menu-open`;
   const existingMenu = ui.querySelector(`.${menuClass}`);
 
   if (existingMenu) {
     commandMenu.classList.add(openClass);
-    commandMenu.classList.remove("ui-focused");
+    commandMenu.classList.remove("fui-ui-focused");
     showMenu(existingMenu);
     return;
   }
 
   commandMenu.classList.add(openClass);
-  commandMenu.classList.remove("ui-focused");
+  commandMenu.classList.remove("fui-ui-focused");
 
   const actionMenu = document.createElement("div");
 
-  actionMenu.className = `${menuClass} fabula-action-menu fabula-submenu`;
+  actionMenu.className = `${menuClass} fui-action-menu fui-submenu`;
 
   const title = actionType.charAt(0).toUpperCase() + actionType.slice(1);
 
   actionMenu.innerHTML = `
-    <div class="fabula-command-title">
+    <div class="fui-command-title">
       ${title}
     </div>
 
-    <div class="action-subtitle">
+    <div class="fui-action-subtitle">
       Selecione um
     </div>
 
-    <div class="action-list">
+    <div class="fui-action-list">
       ${actions
         .map(
           (action, index) => `
             <button
-              class="fabula-command-button action-button ${
-                index === 0 ? "active" : ""
+              class="fui-command-button fui-action-button ${
+                index === 0 ? "fui-active" : ""
               }"
               data-action-id="${action.id}"
             >
               <img
-                class="action-item-icon"
+                class="fui-action-item-icon"
                 src="${action.img}"
               />
 
-              <span class="action-name">
+              <span class="fui-action-name">
                 ${action.name}
               </span>
 
-              <span class="action-cost">
+              <span class="fui-action-cost">
                 ${action.system.cost?.amount ?? ""}
               </span>
             </button>
@@ -65,21 +65,21 @@ export function openActionMenu({ actor, actions, actionType, ui }) {
         .join("")}
     </div>
 
-    <div class="action-scrollbar">
+    <div class="fui-action-scrollbar">
       <div
-        class="action-scrollbar-arrow action-scrollbar-arrow-up"
+        class="fui-action-scrollbar-arrow fui-action-scrollbar-arrow-up"
       ></div>
 
-      <div class="action-scrollbar-track">
-        <div class="action-scrollbar-thumb"></div>
+      <div class="fui-action-scrollbar-track">
+        <div class="fui-action-scrollbar-thumb"></div>
       </div>
 
       <div
-        class="action-scrollbar-arrow action-scrollbar-arrow-down"
+        class="fui-action-scrollbar-arrow fui-action-scrollbar-arrow-down"
       ></div>
     </div>
 
-    <div class="action-cursor"></div>
+    <div class="fui-action-cursor"></div>
   `;
 
   ui.appendChild(actionMenu);
@@ -94,13 +94,13 @@ export function openActionMenu({ actor, actions, actionType, ui }) {
 
   showMenu(actionMenu);
 
-  const actionList = actionMenu.querySelector(".action-list");
-  const actionCursor = actionMenu.querySelector(".action-cursor");
-  const actionButtons = actionMenu.querySelectorAll(".action-button");
+  const actionList = actionMenu.querySelector(".fui-action-list");
+  const actionCursor = actionMenu.querySelector(".fui-action-cursor");
+  const actionButtons = actionMenu.querySelectorAll(".fui-action-button");
 
-  const scrollbar = actionMenu.querySelector(".action-scrollbar");
-  const scrollbarTrack = actionMenu.querySelector(".action-scrollbar-track");
-  const scrollbarThumb = actionMenu.querySelector(".action-scrollbar-thumb");
+  const scrollbar = actionMenu.querySelector(".fui-action-scrollbar");
+  const scrollbarTrack = actionMenu.querySelector(".fui-action-scrollbar-track");
+  const scrollbarThumb = actionMenu.querySelector(".fui-action-scrollbar-thumb");
 
   let selectedAction = 0;
 
@@ -151,7 +151,7 @@ export function openActionMenu({ actor, actions, actionType, ui }) {
 
   function updateActionSelection() {
     actionButtons.forEach((button, index) => {
-      button.classList.toggle("active", index === selectedAction);
+      button.classList.toggle("fui-active", index === selectedAction);
     });
 
     actionButtons[selectedAction]?.scrollIntoView({

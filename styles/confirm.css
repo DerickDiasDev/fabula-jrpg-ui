@@ -2,7 +2,7 @@
    CONFIRM MENU
    ========================================= */
 
-.fabula-confirm-menu {
+.fui-confirm-menu {
   position: fixed;
   z-index: 10002;
 
@@ -30,7 +30,7 @@
    FOCUS
    ========================================= */
 
-.fabula-confirm-menu.ui-focused {
+.fui-confirm-menu.fui-ui-focused {
   border-color: rgba(255, 255, 255, 0.75);
 
   box-shadow:
@@ -42,7 +42,7 @@
    TITLE
    ========================================= */
 
-.fabula-confirm-menu .fabula-command-title {
+.fui-confirm-menu .fui-command-title {
   display: flex;
   align-items: center;
 
@@ -66,7 +66,7 @@
    FOCUS INDICATOR
    ========================================= */
 
-.fabula-confirm-menu.ui-focused .fabula-command-title::after {
+.fui-confirm-menu.fui-ui-focused .fui-command-title::after {
   content: "●";
 
   margin-left: 8px;
@@ -83,7 +83,7 @@
    ACTION
    ========================================= */
 
-.fabula-confirm-menu .confirm-action {
+.fui-confirm-menu .fui-confirm-action {
   display: flex;
   align-items: center;
 
@@ -106,7 +106,7 @@
    TARGETS TITLE
    ========================================= */
 
-.fabula-confirm-menu .confirm-targets-title {
+.fui-confirm-menu .fui-confirm-targets-title {
   padding: 4px 8px;
 
   color: rgba(255, 255, 255, 0.4);
@@ -120,11 +120,11 @@
    TARGETS
    ========================================= */
 
-.fabula-confirm-menu .confirm-targets {
+.fui-confirm-menu .fui-confirm-targets {
   margin-bottom: 10px;
 }
 
-.fabula-confirm-menu .confirm-target {
+.fui-confirm-menu .fui-confirm-target {
   display: flex;
   align-items: center;
 
@@ -140,7 +140,7 @@
    BUTTONS
    ========================================= */
 
-.fabula-confirm-menu .confirm-button {
+.fui-confirm-menu .fui-confirm-button {
   position: relative;
 
   display: flex;
@@ -174,7 +174,7 @@
    HOVER
    ========================================= */
 
-.fabula-confirm-menu .confirm-button:hover {
+.fui-confirm-menu .fui-confirm-button:hover {
   background: rgba(255, 255, 255, 0.1);
 }
 
@@ -182,7 +182,7 @@
    ACTIVE
    ========================================= */
 
-.fabula-confirm-menu .confirm-button.active {
+.fui-confirm-menu .fui-confirm-button.fui-active {
   background: rgba(255, 255, 255, 0.14);
 
   transform: translateX(4px);
@@ -192,7 +192,7 @@
    CURSOR
    ========================================= */
 
-.fabula-confirm-menu .confirm-button.active::before {
+.fui-confirm-menu .fui-confirm-button.fui-active::before {
   content: "";
 
   position: absolute;

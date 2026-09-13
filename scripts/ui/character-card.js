@@ -5,20 +5,20 @@ export function createCharacterCard(actor) {
 
   return `
     <div
-      class="fabula-character-card"
+      class="fui-character-card"
       data-actor-id="${actor.id}"
     >
-      <div class="character-portrait">
+      <div class="fui-character-portrait">
         <img
           src="${actor.img}"
           alt="${actor.name}"
         />
       </div>
 
-      <div class="character-resources">
-        <div class="character-name-row">
-          <span class="character-name">${actor.name}</span>
-          <span class="character-level">NV. ${actor.system.level.value}</span>
+      <div class="fui-character-resources">
+        <div class="fui-character-name-row">
+          <span class="fui-character-name">${actor.name}</span>
+          <span class="fui-character-level">NV. ${actor.system.level.value}</span>
         </div>
 
         ${createBarResource("hp", hp)}
@@ -26,7 +26,7 @@ export function createCharacterCard(actor) {
         ${createIpResource(ip)}
       </div>
 
-      <div class="character-status-effects"></div>
+      <div class="fui-character-status-effects"></div>
     </div>
   `;
 }
@@ -37,23 +37,23 @@ function createBarResource(type, resource) {
 
   return `
     <div
-      class="character-resource character-resource-${type}"
+      class="fui-character-resource fui-character-resource-${type}"
       data-resource="${type}"
     >
-      <div class="resource-header">
-        <span class="resource-label">${type.toUpperCase()}</span>
-        <span class="resource-value">
-          <span class="resource-value-current">${resource.value}</span
-          ><span class="resource-value-sep">/</span
-          ><span class="resource-value-max">${resource.max}</span>
+      <div class="fui-resource-header">
+        <span class="fui-resource-label">${type.toUpperCase()}</span>
+        <span class="fui-resource-value">
+          <span class="fui-resource-value-current">${resource.value}</span
+          ><span class="fui-resource-value-sep">/</span
+          ><span class="fui-resource-value-max">${resource.max}</span>
         </span>
       </div>
 
-      <div class="resource-bar">
-        ${type === "hp" ? `<div class="resource-crisis-marker"></div>` : ""}
+      <div class="fui-resource-bar">
+        ${type === "hp" ? `<div class="fui-resource-crisis-marker"></div>` : ""}
 
         <div
-          class="resource-fill ${type}"
+          class="fui-resource-fill fui-${type}"
           style="width: ${percentage}%"
         ></div>
       </div>
@@ -66,20 +66,20 @@ function createIpResource(resource) {
     const active = index < resource.value;
 
     return `
-        <span class="ip-point ${active ? "active" : ""}">${active ? "◆" : "◇"}</span>
+        <span class="fui-ip-point ${active ? "fui-active" : ""}">${active ? "◆" : "◇"}</span>
       `;
   }).join("");
 
   return `
     <div
-      class="character-resource character-resource-ip"
+      class="fui-character-resource fui-character-resource-ip"
       data-resource="ip"
     >
-      <div class="resource-header">
-        <span class="resource-label">PI</span>
+      <div class="fui-resource-header">
+        <span class="fui-resource-label">PI</span>
       </div>
 
-      <div class="ip-points">
+      <div class="fui-ip-points">
         ${points}
       </div>
     </div>
@@ -96,9 +96,9 @@ function updateBarResource(card, type, resource) {
   const percentage =
     resource.max > 0 ? (resource.value / resource.max) * 100 : 0;
 
-  const fill = resourceElement.querySelector(".resource-fill");
-  const current = resourceElement.querySelector(".resource-value-current");
-  const max = resourceElement.querySelector(".resource-value-max");
+  const fill = resourceElement.querySelector(".fui-resource-fill");
+  const current = resourceElement.querySelector(".fui-resource-value-current");
+  const max = resourceElement.querySelector(".fui-resource-value-max");
 
   if (fill) {
     fill.style.width = `${percentage}%`;
@@ -113,7 +113,7 @@ function updateBarResource(card, type, resource) {
   }
 
   resourceElement.classList.toggle(
-    "resource-critical",
+    "fui-resource-critical",
     type === "hp" && resource.max > 0 && resource.value <= resource.max / 2,
   );
 }
@@ -125,7 +125,7 @@ function updateIpResource(card, resource) {
     return;
   }
 
-  const pointsContainer = resourceElement.querySelector(".ip-points");
+  const pointsContainer = resourceElement.querySelector(".fui-ip-points");
 
   if (pointsContainer) {
     pointsContainer.innerHTML = Array.from(
@@ -133,7 +133,7 @@ function updateIpResource(card, resource) {
       (_, index) => {
         const active = index < resource.value;
 
-        return `<span class="ip-point ${active ? "active" : ""}">${active ? "◆" : "◇"}</span>`;
+        return `<span class="fui-ip-point ${active ? "fui-active" : ""}">${active ? "◆" : "◇"}</span>`;
       },
     ).join("");
   }
@@ -156,8 +156,8 @@ export function updateCharacterCard(actor, ui) {
 }
 
 export function updateActiveCombatant(combat, ui) {
-  ui.querySelectorAll(".fabula-character-card").forEach((card) => {
-    card.classList.remove("active-turn");
+  ui.querySelectorAll(".fui-character-card").forEach((card) => {
+    card.classList.remove("fui-active-turn");
   });
 
   const combatantId = combat.current?.combatantId;
@@ -178,5 +178,5 @@ export function updateActiveCombatant(combat, ui) {
     return;
   }
 
-  card.classList.add("active-turn");
+  card.classList.add("fui-active-turn");
 }

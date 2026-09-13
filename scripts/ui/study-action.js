@@ -6,7 +6,7 @@ export function executeStudy(actor, ui) {
     return;
   }
 
-  const commandMenu = ui.querySelector(".fabula-command");
+  const commandMenu = ui.querySelector(".fui-command");
 
   if (!commandMenu) {
     return;

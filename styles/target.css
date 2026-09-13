@@ -2,7 +2,7 @@
    TARGET COUNT MENU
    ========================================= */
 
-.fabula-target-menu {
+.fui-target-menu {
   position: fixed;
 
   z-index: 10000;
@@ -34,8 +34,8 @@
   pointer-events: auto;
 }
 
-.fabula-target-menu:focus,
-.fabula-target-menu:focus-visible {
+.fui-target-menu:focus,
+.fui-target-menu:focus-visible {
   outline: none;
 }
 
@@ -43,7 +43,7 @@
    TITLE (label flutuante, sem fundo)
    ========================================= */
 
-.fabula-target-menu .fabula-command-title {
+.fui-target-menu .fui-command-title {
   position: absolute;
 
   top: -18px;
@@ -72,7 +72,7 @@
    AÇÃO SELECIONADA (ex: "Attack / Broadaxe")
    ========================================= */
 
-.fabula-target-menu .target-action {
+.fui-target-menu .fui-target-action {
   margin-bottom: 8px;
 
   padding: 0 4px;
@@ -92,7 +92,7 @@
    BOTÕES DE QUANTIDADE (lista vertical)
    ========================================= */
 
-.fabula-target-menu .target-count-button {
+.fui-target-menu .fui-target-count-button {
   position: relative;
   display: flex;
   align-items: center;
@@ -137,12 +137,12 @@
     background 0.12s ease;
 }
 
-.fabula-target-menu .target-count-button:focus,
-.fabula-target-menu .target-count-button:focus-visible {
+.fui-target-menu .fui-target-count-button:focus,
+.fui-target-menu .fui-target-count-button:focus-visible {
   outline: none;
 }
 
-.fabula-target-menu .target-count-button.active {
+.fui-target-menu .fui-target-count-button.fui-active {
   box-shadow: none;
 }
 
@@ -150,7 +150,7 @@
    HOVER / ACTIVE
    ========================================= */
 
-.fabula-target-menu.ui-focused .target-count-button:hover {
+.fui-target-menu.fui-ui-focused .fui-target-count-button:hover {
   background:
     linear-gradient(rgba(40, 40, 44, 0.9), rgba(40, 40, 44, 0.9)) padding-box,
     linear-gradient(
@@ -161,7 +161,7 @@
       border-box;
 }
 
-.fabula-target-menu.ui-focused .target-count-button.active {
+.fui-target-menu.fui-ui-focused .fui-target-count-button.fui-active {
   background:
     linear-gradient(rgba(48, 48, 54, 0.95), rgba(48, 48, 54, 0.95)) padding-box,
     linear-gradient(
@@ -174,8 +174,8 @@
   color: #ffffff;
 }
 
-.fabula-target-menu.ui-focused .target-count-button:hover,
-.fabula-target-menu.ui-focused .target-count-button.active {
+.fui-target-menu.fui-ui-focused .fui-target-count-button:hover,
+.fui-target-menu.fui-ui-focused .fui-target-count-button.fui-active {
   width: calc(100% + 14px);
 
   box-shadow:
@@ -184,8 +184,8 @@
     inset 0 2px 3px 1px rgba(255, 255, 255, 0.9);
 }
 
-.fabula-target-menu.ui-focused .target-count-button:hover::before,
-.fabula-target-menu.ui-focused .target-count-button.active::before {
+.fui-target-menu.fui-ui-focused .fui-target-count-button:hover::before,
+.fui-target-menu.fui-ui-focused .fui-target-count-button.fui-active::before {
   content: "";
 
   position: absolute;

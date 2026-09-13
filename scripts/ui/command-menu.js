@@ -7,20 +7,20 @@ import { executeEquipment } from "./equipment-action.js";
 import { getActiveSubmenu } from "./menu-utils.js";
 
 export function setupCommandMenu(ui) {
-  const commandMenu = ui.querySelector(".fabula-command");
+  const commandMenu = ui.querySelector(".fui-command");
 
   if (!commandMenu) {
     return;
   }
 
-  const buttons = commandMenu.querySelectorAll(".command-button");
-  const tooltip = ui.querySelector(".fabula-command-tooltip"); // NOVO
+  const buttons = commandMenu.querySelectorAll(".fui-command-button");
+  const tooltip = ui.querySelector(".fui-command-tooltip"); // NOVO
 
   let selectedIndex = 0;
 
   function updateSelection() {
     buttons.forEach((button, index) => {
-      button.classList.toggle("active", index === selectedIndex);
+      button.classList.toggle("fui-active", index === selectedIndex);
     });
 
     // NOVO
@@ -196,7 +196,7 @@ export function setupCommandMenu(ui) {
 }
 
 export function updateCommandActor(combat, ui) {
-  const commandMenu = ui.querySelector(".fabula-command");
+  const commandMenu = ui.querySelector(".fui-command");
 
   if (!commandMenu) {
     return;

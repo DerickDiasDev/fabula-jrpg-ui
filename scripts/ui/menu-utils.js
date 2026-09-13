@@ -3,23 +3,23 @@ export function showMenu(menu) {
 
   menu.hidden = false;
 
-  menu.classList.add("ui-focused");
+  menu.classList.add("fui-ui-focused");
 
   menu.focus();
 
   const commandMenu = menu
     .closest("#fabula-jrpg-ui")
-    ?.querySelector(".fabula-command");
+    ?.querySelector(".fui-command");
 
-  if (commandMenu && menu.classList.contains("fabula-submenu")) {
-    commandMenu.classList.add("submenu-open");
+  if (commandMenu && menu.classList.contains("fui-submenu")) {
+    commandMenu.classList.add("fui-submenu-open");
   }
 }
 
 export function hideMenu(menu) {
   if (!menu) return;
 
-  menu.classList.remove("ui-focused");
+  menu.classList.remove("fui-ui-focused");
 
   menu.hidden = true;
 
@@ -27,37 +27,37 @@ export function hideMenu(menu) {
 
   if (!ui) return;
 
-  const commandMenu = ui.querySelector(".fabula-command");
+  const commandMenu = ui.querySelector(".fui-command");
 
   const activeSubmenu = getActiveSubmenu(ui);
 
   if (commandMenu && !activeSubmenu) {
-    commandMenu.classList.remove("submenu-open");
+    commandMenu.classList.remove("fui-submenu-open");
   }
 }
 
 export function getActiveSubmenu(ui) {
-  return ui.querySelector(".fabula-submenu:not([hidden])");
+  return ui.querySelector(".fui-submenu:not([hidden])");
 }
 
 export function hideAllSubmenus(ui) {
-  ui.querySelectorAll(".fabula-submenu").forEach((menu) => {
-    menu.classList.remove("ui-focused");
+  ui.querySelectorAll(".fui-submenu").forEach((menu) => {
+    menu.classList.remove("fui-ui-focused");
 
     menu.hidden = true;
   });
 
-  const commandMenu = ui.querySelector(".fabula-command");
+  const commandMenu = ui.querySelector(".fui-command");
 
   if (commandMenu) {
-    commandMenu.classList.remove("submenu-open");
+    commandMenu.classList.remove("fui-submenu-open");
   }
 }
 
 export function returnToCommand(ui) {
   hideAllSubmenus(ui);
 
-  const commandMenu = ui.querySelector(".fabula-command");
+  const commandMenu = ui.querySelector(".fui-command");
 
   if (!commandMenu) {
     return;
@@ -66,13 +66,13 @@ export function returnToCommand(ui) {
   commandMenu.hidden = false;
 
   commandMenu.classList.remove(
-    "attack-menu-open",
-    "skill-menu-open",
-    "item-menu-open",
-    "submenu-open",
+    "fui-attack-menu-open",
+    "fui-skill-menu-open",
+    "fui-item-menu-open",
+    "fui-submenu-open",
   );
 
-  commandMenu.classList.add("ui-focused");
+  commandMenu.classList.add("fui-ui-focused");
 
   commandMenu.tabIndex = 0;
   commandMenu.focus();

@@ -12,7 +12,7 @@ export function openTargetSelectMenu({
 }) {
   const previousRect = previousMenu.getBoundingClientRect();
 
-  const isCommandMenu = previousMenu.classList.contains("fabula-command");
+  const isCommandMenu = previousMenu.classList.contains("fui-command");
 
   if (!isCommandMenu) {
     hideMenu(previousMenu);
@@ -20,7 +20,7 @@ export function openTargetSelectMenu({
 
   const targetMenu = document.createElement("div");
 
-  targetMenu.className = "fabula-target-select-menu fabula-submenu";
+  targetMenu.className = "fui-target-select-menu fui-submenu";
 
   const combatants = game.combat?.combatants.contents ?? [];
 
@@ -33,11 +33,11 @@ export function openTargetSelectMenu({
   );
 
   targetMenu.innerHTML = `
-    <div class="fabula-command-title">
+    <div class="fui-command-title">
         TARGET
     </div>
 
-    <div class="target-action">
+    <div class="fui-target-action">
        ${
          actionType === "skill"
            ? "Skill"
@@ -49,8 +49,8 @@ export function openTargetSelectMenu({
        }${action ? ` / ${action.name}` : ""}
     </div>
 
-    <div class="target-group">
-        <div class="target-group-title">
+    <div class="fui-target-group">
+        <div class="fui-target-group-title">
             PARTY
         </div>
 
@@ -58,7 +58,7 @@ export function openTargetSelectMenu({
           .map(
             (combatant) => `
               <button
-                class="fabula-command-button target-button"
+                class="fui-command-button fui-target-button"
                 data-combatant-id="${combatant.id}"
               >
                 <span>
@@ -70,8 +70,8 @@ export function openTargetSelectMenu({
           .join("")}
     </div>
 
-    <div class="target-group">
-        <div class="target-group-title">
+    <div class="fui-target-group">
+        <div class="fui-target-group-title">
             ENEMIES
         </div>
 
@@ -79,7 +79,7 @@ export function openTargetSelectMenu({
           .map(
             (combatant) => `
               <button
-                class="fabula-command-button target-button"
+                class="fui-command-button fui-target-button"
                 data-combatant-id="${combatant.id}"
               >
                 <span>
@@ -91,7 +91,7 @@ export function openTargetSelectMenu({
           .join("")}
     </div>
 
-    <div class="target-count">
+    <div class="fui-target-count">
         Selected: 0/${targetCount}
     </div>
   `;
@@ -112,7 +112,7 @@ export function openTargetSelectMenu({
 
   showMenu(targetMenu);
 
-  const targetButtons = targetMenu.querySelectorAll(".target-button");
+  const targetButtons = targetMenu.querySelectorAll(".fui-target-button");
 
   let selectedIndex = 0;
 
@@ -120,7 +120,7 @@ export function openTargetSelectMenu({
 
   function updateSelection() {
     targetButtons.forEach((button, index) => {
-      button.classList.toggle("active", index === selectedIndex);
+      button.classList.toggle("fui-active", index === selectedIndex);
     });
   }
 
@@ -128,10 +128,10 @@ export function openTargetSelectMenu({
     targetButtons.forEach((button) => {
       const selected = selectedTargets.has(button.dataset.combatantId);
 
-      button.classList.toggle("selected", selected);
+      button.classList.toggle("fui-selected", selected);
     });
 
-    const counter = targetMenu.querySelector(".target-count");
+    const counter = targetMenu.querySelector(".fui-target-count");
 
     if (counter) {
       counter.textContent = `Selected: ${selectedTargets.size}/${targetCount}`;
@@ -193,7 +193,7 @@ export function openTargetSelectMenu({
     hideMenu(targetMenu);
 
     if (isCommandMenu) {
-      previousMenu.classList.add("ui-focused");
+      previousMenu.classList.add("fui-ui-focused");
       previousMenu.tabIndex = 0;
       previousMenu.focus();
       return;

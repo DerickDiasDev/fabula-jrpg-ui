@@ -4,7 +4,7 @@
    COMMAND MENU
    ========================================= */
 
-.fabula-command {
+.fui-command {
   position: absolute;
 
   left: 24px;
@@ -33,8 +33,8 @@
   pointer-events: auto;
 }
 
-.fabula-command:focus,
-.fabula-command:focus-visible {
+.fui-command:focus,
+.fui-command:focus-visible {
   outline: none;
 }
 
@@ -42,7 +42,7 @@
    ATIVO (com foco de teclado) — painel acende
    ========================================= */
 
-.fabula-command.ui-focused {
+.fui-command.fui-ui-focused {
   opacity: 1;
 }
 
@@ -50,7 +50,7 @@
    NOME DO PERSONAGEM (banner dinâmico)
    ========================================= */
 
-.fabula-command::after {
+.fui-command::after {
   content: attr(data-actor-name);
 
   position: absolute;
@@ -82,7 +82,7 @@
    COMMAND MOLDURA (SVG do painel inteiro)
    ========================================= */
 
-.fabula-command::before {
+.fui-command::before {
   content: "";
 
   position: absolute;
@@ -102,7 +102,7 @@
    COMMAND BUTTONS
    ========================================= */
 
-.fabula-command > .command-button {
+.fui-command > .fui-command-button {
   position: relative;
   display: flex;
   align-items: center;
@@ -149,17 +149,19 @@
     background 0.12s ease;
 }
 
-.fabula-command > .command-button:focus,
-.fabula-command > .command-button:focus-visible {
+.fui-command > .fui-command-button:focus,
+.fui-command > .fui-command-button:focus-visible {
   outline: none;
 }
 
 /* =========================================
-   ZERA O box-shadow QUE O FOUNDRY APLICA
-   EM QUALQUER .active (core CSS do sistema)
+   ZERA O box-shadow padrão do botão.
+   (Antes usava .active, que conflitava com o
+   CSS core do Foundry/ProjectFU; agora usamos
+   .fui-active, que é exclusivo deste módulo)
    ========================================= */
 
-.fabula-command > .command-button.active {
+.fui-command > .fui-command-button.fui-active {
   box-shadow: none;
 }
 
@@ -168,7 +170,7 @@
    (só reage quando o painel está focado)
    ========================================= */
 
-.fabula-command.ui-focused > .command-button:hover {
+.fui-command.fui-ui-focused > .fui-command-button:hover {
   background:
     linear-gradient(rgba(40, 40, 44, 0.9), rgba(40, 40, 44, 0.9)) padding-box,
     linear-gradient(
@@ -183,7 +185,7 @@
    COMMAND ACTIVE / SELECTED
    ========================================= */
 
-.fabula-command.ui-focused > .command-button.active {
+.fui-command.fui-ui-focused > .fui-command-button.fui-active {
   background:
     linear-gradient(rgba(48, 48, 54, 0.95), rgba(48, 48, 54, 0.95)) padding-box,
     linear-gradient(
@@ -197,12 +199,12 @@
 }
 
 /* =========================================
-   SELECTED (hover do mouse OU active — os
+   SELECTED (hover do mouse OU fui-active — os
    dois só contam com o painel focado)
    ========================================= */
 
-.fabula-command.ui-focused > .command-button:hover,
-.fabula-command.ui-focused > .command-button.active {
+.fui-command.fui-ui-focused > .fui-command-button:hover,
+.fui-command.fui-ui-focused > .fui-command-button.fui-active {
   width: calc(100% + 14px);
 
   box-shadow:
@@ -211,8 +213,8 @@
     inset 0 2px 3px 1px rgba(255, 255, 255, 0.9);
 }
 
-.fabula-command.ui-focused > .command-button:hover::before,
-.fabula-command.ui-focused > .command-button.active::before {
+.fui-command.fui-ui-focused > .fui-command-button:hover::before,
+.fui-command.fui-ui-focused > .fui-command-button.fui-active::before {
   content: "";
 
   position: absolute;
@@ -237,13 +239,13 @@
    nenhum botão)
    ========================================= */
 
-.fabula-command > .command-button.blocked {
+.fui-command > .fui-command-button.fui-blocked {
   color: rgba(255, 255, 255, 0.3);
 
   cursor: default;
 }
 
-.fabula-command.ui-focused > .command-button.blocked:hover {
+.fui-command.fui-ui-focused > .fui-command-button.fui-blocked:hover {
   background:
     linear-gradient(rgba(15, 15, 15, 0.9), rgba(117, 117, 117, 0)) padding-box,
     linear-gradient(

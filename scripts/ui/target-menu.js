@@ -3,7 +3,7 @@ import { showMenu, hideMenu, getActiveSubmenu } from "./menu-utils.js";
 
 export function openTargetCountMenu({ actor, action, actionType, ui }) {
   const previousMenu =
-    getActiveSubmenu(ui) || ui.querySelector(".fabula-command");
+    getActiveSubmenu(ui) || ui.querySelector(".fui-command");
 
   if (!previousMenu) return;
 
@@ -14,7 +14,7 @@ export function openTargetCountMenu({ actor, action, actionType, ui }) {
 
   const targetMenu = document.createElement("div");
 
-  targetMenu.className = "fabula-target-menu fabula-submenu";
+  targetMenu.className = "fui-target-menu fui-submenu";
 
   const actionLabel =
     actionType === "skill"
@@ -26,44 +26,44 @@ export function openTargetCountMenu({ actor, action, actionType, ui }) {
           : "Attack";
 
   targetMenu.innerHTML = `
-    <div class="fabula-command-title">
+    <div class="fui-command-title">
         Target
     </div>
 
-    <div class="target-action">
+    <div class="fui-target-action">
         ${actionLabel}${action ? ` / ${action.name}` : ""}
     </div>
 
     <button
-        class="fabula-command-button target-count-button active"
+        class="fui-command-button fui-target-count-button fui-active"
         data-count="1"
     >
         1
     </button>
 
     <button
-        class="fabula-command-button target-count-button"
+        class="fui-command-button fui-target-count-button"
         data-count="2"
     >
         2
     </button>
 
     <button
-        class="fabula-command-button target-count-button"
+        class="fui-command-button fui-target-count-button"
         data-count="3"
     >
         3
     </button>
 
     <button
-        class="fabula-command-button target-count-button"
+        class="fui-command-button fui-target-count-button"
         data-count="4"
     >
         4
     </button>
 
     <button
-        class="fabula-command-button target-count-button"
+        class="fui-command-button fui-target-count-button"
         data-count="5"
     >
         5
@@ -80,13 +80,13 @@ export function openTargetCountMenu({ actor, action, actionType, ui }) {
 
   showMenu(targetMenu);
 
-  const buttons = targetMenu.querySelectorAll(".target-count-button");
+  const buttons = targetMenu.querySelectorAll(".fui-target-count-button");
 
   let selectedCount = 1;
 
   function updateSelection() {
     buttons.forEach((button, index) => {
-      button.classList.toggle("active", index === selectedCount - 1);
+      button.classList.toggle("fui-active", index === selectedCount - 1);
     });
   }
 

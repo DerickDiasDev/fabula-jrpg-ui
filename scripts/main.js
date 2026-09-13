@@ -28,37 +28,37 @@ export function createFabulaUI() {
   ui.innerHTML = `
     <!-- COMMAND MENU -->
 
-    <div class="fabula-command" data-actor-name="${currentActorName}">
+    <div class="fui-command" data-actor-name="${currentActorName}">
 
-      <button class="command-button active">
+      <button class="fui-command-button fui-active">
         <span>Attack</span>
       </button>
 
-      <button class="command-button">
+      <button class="fui-command-button">
         <span>Skill</span>
       </button>
 
-      <button class="command-button">
+      <button class="fui-command-button">
         <span>Study</span>
       </button>
 
-      <button class="command-button">
+      <button class="fui-command-button">
         <span>Guard</span>
       </button>
 
-      <button class="command-button">
+      <button class="fui-command-button">
         <span>Item</span>
       </button>
 
-      <button class="command-button">
+      <button class="fui-command-button">
         <span>Equipment</span>
       </button>
 
-      <button class="command-button">
+      <button class="fui-command-button">
         <span>Hinder</span>
       </button>
 
-      <button class="command-button">
+      <button class="fui-command-button">
         <span>Objective</span>
       </button>
 
@@ -66,7 +66,7 @@ export function createFabulaUI() {
 
     <!-- PARTY -->
 
-    <div class="fabula-party-stats">
+    <div class="fui-party-stats">
       ${actors.map(createCharacterCard).join("")}
     </div>
   `;
@@ -84,7 +84,7 @@ export function createFabulaUI() {
       return;
     }
 
-    const activeSubmenu = ui.querySelector(".fabula-submenu:not([hidden])");
+    const activeSubmenu = ui.querySelector(".fui-submenu:not([hidden])");
 
     if (activeSubmenu) {
       return;
@@ -92,7 +92,7 @@ export function createFabulaUI() {
 
     event.preventDefault();
 
-    const commandMenu = ui.querySelector(".fabula-command");
+    const commandMenu = ui.querySelector(".fui-command");
 
     if (!commandMenu) {
       return;
@@ -101,7 +101,7 @@ export function createFabulaUI() {
     commandMenu.tabIndex = 0;
     commandMenu.focus();
 
-    commandMenu.classList.add("ui-focused");
+    commandMenu.classList.add("fui-ui-focused");
   });
 
   // =========================

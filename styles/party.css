@@ -4,7 +4,7 @@
    PARTY STATS (outer glass frame)
    ========================================= */
 
-.fabula-party-stats {
+.fui-party-stats {
   position: absolute;
 
   left: 50%;
@@ -54,7 +54,7 @@
    um risco/artefato no meio)
    ========================================= */
 
-.fabula-party-stats::after {
+.fui-party-stats::after {
   content: "PARTY";
 
   position: absolute;
@@ -98,7 +98,7 @@
    CHARACTER CARD (sem background próprio)
    ========================================= */
 
-.fabula-character-card {
+.fui-character-card {
   position: relative;
 
   display: flex;
@@ -121,7 +121,7 @@
    MOLDURA (todos os cards)
    ========================================= */
 
-.fabula-character-card::before {
+.fui-character-card::before {
   content: "";
 
   position: absolute;
@@ -141,11 +141,11 @@
    ACTIVE TURN
    ========================================= */
 
-.fabula-character-card.active-turn {
+.fui-character-card.fui-active-turn {
   transform: translateY(-8px);
 }
 
-.fabula-character-card.active-turn::before {
+.fui-character-card.fui-active-turn::before {
   background-image: url("../assets/moldura-active.svg");
 }
 
@@ -153,13 +153,13 @@
    CHARACTER NAME + LEVEL
    ========================================= */
 
-.character-name-row {
+.fui-character-name-row {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
 }
 
-.character-name {
+.fui-character-name {
   font-family: "Gabriela", serif;
   font-size: 14px;
   font-weight: 600;
@@ -173,7 +173,7 @@
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
 }
 
-.character-level {
+.fui-character-level {
   font-family: "Gabriela", serif;
   font-size: 11px;
   font-weight: 700;
@@ -191,7 +191,7 @@
    PORTRAIT
    ========================================= */
 
-.character-portrait {
+.fui-character-portrait {
   position: relative;
 
   width: 100%;
@@ -217,7 +217,7 @@
   border-radius: 3px;
 }
 
-.character-portrait::after {
+.fui-character-portrait::after {
   content: "";
 
   position: absolute;
@@ -229,7 +229,7 @@
   pointer-events: none;
 }
 
-.character-portrait img {
+.fui-character-portrait img {
   display: block;
 
   width: 100%;
@@ -242,7 +242,7 @@
    RESOURCES
    ========================================= */
 
-.character-resources {
+.fui-character-resources {
   display: flex;
   flex-direction: column;
 
@@ -253,7 +253,7 @@
   gap: 5px;
 }
 
-.character-resource {
+.fui-character-resource {
   display: flex;
   flex-direction: column;
 
@@ -266,13 +266,13 @@
   color: #eef1f7;
 }
 
-.resource-header {
+.fui-resource-header {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
 }
 
-.resource-label {
+.fui-resource-label {
   font-size: 11px;
   font-weight: 400;
 
@@ -285,7 +285,7 @@
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
 }
 
-.resource-value {
+.fui-resource-value {
   font-size: 20px;
   font-weight: 700;
 
@@ -298,8 +298,8 @@
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
 }
 
-.resource-value-max,
-.resource-value-sep {
+.fui-resource-value-max,
+.fui-resource-value-sep {
   font-size: 0.75em;
   font-weight: 600;
 
@@ -310,7 +310,7 @@
    RESOURCE BAR
    ========================================= */
 
-.resource-bar {
+.fui-resource-bar {
   position: relative;
 
   width: 100%;
@@ -327,7 +327,7 @@
   box-sizing: border-box;
 }
 
-.resource-fill {
+.fui-resource-fill {
   height: 100%;
 
   transition: width 0.3s ease;
@@ -337,7 +337,7 @@
    HP
    ========================================= */
 
-.resource-fill.hp {
+.fui-resource-fill.fui-hp {
   background: linear-gradient(90deg, #3fdb6c 0%, #7ef29a 100%);
 
   box-shadow: 0 0 6px rgba(63, 219, 108, 0.7);
@@ -347,7 +347,7 @@
    HP CRISIS MARKER
    ========================================= */
 
-.resource-crisis-marker {
+.fui-resource-crisis-marker {
   position: absolute;
 
   left: 50%;
@@ -365,7 +365,7 @@
    CRISIS
    ========================================= */
 
-.character-resource.resource-critical .resource-fill.hp {
+.fui-character-resource.fui-resource-critical .fui-resource-fill.fui-hp {
   background: linear-gradient(90deg, #b8c93f 0%, #d9e37e 100%);
 
   box-shadow: 0 0 6px rgba(184, 201, 63, 0.7);
@@ -375,7 +375,7 @@
    MP
    ========================================= */
 
-.resource-fill.mp {
+.fui-resource-fill.fui-mp {
   background: linear-gradient(90deg, #3f9fdb 0%, #7ecbff 100%);
 
   box-shadow: 0 0 6px rgba(63, 159, 219, 0.7);
@@ -385,7 +385,7 @@
    PI (bright glowing yellow)
    ========================================= */
 
-.ip-points {
+.fui-ip-points {
   display: flex;
   align-items: center;
 
@@ -396,7 +396,7 @@
   margin-top: 2px;
 }
 
-.ip-point {
+.fui-ip-point {
   display: inline-flex;
 
   align-items: center;
@@ -408,7 +408,7 @@
   color: rgba(255, 255, 255, 0.25);
 }
 
-.ip-point.active {
+.fui-ip-point.fui-active {
   color: #ffe066;
 
   text-shadow:
@@ -420,7 +420,7 @@
    STATUS EFFECTS
    ========================================= */
 
-.character-status-effects {
+.fui-character-status-effects {
   position: absolute;
 
   right: -22px;

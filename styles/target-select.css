@@ -2,7 +2,7 @@
     TARGET SELECT MENU
     ========================================= */
 
-.fabula-target-select-menu {
+.fui-target-select-menu {
   position: fixed;
   z-index: 10001;
 
@@ -30,7 +30,7 @@
    FOCUS
    ========================================= */
 
-.fabula-target-select-menu.ui-focused {
+.fui-target-select-menu.fui-ui-focused {
   border-color: rgba(255, 255, 255, 0.75);
 
   box-shadow:
@@ -42,7 +42,7 @@
    TITLE
    ========================================= */
 
-.fabula-target-select-menu .fabula-command-title {
+.fui-target-select-menu .fui-command-title {
   display: flex;
   align-items: center;
 
@@ -66,7 +66,7 @@
    FOCUS INDICATOR
    ========================================= */
 
-.fabula-target-select-menu.ui-focused .fabula-command-title::after {
+.fui-target-select-menu.fui-ui-focused .fui-command-title::after {
   content: "●";
 
   margin-left: 8px;
@@ -83,7 +83,7 @@
    ACTION
    ========================================= */
 
-.fabula-target-select-menu .target-action {
+.fui-target-select-menu .fui-target-action {
   display: flex;
   align-items: center;
 
@@ -106,7 +106,7 @@
    TARGET GROUP
    ========================================= */
 
-.fabula-target-select-menu .target-group {
+.fui-target-select-menu .fui-target-group {
   margin-bottom: 8px;
 }
 
@@ -114,7 +114,7 @@
    GROUP TITLE
    ========================================= */
 
-.fabula-target-select-menu .target-group-title {
+.fui-target-select-menu .fui-target-group-title {
   padding: 4px 8px;
 
   color: rgba(255, 255, 255, 0.4);
@@ -129,7 +129,7 @@
    TARGET BUTTON
    ========================================= */
 
-.fabula-target-select-menu .target-button {
+.fui-target-select-menu .fui-target-button {
   position: relative;
 
   display: flex;
@@ -163,7 +163,7 @@
    HOVER
    ========================================= */
 
-.fabula-target-select-menu .target-button:hover {
+.fui-target-select-menu .fui-target-button:hover {
   background: rgba(255, 255, 255, 0.1);
 }
 
@@ -171,13 +171,13 @@
    ACTIVE / CURSOR
    ========================================= */
 
-.fabula-target-select-menu .target-button.active {
+.fui-target-select-menu .fui-target-button.fui-active {
   background: rgba(255, 255, 255, 0.14);
 
   transform: translateX(4px);
 }
 
-.fabula-target-select-menu .target-button.active::before {
+.fui-target-select-menu .fui-target-button.fui-active::before {
   content: "";
 
   position: absolute;
@@ -201,11 +201,11 @@
    SELECTED TARGET
    ========================================= */
 
-.fabula-target-select-menu .target-button.selected {
+.fui-target-select-menu .fui-target-button.fui-selected {
   background: rgba(255, 255, 255, 0.08);
 }
 
-.fabula-target-select-menu .target-button.selected::after {
+.fui-target-select-menu .fui-target-button.fui-selected::after {
   content: "✓";
 
   margin-left: auto;
@@ -219,7 +219,7 @@
    SELECTED COUNTER
    ========================================= */
 
-.fabula-target-select-menu .target-count {
+.fui-target-select-menu .fui-target-count {
   margin-top: 8px;
   padding: 6px 8px;
 
