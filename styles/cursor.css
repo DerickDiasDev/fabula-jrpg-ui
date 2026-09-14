@@ -1,0 +1,81 @@
+/* =========================================
+   HUD CURSOR (compartilhado)
+   =========================================
+
+   Cursor flutuante usado em TODOS os menus e
+   submenus da HUD:
+
+     - Command Menu
+     - Attack / Skill / Item (Action Menu)
+     - Target Count
+     - Target Select
+     - Confirm
+     - futuros submenus
+
+   Este é o cursor da INTERFACE (indica o botão
+   atualmente em foco). Não confundir com o
+   cursor do Canvas, que aponta para o Token
+   durante a seleção de alvos - são dois
+   sistemas completamente separados.
+
+   Cada menu cria UM elemento ".fui-cursor"
+   (via createHudCursor(), em
+   scripts/ui/hud-cursor.js) e o posiciona sobre
+   o botão focado. O botão NUNCA se move - quem
+   se move é o cursor.
+   ========================================= */
+
+.fui-cursor {
+  position: absolute;
+
+  left: -16px;
+  top: 0;
+
+  width: 26px;
+  height: 26px;
+
+  background-image: url("../assets/cursor.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+
+  pointer-events: none;
+
+  opacity: 0;
+
+  transition:
+    top 0.15s ease,
+    height 0.15s ease,
+    opacity 0.12s ease;
+}
+
+/* =========================================
+   VISIBILIDADE
+   Só aparece quando: (1) o menu que o contém
+   está com foco de teclado (.fui-ui-focused) e
+   (2) existe um botão focado (fui-cursor-visible,
+   controlado via JS em hud-cursor.js).
+   ========================================= */
+
+.fui-ui-focused .fui-cursor.fui-cursor-visible {
+  opacity: 1;
+
+  animation: fui-cursor-sway 1.1s ease-in-out infinite;
+}
+
+/* =========================================
+   BALANÇO HORIZONTAL (← cursor →)
+   Sutil e contínuo, para indicar foco sem
+   mover o botão.
+   ========================================= */
+
+@keyframes fui-cursor-sway {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  50% {
+    transform: translateX(4px);
+  }
+}

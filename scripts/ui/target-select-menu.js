@@ -1,6 +1,7 @@
 import { openConfirmMenu } from "./confirm-menu.js";
 import { showMenu, hideMenu } from "./menu-utils.js";
 import { executeAction } from "./execute-action.js";
+import { createHudCursor } from "./hud-cursor.js";
 
 export function openTargetSelectMenu({
   actor,
@@ -132,8 +133,6 @@ export function openTargetSelectMenu({
 
       <div class="fui-target-scrollbar-arrow fui-target-scrollbar-arrow-down"></div>
     </div>
-
-    <div class="fui-target-cursor"></div>
   `;
 
   ui.appendChild(targetMenu);
@@ -166,7 +165,7 @@ export function openTargetSelectMenu({
 
   const targetButtons = targetMenu.querySelectorAll(".fui-target-button");
 
-  const targetCursor = targetMenu.querySelector(".fui-target-cursor");
+  const cursor = createHudCursor(targetMenu);
 
   const scrollbar = targetMenu.querySelector(".fui-target-scrollbar");
 
@@ -262,22 +261,17 @@ export function openTargetSelectMenu({
   }
 
   // =====================================================
-  // TARGET CURSOR
+  // FOCUSED BUTTON
   // =====================================================
+  //
+  // Botão atualmente focado, considerando o grupo ativo
+  // (Party ou Enemies). Usado pelo cursor da HUD.
 
-  function updateTargetCursor() {
+  function getFocusedButton() {
     const activeButtons = getActiveButtons();
     const selectedIndex = getSelectedIndex();
-    const button = activeButtons[selectedIndex];
 
-    if (!button || !targetCursor || !targetList) {
-      return;
-    }
-
-    const top = targetList.offsetTop + button.offsetTop - targetList.scrollTop;
-
-    targetCursor.style.top = `${top}px`;
-    targetCursor.style.height = `${button.offsetHeight}px`;
+    return activeButtons[selectedIndex];
   }
 
   // =====================================================
@@ -395,7 +389,7 @@ export function openTargetSelectMenu({
       });
     }
 
-    updateTargetCursor();
+    cursor.update(activeButton);
 
     requestAnimationFrame(updateTargetScrollbar);
     requestAnimationFrame(updateTargetMarquee);
@@ -529,7 +523,7 @@ export function openTargetSelectMenu({
   // =====================================================
 
   targetList?.addEventListener("scroll", () => {
-    updateTargetCursor();
+    cursor.update(getFocusedButton());
     updateTargetScrollbar();
   });
 
@@ -691,7 +685,7 @@ export function openTargetSelectMenu({
 
   requestAnimationFrame(() => {
     updateTargetScrollbar();
-    updateTargetCursor();
+    cursor.update(getFocusedButton());
     updateTargetMarquee();
   });
 }

@@ -272,8 +272,6 @@
 
 .fui-target-select-menu.fui-ui-focused .fui-target-button:hover,
 .fui-target-select-menu.fui-ui-focused .fui-target-button.fui-active {
-  width: 100%;
-
   box-shadow:
     inset 0 0 13px 1px rgba(90, 130, 255, 0.65),
     inset 0 0 10px 3px rgba(160, 90, 255, 0.5),
@@ -336,34 +334,6 @@
 
   font-family: "Playpen Sans", cursive;
   font-size: 13px;
-}
-
-/* =========================================
-   CURSOR
-   ========================================= */
-
-.fui-target-select-menu .fui-target-cursor {
-  position: absolute;
-
-  left: -3px;
-
-  width: 26px;
-  height: 26px;
-
-  background-image: url("../assets/cursor.png");
-
-  background-size: 26px 26px;
-
-  background-repeat: no-repeat;
-  background-position: center;
-
-  pointer-events: none;
-
-  display: none;
-}
-
-.fui-target-select-menu.fui-ui-focused .fui-target-cursor {
-  display: block;
 }
 
 /* =========================================

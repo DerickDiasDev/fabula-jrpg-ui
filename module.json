@@ -23,6 +23,7 @@
   "esmodules": ["scripts/main.js"],
   "styles": [
     "styles/base.css",
+    "styles/cursor.css",
     "styles/command.css",
     "styles/action.css",
     "styles/party.css",

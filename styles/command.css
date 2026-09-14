@@ -201,36 +201,18 @@
 /* =========================================
    SELECTED (hover do mouse OU fui-active — os
    dois só contam com o painel focado)
+
+   O botão NÃO se move - quem indica o foco é
+   o .fui-cursor flutuante (ver
+   styles/cursor.css).
    ========================================= */
 
 .fui-command.fui-ui-focused > .fui-command-button:hover,
 .fui-command.fui-ui-focused > .fui-command-button.fui-active {
-  width: calc(100% + 14px);
-
   box-shadow:
     inset 0 0 13px 1px rgba(90, 130, 255, 0.65),
     inset 0 0 10px 3px rgba(160, 90, 255, 0.5),
     inset 0 2px 3px 1px rgba(255, 255, 255, 0.9);
-}
-
-.fui-command.fui-ui-focused > .fui-command-button:hover::before,
-.fui-command.fui-ui-focused > .fui-command-button.fui-active::before {
-  content: "";
-
-  position: absolute;
-
-  left: -24px;
-  top: 50%;
-
-  width: 26px;
-  height: 26px;
-
-  background-image: url("../assets/cursor.png");
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-
-  transform: translateY(-50%);
 }
 
 /* =========================================

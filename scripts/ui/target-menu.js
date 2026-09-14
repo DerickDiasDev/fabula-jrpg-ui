@@ -1,5 +1,6 @@
 import { openTargetSelectMenu } from "./target-select-menu.js";
 import { showMenu, hideMenu, getActiveSubmenu } from "./menu-utils.js";
+import { createHudCursor } from "./hud-cursor.js";
 
 export function openTargetCountMenu({ actor, action, actionType, ui }) {
   const previousMenu =
@@ -82,12 +83,16 @@ export function openTargetCountMenu({ actor, action, actionType, ui }) {
 
   const buttons = targetMenu.querySelectorAll(".fui-target-count-button");
 
+  const cursor = createHudCursor(targetMenu);
+
   let selectedCount = 1;
 
   function updateSelection() {
     buttons.forEach((button, index) => {
       button.classList.toggle("fui-active", index === selectedCount - 1);
     });
+
+    cursor.update(buttons[selectedCount - 1]);
   }
 
   function closeTargetCountMenu() {
@@ -151,4 +156,8 @@ export function openTargetCountMenu({ actor, action, actionType, ui }) {
   });
 
   updateSelection();
+
+  requestAnimationFrame(() => {
+    cursor.update(buttons[selectedCount - 1]);
+  });
 }

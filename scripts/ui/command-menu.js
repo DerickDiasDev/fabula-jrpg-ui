@@ -1,4 +1,5 @@
 import { openActionMenu } from "./action-menu.js";
+import { createHudCursor } from "./hud-cursor.js";
 
 import { executeGuard } from "./guard-action.js";
 import { executeHinder } from "./hinder-action.js";
@@ -70,6 +71,8 @@ export function setupCommandMenu(ui) {
 
   const tooltip = ui.querySelector(".fui-command-tooltip");
 
+  const cursor = createHudCursor(commandMenu);
+
   let selectedIndex = 0;
 
   // ===================================================
@@ -84,6 +87,8 @@ export function setupCommandMenu(ui) {
     if (tooltip) {
       tooltip.textContent = buttons[selectedIndex]?.dataset.description ?? "";
     }
+
+    cursor.update(buttons[selectedIndex]);
   }
 
   // ===================================================
@@ -305,4 +310,8 @@ export function setupCommandMenu(ui) {
   // ===================================================
 
   updateSelection();
+
+  requestAnimationFrame(() => {
+    cursor.update(buttons[selectedIndex]);
+  });
 }

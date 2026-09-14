@@ -1,5 +1,6 @@
 import { executeAction } from "./execute-action.js";
 import { showMenu, hideMenu } from "./menu-utils.js";
+import { createHudCursor } from "./hud-cursor.js";
 
 export function openConfirmMenu({
   actor,
@@ -78,8 +79,6 @@ export function openConfirmMenu({
       </button>
 
     </div>
-
-    <div class="fui-confirm-cursor"></div>
   `;
 
   ui.appendChild(confirmMenu);
@@ -94,28 +93,16 @@ export function openConfirmMenu({
 
   const buttons = confirmMenu.querySelectorAll(".fui-confirm-button");
 
-  const cursor = confirmMenu.querySelector(".fui-confirm-cursor");
+  const cursor = createHudCursor(confirmMenu);
 
   let selectedIndex = 0;
-
-  function updateCursor() {
-    const button = buttons[selectedIndex];
-
-    if (!button || !cursor) {
-      return;
-    }
-
-    cursor.style.top = `${button.offsetTop + button.offsetHeight / 2 - 13}px`;
-
-    cursor.style.height = `${button.offsetHeight}px`;
-  }
 
   function updateSelection() {
     buttons.forEach((button, index) => {
       button.classList.toggle("fui-active", index === selectedIndex);
     });
 
-    updateCursor();
+    cursor.update(buttons[selectedIndex]);
   }
 
   function closeConfirmMenu() {
@@ -209,6 +196,6 @@ export function openConfirmMenu({
   updateSelection();
 
   requestAnimationFrame(() => {
-    updateCursor();
+    cursor.update(buttons[selectedIndex]);
   });
 }

@@ -1,5 +1,6 @@
 import { openTargetCountMenu } from "./target-menu.js";
 import { showMenu, hideMenu, returnToCommand } from "./menu-utils.js";
+import { createHudCursor } from "./hud-cursor.js";
 
 export function openActionMenu({ actor, actions, actionType, ui }) {
   const commandMenu = ui.querySelector(".fui-command");
@@ -111,8 +112,6 @@ export function openActionMenu({ actor, actions, actionType, ui }) {
         class="fui-action-scrollbar-arrow fui-action-scrollbar-arrow-down"
       ></div>
     </div>
-
-    <div class="fui-action-cursor"></div>
   `;
 
   ui.appendChild(actionMenu);
@@ -128,8 +127,9 @@ export function openActionMenu({ actor, actions, actionType, ui }) {
   showMenu(actionMenu);
 
   const actionList = actionMenu.querySelector(".fui-action-list");
-  const actionCursor = actionMenu.querySelector(".fui-action-cursor");
   const actionButtons = actionMenu.querySelectorAll(".fui-action-button");
+
+  const cursor = createHudCursor(actionMenu);
 
   const scrollbar = actionMenu.querySelector(".fui-action-scrollbar");
   const scrollbarTrack = actionMenu.querySelector(
@@ -140,19 +140,6 @@ export function openActionMenu({ actor, actions, actionType, ui }) {
   );
 
   let selectedAction = 0;
-
-  function updateActionCursor() {
-    const button = actionButtons[selectedAction];
-
-    if (!button || !actionCursor || !actionList) {
-      return;
-    }
-
-    const top = actionList.offsetTop + button.offsetTop - actionList.scrollTop;
-
-    actionCursor.style.top = `${top}px`;
-    actionCursor.style.height = `${button.offsetHeight}px`;
-  }
 
   function updateActionScrollbar() {
     if (!actionList || !scrollbar || !scrollbarTrack || !scrollbarThumb) {
@@ -242,14 +229,14 @@ export function openActionMenu({ actor, actions, actionType, ui }) {
       inline: "nearest",
     });
 
-    updateActionCursor();
+    cursor.update(actionButtons[selectedAction]);
 
     requestAnimationFrame(updateActionScrollbar);
     requestAnimationFrame(updateActionMarquee);
   }
 
   actionList?.addEventListener("scroll", () => {
-    updateActionCursor();
+    cursor.update(actionButtons[selectedAction]);
     updateActionScrollbar();
   });
 
@@ -347,6 +334,6 @@ export function openActionMenu({ actor, actions, actionType, ui }) {
 
   requestAnimationFrame(() => {
     updateActionScrollbar();
-    updateActionCursor();
+    cursor.update(actionButtons[selectedAction]);
   });
 }

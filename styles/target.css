@@ -197,30 +197,8 @@
 
 .fui-target-menu.fui-ui-focused .fui-target-count-button:hover,
 .fui-target-menu.fui-ui-focused .fui-target-count-button.fui-active {
-  width: calc(100% + 14px);
-
   box-shadow:
     inset 0 0 13px 1px rgba(90, 130, 255, 0.65),
     inset 0 0 10px 3px rgba(160, 90, 255, 0.5),
     inset 0 2px 3px 1px rgba(255, 255, 255, 0.9);
-}
-
-.fui-target-menu.fui-ui-focused .fui-target-count-button:hover::before,
-.fui-target-menu.fui-ui-focused .fui-target-count-button.fui-active::before {
-  content: "";
-
-  position: absolute;
-
-  left: -24px;
-  top: 50%;
-
-  width: 26px;
-  height: 26px;
-
-  background-image: url("../assets/cursor.png");
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-
-  transform: translateY(-50%);
 }
