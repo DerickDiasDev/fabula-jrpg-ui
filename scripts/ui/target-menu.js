@@ -3,8 +3,7 @@ import { showMenu, hideMenu, getActiveSubmenu } from "./menu-utils.js";
 import { createHudCursor } from "./hud-cursor.js";
 
 export function openTargetCountMenu({ actor, action, actionType, ui }) {
-  const previousMenu =
-    getActiveSubmenu(ui) || ui.querySelector(".fui-command");
+  const previousMenu = getActiveSubmenu(ui) || ui.querySelector(".fui-command");
 
   if (!previousMenu) return;
 

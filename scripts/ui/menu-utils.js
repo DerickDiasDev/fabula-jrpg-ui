@@ -20,7 +20,6 @@ export function hideMenu(menu) {
   if (!menu) return;
 
   menu.classList.remove("fui-ui-focused");
-
   menu.hidden = true;
 
   const ui = menu.closest("#fabula-jrpg-ui");
@@ -28,7 +27,6 @@ export function hideMenu(menu) {
   if (!ui) return;
 
   const commandMenu = ui.querySelector(".fui-command");
-
   const activeSubmenu = getActiveSubmenu(ui);
 
   if (commandMenu && !activeSubmenu) {
@@ -42,8 +40,11 @@ export function getActiveSubmenu(ui) {
 
 export function hideAllSubmenus(ui) {
   ui.querySelectorAll(".fui-submenu").forEach((menu) => {
-    menu.classList.remove("fui-ui-focused");
+    if (typeof menu._fabulaCleanup === "function") {
+      menu._fabulaCleanup();
+    }
 
+    menu.classList.remove("fui-ui-focused");
     menu.hidden = true;
   });
 
@@ -82,16 +83,35 @@ export function closeActiveSubmenu(ui) {
   const activeSubmenu = getActiveSubmenu(ui);
 
   if (!activeSubmenu) {
+    destroyCanvasCursor(ui);
     return false;
+  }
+
+  if (typeof activeSubmenu._fabulaCleanup === "function") {
+    activeSubmenu._fabulaCleanup();
   }
 
   activeSubmenu.hidden = true;
 
   activeSubmenu.classList.remove("ui-focused", "fui-ui-focused");
 
+  destroyCanvasCursor(ui);
+
   ui.querySelector(".fui-command")?.classList.add("fui-ui-focused");
 
   ui.querySelector(".fui-command")?.focus();
 
   return true;
+}
+export function setCanvasCursor(ui, canvasCursor) {
+  if (!ui) return;
+
+  ui._fabulaCanvasCursor = canvasCursor;
+}
+
+export function destroyCanvasCursor(ui) {
+  if (!ui) return;
+
+  ui._fabulaCanvasCursor?.destroy();
+  ui._fabulaCanvasCursor = null;
 }

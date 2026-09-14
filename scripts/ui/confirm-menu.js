@@ -1,5 +1,7 @@
 import { executeAction } from "./execute-action.js";
-import { showMenu, hideMenu } from "./menu-utils.js";
+
+import { showMenu, hideMenu, destroyCanvasCursor } from "./menu-utils.js";
+
 import { createHudCursor } from "./hud-cursor.js";
 
 export function openConfirmMenu({
@@ -10,6 +12,7 @@ export function openConfirmMenu({
   ui,
   previousMenu,
   positionRect,
+  canvasCursor,
 }) {
   const previousRect = positionRect ?? previousMenu.getBoundingClientRect();
 
@@ -63,7 +66,6 @@ export function openConfirmMenu({
     </div>
 
     <div class="fui-confirm-buttons">
-
       <button
         class="fui-command-button fui-confirm-button fui-active"
         data-confirm="confirm"
@@ -77,14 +79,12 @@ export function openConfirmMenu({
       >
         Cancel
       </button>
-
     </div>
   `;
 
   ui.appendChild(confirmMenu);
 
   confirmMenu.tabIndex = 0;
-
   confirmMenu.style.position = "fixed";
   confirmMenu.style.left = `${previousRect.left}px`;
   confirmMenu.style.top = `${previousRect.top}px`;
@@ -96,6 +96,7 @@ export function openConfirmMenu({
   const cursor = createHudCursor(confirmMenu);
 
   let selectedIndex = 0;
+  let isExecuting = false;
 
   function updateSelection() {
     buttons.forEach((button, index) => {
@@ -107,10 +108,11 @@ export function openConfirmMenu({
 
   function closeConfirmMenu() {
     hideMenu(confirmMenu);
+
+    destroyCanvasCursor(ui);
+
     showMenu(previousMenu);
   }
-
-  let isExecuting = false;
 
   async function executeConfirm() {
     if (isExecuting) {
@@ -132,21 +134,25 @@ export function openConfirmMenu({
 
     isExecuting = true;
 
-    await executeAction({
-      actor,
-      action,
-      actionType,
-      targetIds,
-      ui,
-    });
+    try {
+      await executeAction({
+        actor,
+        action,
+        actionType,
+        targetIds,
+        ui,
+      });
+
+      destroyCanvasCursor(ui);
+    } finally {
+      isExecuting = false;
+    }
   }
 
   buttons.forEach((button, index) => {
     button.addEventListener("click", () => {
       selectedIndex = index;
-
       updateSelection();
-
       executeConfirm();
     });
   });
@@ -159,7 +165,6 @@ export function openConfirmMenu({
       selectedIndex = (selectedIndex + 1) % buttons.length;
 
       updateSelection();
-
       return;
     }
 
@@ -170,7 +175,6 @@ export function openConfirmMenu({
       selectedIndex = (selectedIndex - 1 + buttons.length) % buttons.length;
 
       updateSelection();
-
       return;
     }
 
@@ -179,7 +183,6 @@ export function openConfirmMenu({
       event.stopPropagation();
 
       executeConfirm();
-
       return;
     }
 
@@ -188,7 +191,6 @@ export function openConfirmMenu({
       event.stopPropagation();
 
       closeConfirmMenu();
-
       return;
     }
   });

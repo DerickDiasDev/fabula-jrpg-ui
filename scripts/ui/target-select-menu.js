@@ -1,7 +1,8 @@
 import { openConfirmMenu } from "./confirm-menu.js";
-import { showMenu, hideMenu } from "./menu-utils.js";
+import { showMenu, hideMenu, setCanvasCursor } from "./menu-utils.js";
 import { executeAction } from "./execute-action.js";
 import { createHudCursor } from "./hud-cursor.js";
+import { createCanvasCursor } from "./canvas-cursor.js";
 
 export function openTargetSelectMenu({
   actor,
@@ -167,6 +168,9 @@ export function openTargetSelectMenu({
 
   const cursor = createHudCursor(targetMenu);
 
+  const canvasCursor = createCanvasCursor();
+  setCanvasCursor(ui, canvasCursor);
+
   const scrollbar = targetMenu.querySelector(".fui-target-scrollbar");
 
   const scrollbarTrack = targetMenu.querySelector(
@@ -272,6 +276,21 @@ export function openTargetSelectMenu({
     const selectedIndex = getSelectedIndex();
 
     return activeButtons[selectedIndex];
+  }
+
+  // =====================================================
+  // TOKEN LOOKUP (Canvas Cursor)
+  // =====================================================
+  //
+  // Resolve o Token no Canvas correspondente a um
+  // combatant, usado apenas para posicionar o Canvas
+  // Cursor. Não interfere na lógica de seleção, que
+  // continua baseada em combatant.id.
+
+  function getTokenForCombatantId(combatantId) {
+    const combatant = game.combat?.combatants.get(combatantId);
+
+    return combatant?.token?.object ?? null;
   }
 
   // =====================================================
@@ -391,6 +410,12 @@ export function openTargetSelectMenu({
 
     cursor.update(activeButton);
 
+    canvasCursor.setFocusedToken(
+      activeButton
+        ? getTokenForCombatantId(activeButton.dataset.combatantId)
+        : null,
+    );
+
     requestAnimationFrame(updateTargetScrollbar);
     requestAnimationFrame(updateTargetMarquee);
   }
@@ -411,6 +436,10 @@ export function openTargetSelectMenu({
     if (counter) {
       counter.textContent = `Selected: ${selectedTargets.size}/${targetCount}`;
     }
+
+    canvasCursor.setSelectedTokens(
+      [...selectedTargets].map(getTokenForCombatantId).filter(Boolean),
+    );
   }
 
   // =====================================================
@@ -473,6 +502,8 @@ export function openTargetSelectMenu({
     isTransitioning = true;
 
     if (actionType === "study") {
+      canvasCursor.destroy();
+
       executeAction({
         actor,
         action,
@@ -497,6 +528,7 @@ export function openTargetSelectMenu({
       ui,
       previousMenu,
       positionRect: targetSelectRect,
+      canvasCursor,
     });
   }
 
@@ -505,6 +537,8 @@ export function openTargetSelectMenu({
   // =====================================================
 
   function closeTargetSelectMenu() {
+    canvasCursor.destroy();
+
     hideMenu(targetMenu);
 
     if (isCommandMenu) {
