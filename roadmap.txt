@@ -1,0 +1,29 @@
+AGORA
+ │
+ ├─ 1. Target Select: detectar KO/Death
+ │
+ ├─ 2. Target Select: navegação Party ↔ Enemies
+ │
+ ├─ 3. Cursor cursor.png
+ │      ├─ Command/Menu
+ │      └─ Target Select
+ │
+ ├─ 4. Party HUD: Status Effects
+ │
+ ├─ 5. Party HUD: KO/Death visual
+ │
+ ├─ 6. Corrigir HP <50% após reload
+ │
+ ├─ 7. Sons de navegação/hover/Enter
+ │
+ ├─ 8. Testes gerais
+ │
+ └─ 9. ZIP completo → pente-fino de lifecycle/refatoração
+             │
+             ▼
+       Visual polish final
+             │
+             ▼
+           Release
+
+IMPORTANTE!: Configuraçoes das HUD e do modulo como um todo

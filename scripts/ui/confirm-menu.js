@@ -8,8 +8,9 @@ export function openConfirmMenu({
   targetIds,
   ui,
   previousMenu,
+  positionRect,
 }) {
-  const previousRect = previousMenu.getBoundingClientRect();
+  const previousRect = positionRect ?? previousMenu.getBoundingClientRect();
 
   hideMenu(previousMenu);
 

@@ -18,9 +18,9 @@ export function openTargetSelectMenu({
     hideMenu(previousMenu);
   }
 
-  const targetMenu = document.createElement("div");
-
-  targetMenu.className = "fui-target-select-menu fui-submenu";
+  // =====================================================
+  // TARGET DATA
+  // =====================================================
 
   const combatants = game.combat?.combatants.contents ?? [];
 
@@ -28,9 +28,20 @@ export function openTargetSelectMenu({
     (combatant) => combatant.actor?.type === "character",
   );
 
-  const enemies = combatants.filter(
-    (combatant) => combatant.actor?.type !== "character",
-  );
+  const enemies = combatants.filter((combatant) => {
+    const actor = combatant.actor;
+
+    if (actor?.type === "character") {
+      return false;
+    }
+
+    // KO/Death não pode ser alvo.
+    return !actor?.statuses?.has("ko");
+  });
+
+  // =====================================================
+  // ACTION LABEL
+  // =====================================================
 
   const actionLabel =
     actionType === "skill"
@@ -40,6 +51,14 @@ export function openTargetSelectMenu({
         : actionType === "study"
           ? "Study"
           : "Attack";
+
+  // =====================================================
+  // CREATE MENU
+  // =====================================================
+
+  const targetMenu = document.createElement("div");
+
+  targetMenu.className = "fui-target-select-menu fui-submenu";
 
   targetMenu.innerHTML = `
     <div class="fui-command-title">
@@ -52,7 +71,7 @@ export function openTargetSelectMenu({
 
     <div class="fui-target-list">
 
-      <div class="fui-target-group">
+      <div class="fui-target-group" data-target-group="party">
         <div class="fui-target-group-title">
           PARTY
         </div>
@@ -75,7 +94,7 @@ export function openTargetSelectMenu({
           .join("")}
       </div>
 
-      <div class="fui-target-group">
+      <div class="fui-target-group" data-target-group="enemies">
         <div class="fui-target-group-title">
           ENEMIES
         </div>
@@ -133,24 +152,123 @@ export function openTargetSelectMenu({
 
   showMenu(targetMenu);
 
+  // =====================================================
+  // DOM REFERENCES
+  // =====================================================
+
   const targetList = targetMenu.querySelector(".fui-target-list");
+
+  const targetGroups = {
+    party: targetMenu.querySelector('[data-target-group="party"]'),
+
+    enemies: targetMenu.querySelector('[data-target-group="enemies"]'),
+  };
+
   const targetButtons = targetMenu.querySelectorAll(".fui-target-button");
+
   const targetCursor = targetMenu.querySelector(".fui-target-cursor");
 
   const scrollbar = targetMenu.querySelector(".fui-target-scrollbar");
+
   const scrollbarTrack = targetMenu.querySelector(
     ".fui-target-scrollbar-track",
   );
+
   const scrollbarThumb = targetMenu.querySelector(
     ".fui-target-scrollbar-thumb",
   );
 
-  let selectedIndex = 0;
+  // =====================================================
+  // GROUP STATE
+  // =====================================================
+
+  const groups = [
+    {
+      id: "party",
+      element: targetGroups.party,
+      buttons: Array.from(
+        targetGroups.party?.querySelectorAll(".fui-target-button") ?? [],
+      ),
+    },
+
+    {
+      id: "enemies",
+      element: targetGroups.enemies,
+      buttons: Array.from(
+        targetGroups.enemies?.querySelectorAll(".fui-target-button") ?? [],
+      ),
+    },
+  ];
+
+  // PARTY começa selecionado quando existir.
+  // Caso esteja vazio, começa em ENEMIES.
+  let activeGroupIndex = groups[0].buttons.length > 0 ? 0 : 1;
+
+  // Cada grupo mantém sua própria posição.
+  const groupSelectedIndexes = [0, 0];
 
   const selectedTargets = new Set();
 
+  // =====================================================
+  // GROUP HELPERS
+  // =====================================================
+
+  function getActiveGroup() {
+    return groups[activeGroupIndex];
+  }
+
+  function getActiveButtons() {
+    return getActiveGroup()?.buttons ?? [];
+  }
+
+  function getSelectedIndex() {
+    return groupSelectedIndexes[activeGroupIndex] ?? 0;
+  }
+
+  function setSelectedIndex(index) {
+    groupSelectedIndexes[activeGroupIndex] = index;
+  }
+
+  function findNextAvailableGroup(direction) {
+    if (groups.length <= 1) {
+      return activeGroupIndex;
+    }
+
+    let nextIndex = activeGroupIndex;
+
+    for (let i = 0; i < groups.length; i++) {
+      nextIndex = (nextIndex + direction + groups.length) % groups.length;
+
+      if (groups[nextIndex].buttons.length > 0) {
+        return nextIndex;
+      }
+    }
+
+    return activeGroupIndex;
+  }
+
+  // =====================================================
+  // GROUP VISUAL STATE
+  // =====================================================
+
+  function updateGroupVisibility() {
+    groups.forEach((group, index) => {
+      if (!group.element) {
+        return;
+      }
+
+      group.element.hidden = index !== activeGroupIndex;
+    });
+  }
+
+  // =====================================================
+  // TARGET CURSOR
+  // =====================================================
+
   function updateTargetCursor() {
-    const button = targetButtons[selectedIndex];
+    const activeButtons = getActiveButtons();
+    const selectedIndex = getSelectedIndex();
+    const button = activeButtons[selectedIndex];
 
     if (!button || !targetCursor || !targetList) {
       return;
@@ -161,6 +279,10 @@ export function openTargetSelectMenu({
     targetCursor.style.top = `${top}px`;
     targetCursor.style.height = `${button.offsetHeight}px`;
   }
+
+  // =====================================================
+  // SCROLLBAR
+  // =====================================================
 
   function updateTargetScrollbar() {
     if (!targetList || !scrollbar || !scrollbarTrack || !scrollbarThumb) {
@@ -193,6 +315,10 @@ export function openTargetSelectMenu({
 
     scrollbarThumb.style.transform = `translateY(${thumbTop}px)`;
   }
+
+  // =====================================================
+  // MARQUEE
+  // =====================================================
 
   function applyMarqueeIfNeeded(button) {
     const nameEl = button.querySelector(".fui-target-name");
@@ -246,21 +372,38 @@ export function openTargetSelectMenu({
     });
   }
 
+  // =====================================================
+  // SELECTION / FOCUS
+  // =====================================================
+
   function updateSelection() {
-    targetButtons.forEach((button, index) => {
-      button.classList.toggle("fui-active", index === selectedIndex);
+    const activeButtons = getActiveButtons();
+    const selectedIndex = getSelectedIndex();
+
+    targetButtons.forEach((button) => {
+      button.classList.remove("fui-active");
     });
 
-    targetButtons[selectedIndex]?.scrollIntoView({
-      block: "nearest",
-      inline: "nearest",
-    });
+    const activeButton = activeButtons[selectedIndex];
+
+    if (activeButton) {
+      activeButton.classList.add("fui-active");
+
+      activeButton.scrollIntoView({
+        block: "nearest",
+        inline: "nearest",
+      });
+    }
 
     updateTargetCursor();
 
     requestAnimationFrame(updateTargetScrollbar);
     requestAnimationFrame(updateTargetMarquee);
   }
+
+  // =====================================================
+  // SELECTED TARGETS
+  // =====================================================
 
   function updateSelectedTargets() {
     targetButtons.forEach((button) => {
@@ -276,17 +419,62 @@ export function openTargetSelectMenu({
     }
   }
 
-  targetList?.addEventListener("scroll", () => {
-    updateTargetCursor();
-    updateTargetScrollbar();
-  });
+  // =====================================================
+  // CHANGE GROUP
+  // =====================================================
+
+  function changeGroup(direction) {
+    const nextGroupIndex = findNextAvailableGroup(direction);
+
+    if (nextGroupIndex === activeGroupIndex) {
+      return;
+    }
+
+    activeGroupIndex = nextGroupIndex;
+
+    updateGroupVisibility();
+    updateSelection();
+  }
+
+  // =====================================================
+  // SELECT TARGET
+  // =====================================================
+
+  function selectTarget() {
+    const activeButtons = getActiveButtons();
+    const selectedIndex = getSelectedIndex();
+    const button = activeButtons[selectedIndex];
+
+    if (!button) {
+      return false;
+    }
+
+    const combatantId = button.dataset.combatantId;
+
+    if (selectedTargets.has(combatantId)) {
+      selectedTargets.delete(combatantId);
+      updateSelectedTargets();
+      return false;
+    }
+
+    if (selectedTargets.size >= targetCount) {
+      return false;
+    }
+
+    selectedTargets.add(combatantId);
+    updateSelectedTargets();
+
+    return selectedTargets.size === targetCount;
+  }
+
+  // =====================================================
+  // CONFIRMATION
+  // =====================================================
 
   let isTransitioning = false;
 
   function openConfirmation() {
-    if (isTransitioning) {
-      return;
-    }
+    if (isTransitioning) return;
 
     isTransitioning = true;
 
@@ -298,9 +486,14 @@ export function openTargetSelectMenu({
         targetIds: [...selectedTargets],
         ui,
       });
-
       return;
     }
+
+    // Guarda a posição ANTES de remover o Target Select
+    const targetSelectRect = targetMenu.getBoundingClientRect();
+
+    // Remove o Target Select do DOM
+    targetMenu.remove();
 
     openConfirmMenu({
       actor,
@@ -308,31 +501,14 @@ export function openTargetSelectMenu({
       actionType,
       targetIds: [...selectedTargets],
       ui,
-      previousMenu: targetMenu,
+      previousMenu,
+      positionRect: targetSelectRect,
     });
   }
 
-  function selectTarget() {
-    const button = targetButtons[selectedIndex];
-
-    if (!button) {
-      return;
-    }
-
-    const combatantId = button.dataset.combatantId;
-
-    if (selectedTargets.has(combatantId)) {
-      selectedTargets.delete(combatantId);
-    } else {
-      if (selectedTargets.size >= targetCount) {
-        return;
-      }
-
-      selectedTargets.add(combatantId);
-    }
-
-    updateSelectedTargets();
-  }
+  // =====================================================
+  // CLOSE MENU
+  // =====================================================
 
   function closeTargetSelectMenu() {
     hideMenu(targetMenu);
@@ -348,14 +524,38 @@ export function openTargetSelectMenu({
     showMenu(previousMenu);
   }
 
-  targetButtons.forEach((button, index) => {
+  // =====================================================
+  // SCROLL
+  // =====================================================
+
+  targetList?.addEventListener("scroll", () => {
+    updateTargetCursor();
+    updateTargetScrollbar();
+  });
+
+  // =====================================================
+  // BUTTON EVENTS
+  // =====================================================
+
+  targetButtons.forEach((button) => {
     button.addEventListener("click", () => {
-      selectedIndex = index;
+      const groupElement = button.closest(".fui-target-group");
 
-      selectTarget();
-      updateSelection();
+      const groupIndex = groups.findIndex(
+        (group) => group.element === groupElement,
+      );
 
-      if (selectedTargets.size === targetCount) {
+      if (groupIndex !== -1) {
+        activeGroupIndex = groupIndex;
+
+        setSelectedIndex(groups[groupIndex].buttons.indexOf(button));
+
+        updateGroupVisibility();
+      }
+
+      const complete = selectTarget();
+
+      if (complete) {
         openConfirmation();
       }
     });
@@ -371,50 +571,105 @@ export function openTargetSelectMenu({
     });
   });
 
+  // =====================================================
+  // KEYBOARD NAVIGATION
+  // =====================================================
+
   targetMenu.addEventListener("keydown", (event) => {
-    if (event.key === "ArrowDown") {
-      event.preventDefault();
-      event.stopPropagation();
-
-      if (targetButtons.length === 0) {
-        return;
-      }
-
-      selectedIndex = (selectedIndex + 1) % targetButtons.length;
-
-      updateSelection();
-
-      return;
-    }
+    // ---------------------------------------------------
+    // UP
+    // ---------------------------------------------------
 
     if (event.key === "ArrowUp") {
       event.preventDefault();
       event.stopPropagation();
 
-      if (targetButtons.length === 0) {
+      const activeButtons = getActiveButtons();
+
+      if (activeButtons.length === 0) {
         return;
       }
 
-      selectedIndex =
-        (selectedIndex - 1 + targetButtons.length) % targetButtons.length;
+      const currentIndex = getSelectedIndex();
+
+      setSelectedIndex(
+        (currentIndex - 1 + activeButtons.length) % activeButtons.length,
+      );
 
       updateSelection();
 
       return;
     }
 
+    // ---------------------------------------------------
+    // DOWN
+    // ---------------------------------------------------
+
+    if (event.key === "ArrowDown") {
+      event.preventDefault();
+      event.stopPropagation();
+
+      const activeButtons = getActiveButtons();
+
+      if (activeButtons.length === 0) {
+        return;
+      }
+
+      const currentIndex = getSelectedIndex();
+
+      setSelectedIndex((currentIndex + 1) % activeButtons.length);
+
+      updateSelection();
+
+      return;
+    }
+
+    // ---------------------------------------------------
+    // LEFT
+    // ---------------------------------------------------
+
+    if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      event.stopPropagation();
+
+      changeGroup(-1);
+
+      return;
+    }
+
+    // ---------------------------------------------------
+    // RIGHT
+    // ---------------------------------------------------
+
+    if (event.key === "ArrowRight") {
+      event.preventDefault();
+      event.stopPropagation();
+
+      changeGroup(1);
+
+      return;
+    }
+
+    // ---------------------------------------------------
+    // ENTER
+    // ---------------------------------------------------
+
     if (event.key === "Enter") {
       event.preventDefault();
       event.stopPropagation();
 
-      selectTarget();
+      const complete = selectTarget();
 
-      if (selectedTargets.size === targetCount) {
+      if (complete) {
         openConfirmation();
       }
 
       return;
     }
+
+    // ---------------------------------------------------
+    // ESCAPE
+    // ---------------------------------------------------
 
     if (event.key === "Escape") {
       event.preventDefault();
@@ -426,6 +681,11 @@ export function openTargetSelectMenu({
     }
   });
 
+  // =====================================================
+  // INITIAL STATE
+  // =====================================================
+
+  updateGroupVisibility();
   updateSelection();
   updateSelectedTargets();
 

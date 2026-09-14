@@ -1,10 +1,63 @@
 import { openActionMenu } from "./action-menu.js";
+
 import { executeGuard } from "./guard-action.js";
 import { executeHinder } from "./hinder-action.js";
 import { executeObjective } from "./objective-action.js";
 import { executeStudy } from "./study-action.js";
 import { executeEquipment } from "./equipment-action.js";
+
 import { getActiveSubmenu } from "./menu-utils.js";
+
+// =====================================================
+// SELECTED ACTOR
+// =====================================================
+
+let selectedActor = null;
+
+// =====================================================
+// SET / GET SELECTED ACTOR
+// =====================================================
+
+export function updateCommandActor(actor, ui) {
+  const commandMenu = ui.querySelector(".fui-command");
+
+  if (!commandMenu) {
+    return;
+  }
+
+  selectedActor = actor ?? null;
+
+  commandMenu.dataset.actorName = selectedActor?.name ?? "";
+
+  console.log(
+    "Fabula JRPG UI | Command Actor:",
+    selectedActor?.name ?? "nenhum",
+  );
+}
+
+export function getCommandActor() {
+  return selectedActor;
+}
+
+// =====================================================
+// CLEAR SELECTED ACTOR
+// =====================================================
+
+export function clearCommandActor(ui) {
+  selectedActor = null;
+
+  const commandMenu = ui?.querySelector(".fui-command");
+
+  if (!commandMenu) {
+    return;
+  }
+
+  commandMenu.dataset.actorName = "";
+}
+
+// =====================================================
+// SETUP COMMAND MENU
+// =====================================================
 
 export function setupCommandMenu(ui) {
   const commandMenu = ui.querySelector(".fui-command");
@@ -14,20 +67,28 @@ export function setupCommandMenu(ui) {
   }
 
   const buttons = commandMenu.querySelectorAll(".fui-command-button");
-  const tooltip = ui.querySelector(".fui-command-tooltip"); // NOVO
+
+  const tooltip = ui.querySelector(".fui-command-tooltip");
 
   let selectedIndex = 0;
+
+  // ===================================================
+  // UPDATE MENU SELECTION
+  // ===================================================
 
   function updateSelection() {
     buttons.forEach((button, index) => {
       button.classList.toggle("fui-active", index === selectedIndex);
     });
 
-    // NOVO
     if (tooltip) {
       tooltip.textContent = buttons[selectedIndex]?.dataset.description ?? "";
     }
   }
+
+  // ===================================================
+  // EXECUTE COMMAND
+  // ===================================================
 
   function executeCommand() {
     const activeSubmenu = getActiveSubmenu(ui);
@@ -47,14 +108,23 @@ export function setupCommandMenu(ui) {
       ?.textContent.trim()
       .toUpperCase();
 
-    const combatant = game.combat?.combatant;
+    // =================================================
+    // COMMAND ACTOR
+    // =================================================
 
-    const actor = combatant?.actor;
+    const actor = selectedActor;
 
     if (!actor) {
-      console.error("COMMAND: ator do combatente não encontrado.");
+      foundry.ui.notifications.warn("Nenhum personagem selecionado.");
+
+      console.warn("Fabula JRPG UI | Command Menu: nenhum Actor selecionado.");
+
       return;
     }
+
+    // =================================================
+    // ATTACK
+    // =================================================
 
     if (command === "ATTACK") {
       const weapons = actor.items.contents.filter(
@@ -63,6 +133,7 @@ export function setupCommandMenu(ui) {
 
       if (weapons.length === 0) {
         foundry.ui.notifications.warn("Nenhuma arma disponível.");
+
         return;
       }
 
@@ -76,6 +147,10 @@ export function setupCommandMenu(ui) {
       return;
     }
 
+    // =================================================
+    // SKILL
+    // =================================================
+
     if (command === "SKILL") {
       const skills = actor.items.contents.filter(
         (item) => item.type === "spell",
@@ -83,6 +158,7 @@ export function setupCommandMenu(ui) {
 
       if (skills.length === 0) {
         foundry.ui.notifications.warn("Nenhuma Skill disponível.");
+
         return;
       }
 
@@ -96,10 +172,18 @@ export function setupCommandMenu(ui) {
       return;
     }
 
+    // =================================================
+    // GUARD
+    // =================================================
+
     if (command === "GUARD") {
       executeGuard(actor, ui);
       return;
     }
+
+    // =================================================
+    // ITEM
+    // =================================================
 
     if (command === "ITEM") {
       const items = actor.items.contents.filter(
@@ -108,6 +192,7 @@ export function setupCommandMenu(ui) {
 
       if (items.length === 0) {
         foundry.ui.notifications.warn("Nenhum Item disponível.");
+
         return;
       }
 
@@ -121,20 +206,36 @@ export function setupCommandMenu(ui) {
       return;
     }
 
+    // =================================================
+    // HINDER
+    // =================================================
+
     if (command === "HINDER") {
       executeHinder(actor, ui);
       return;
     }
+
+    // =================================================
+    // OBJECTIVE
+    // =================================================
 
     if (command === "OBJECTIVE") {
       executeObjective(actor, ui);
       return;
     }
 
+    // =================================================
+    // STUDY
+    // =================================================
+
     if (command === "STUDY") {
       executeStudy(actor, ui);
       return;
     }
+
+    // =================================================
+    // EQUIPMENT
+    // =================================================
 
     if (command === "EQUIPMENT") {
       executeEquipment(actor, ui);
@@ -143,6 +244,10 @@ export function setupCommandMenu(ui) {
 
     console.log("Command:", command);
   }
+
+  // ===================================================
+  // KEYBOARD
+  // ===================================================
 
   commandMenu.addEventListener("keydown", (event) => {
     const activeSubmenu = getActiveSubmenu(ui);
@@ -182,27 +287,22 @@ export function setupCommandMenu(ui) {
     }
   });
 
+  // ===================================================
+  // MOUSE / CLICK
+  // ===================================================
+
   buttons.forEach((button, index) => {
     button.addEventListener("click", () => {
       selectedIndex = index;
 
       updateSelection();
-
       executeCommand();
     });
   });
 
+  // ===================================================
+  // INITIAL SELECTION
+  // ===================================================
+
   updateSelection();
-}
-
-export function updateCommandActor(combat, ui) {
-  const commandMenu = ui.querySelector(".fui-command");
-
-  if (!commandMenu) {
-    return;
-  }
-
-  const actor = combat?.combatant?.actor;
-
-  commandMenu.dataset.actorName = actor?.name ?? "";
 }

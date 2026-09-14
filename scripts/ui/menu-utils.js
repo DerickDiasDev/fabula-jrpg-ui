@@ -77,3 +77,21 @@ export function returnToCommand(ui) {
   commandMenu.tabIndex = 0;
   commandMenu.focus();
 }
+
+export function closeActiveSubmenu(ui) {
+  const activeSubmenu = getActiveSubmenu(ui);
+
+  if (!activeSubmenu) {
+    return false;
+  }
+
+  activeSubmenu.hidden = true;
+
+  activeSubmenu.classList.remove("ui-focused", "fui-ui-focused");
+
+  ui.querySelector(".fui-command")?.classList.add("fui-ui-focused");
+
+  ui.querySelector(".fui-command")?.focus();
+
+  return true;
+}
