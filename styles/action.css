@@ -2,28 +2,51 @@
 
 .fui-action-menu {
   position: fixed;
+
   z-index: 10000;
+
   width: 220px;
   height: 264.25px;
+
   box-sizing: border-box;
+
   display: flex;
   flex-direction: column;
+
   gap: 0;
-  padding: 22px 20px 16px;
-  background: rgba(20, 16, 27, 0.92);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.75);
-  border-radius: 10px;
+
+  padding: 22px 20px 16px 20px;
+
+  background: transparent;
+  border: none;
+
   outline: none;
-  box-shadow:
-    0 8px 24px rgba(0, 0, 0, 0.4),
-    0 0 0 2px rgba(255, 255, 255, 0.12);
+
   pointer-events: auto;
 }
 
 .fui-action-menu:focus,
 .fui-action-menu:focus-visible {
   outline: none;
+}
+
+.fui-action-menu::before {
+  content: "";
+
+  position: absolute;
+
+  inset: 0;
+
+  z-index: -1;
+
+  background-image: url("../assets/moldura-submenu.svg");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+
+  pointer-events: none;
 }
 
 .fui-action-menu .fui-command-title {
@@ -49,7 +72,7 @@
   font-family: "Playpen Sans", cursive;
   font-size: 13px;
   font-weight: 400;
-  color: rgba(255, 255, 255, 0.55);
+  color: rgba(255, 255, 255, 0.75);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -139,7 +162,7 @@
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 10px;
+  gap: 8px;
   width: calc(100% - 10px);
   height: 40px;
   flex-shrink: 0;
@@ -217,8 +240,9 @@
 
 .fui-action-menu .fui-action-cursor {
   position: absolute;
-  left: 4px;
+  left: -3px;
   width: 26px;
+  height: 26px;
   background-image: url("../assets/cursor.png");
   background-size: 26px 26px;
   background-repeat: no-repeat;
@@ -247,11 +271,60 @@
   text-overflow: ellipsis;
 }
 
-.fui-action-menu .fui-action-cost {
-  margin-left: auto;
-  padding-left: 8px;
-  color: rgba(255, 255, 255, 0.55);
-  font-family: "Playpen Sans", cursive;
-  font-size: 12px;
+/* =========================================
+   NAME (com suporte a marquee quando ativo
+   e o texto não cabe)
+   ========================================= */
+
+.fui-action-menu .fui-action-name {
+  flex: 1;
+  min-width: 0;
+
+  overflow: hidden;
   white-space: nowrap;
+}
+
+.fui-action-menu .fui-action-name-inner {
+  display: inline-block;
+
+  will-change: transform;
+}
+
+.fui-action-menu .fui-action-button.fui-marquee .fui-action-name-inner {
+  animation: fui-marquee-scroll var(--fui-marquee-duration, 3s) linear infinite;
+}
+
+@keyframes fui-marquee-scroll {
+  0%,
+  15% {
+    transform: translateX(0);
+  }
+
+  85%,
+  100% {
+    transform: translateX(var(--fui-marquee-distance, 0px));
+  }
+}
+
+/* =========================================
+   COST (largura fixa e compacta)
+   ========================================= */
+
+.fui-action-menu .fui-action-cost {
+  flex: 0 0 auto;
+
+  max-width: 68px;
+
+  margin-left: auto;
+  padding-right: 1px;
+  padding-left: 3px;
+
+  color: rgba(255, 255, 255, 0.55);
+
+  font-family: "Playpen Sans", cursive;
+  font-size: 11px;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

@@ -28,13 +28,46 @@ export function openActionMenu({ actor, actions, actionType, ui }) {
 
   const title = actionType.charAt(0).toUpperCase() + actionType.slice(1);
 
+  function getActionCost(action) {
+    if (actionType === "skill") {
+      const cost = action.system.cost;
+
+      if (!cost) {
+        return "";
+      }
+
+      const amount = cost.amount;
+      const resource = cost.resource?.toUpperCase();
+
+      if (amount == null || !resource) {
+        return "";
+      }
+
+      return cost.perTarget
+        ? `${amount} ${resource} / A`
+        : `${amount} ${resource}`;
+    }
+
+    if (actionType === "item") {
+      const ipCost = action.system.ipCost?.value;
+
+      if (ipCost == null) {
+        return "";
+      }
+
+      return `${ipCost} IP`;
+    }
+
+    return "";
+  }
+
   actionMenu.innerHTML = `
     <div class="fui-command-title">
       ${title}
     </div>
 
     <div class="fui-action-subtitle">
-      Selecione um
+      Select one : 
     </div>
 
     <div class="fui-action-list">
@@ -53,11 +86,11 @@ export function openActionMenu({ actor, actions, actionType, ui }) {
               />
 
               <span class="fui-action-name">
-                ${action.name}
+                <span class="fui-action-name-inner">${action.name}</span>
               </span>
 
               <span class="fui-action-cost">
-                ${action.system.cost?.amount ?? ""}
+                ${getActionCost(action)}
               </span>
             </button>
           `,
@@ -99,8 +132,12 @@ export function openActionMenu({ actor, actions, actionType, ui }) {
   const actionButtons = actionMenu.querySelectorAll(".fui-action-button");
 
   const scrollbar = actionMenu.querySelector(".fui-action-scrollbar");
-  const scrollbarTrack = actionMenu.querySelector(".fui-action-scrollbar-track");
-  const scrollbarThumb = actionMenu.querySelector(".fui-action-scrollbar-thumb");
+  const scrollbarTrack = actionMenu.querySelector(
+    ".fui-action-scrollbar-track",
+  );
+  const scrollbarThumb = actionMenu.querySelector(
+    ".fui-action-scrollbar-thumb",
+  );
 
   let selectedAction = 0;
 
@@ -149,6 +186,52 @@ export function openActionMenu({ actor, actions, actionType, ui }) {
     scrollbarThumb.style.transform = `translateY(${thumbTop}px)`;
   }
 
+  function applyMarqueeIfNeeded(button) {
+    const nameEl = button.querySelector(".fui-action-name");
+    const innerEl = button.querySelector(".fui-action-name-inner");
+
+    if (!nameEl || !innerEl) {
+      return;
+    }
+
+    const overflow = innerEl.scrollWidth - nameEl.clientWidth;
+
+    if (overflow <= 0) {
+      clearMarquee(button);
+      return;
+    }
+
+    const pixelsPerSecond = 40;
+    const duration = Math.max(2, overflow / pixelsPerSecond + 1.5);
+
+    innerEl.style.setProperty("--fui-marquee-distance", `-${overflow}px`);
+    innerEl.style.setProperty("--fui-marquee-duration", `${duration}s`);
+
+    button.classList.add("fui-marquee");
+  }
+
+  function clearMarquee(button) {
+    const innerEl = button.querySelector(".fui-action-name-inner");
+
+    button.classList.remove("fui-marquee");
+
+    innerEl?.style.removeProperty("--fui-marquee-distance");
+    innerEl?.style.removeProperty("--fui-marquee-duration");
+  }
+
+  function updateActionMarquee() {
+    actionButtons.forEach((button) => {
+      const shouldAnimate =
+        button.classList.contains("fui-active") || button.matches(":hover");
+
+      if (shouldAnimate) {
+        applyMarqueeIfNeeded(button);
+      } else {
+        clearMarquee(button);
+      }
+    });
+  }
+
   function updateActionSelection() {
     actionButtons.forEach((button, index) => {
       button.classList.toggle("fui-active", index === selectedAction);
@@ -162,6 +245,7 @@ export function openActionMenu({ actor, actions, actionType, ui }) {
     updateActionCursor();
 
     requestAnimationFrame(updateActionScrollbar);
+    requestAnimationFrame(updateActionMarquee);
   }
 
   actionList?.addEventListener("scroll", () => {
@@ -199,6 +283,16 @@ export function openActionMenu({ actor, actions, actionType, ui }) {
       selectedAction = index;
       updateActionSelection();
       executeSelectedAction();
+    });
+
+    button.addEventListener("mouseenter", () => {
+      applyMarqueeIfNeeded(button);
+    });
+
+    button.addEventListener("mouseleave", () => {
+      if (!button.classList.contains("fui-active")) {
+        clearMarquee(button);
+      }
     });
   });
 

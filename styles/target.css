@@ -2,12 +2,18 @@
    TARGET COUNT MENU
    ========================================= */
 
+/* =========================================
+   TARGET COUNT MENU
+   Mesmo tamanho do Action (220 × 264.25px)
+   ========================================= */
+
 .fui-target-menu {
   position: fixed;
 
   z-index: 10000;
 
   width: 220px;
+  height: 264.25px;
 
   box-sizing: border-box;
 
@@ -18,18 +24,10 @@
 
   padding: 22px 20px 16px;
 
-  background: rgba(20, 16, 27, 0.92);
-
-  backdrop-filter: blur(8px);
-
-  border: 1px solid rgba(255, 255, 255, 0.75);
-  border-radius: 10px;
+  background: transparent;
+  border: none;
 
   outline: none;
-
-  box-shadow:
-    0 8px 24px rgba(0, 0, 0, 0.4),
-    0 0 0 2px rgba(255, 255, 255, 0.12);
 
   pointer-events: auto;
 }
@@ -37,6 +35,29 @@
 .fui-target-menu:focus,
 .fui-target-menu:focus-visible {
   outline: none;
+}
+
+/* =========================================
+   MOLDURA (SVG do painel inteiro)
+   ========================================= */
+
+.fui-target-menu::before {
+  content: "";
+
+  position: absolute;
+
+  inset: 0;
+
+  z-index: -1;
+
+  background-image: url("../assets/moldura-submenu.svg");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+
+  pointer-events: none;
 }
 
 /* =========================================
@@ -81,7 +102,7 @@
   font-size: 13px;
   font-weight: 400;
 
-  color: rgba(255, 255, 255, 0.55);
+  color: rgba(255, 255, 255, 0.75);
 
   white-space: nowrap;
   overflow: hidden;
