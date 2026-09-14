@@ -33,42 +33,52 @@ export function openConfirmMenu({
 
   confirmMenu.innerHTML = `
     <div class="fui-command-title">
-        CONFIRM
+      CONFIRM
     </div>
 
     <div class="fui-confirm-action">
-        ${actionLabel} / ${action.name}
+      ${actionLabel} / ${action.name}
     </div>
 
     <div class="fui-confirm-targets-title">
-        TARGETS
+      TARGETS
     </div>
 
     <div class="fui-confirm-targets">
-        ${targets
-          .map(
-            (combatant) => `
-              <div class="fui-confirm-target">
+      ${targets
+        .map(
+          (combatant) => `
+            <div class="fui-confirm-target">
+              <span class="fui-confirm-target-name">
+                <span class="fui-confirm-target-name-inner">
                   ${combatant.actor.name}
-              </div>
-            `,
-          )
-          .join("")}
+                </span>
+              </span>
+            </div>
+          `,
+        )
+        .join("")}
     </div>
 
-    <button
-      class="fui-command-button fui-confirm-button fui-active"
-      data-confirm="confirm"
-    >
-      Confirm
-    </button>
+    <div class="fui-confirm-buttons">
 
-    <button
-      class="fui-command-button fui-confirm-button"
-      data-confirm="cancel"
-    >
-      Cancel
-    </button>
+      <button
+        class="fui-command-button fui-confirm-button fui-active"
+        data-confirm="confirm"
+      >
+        Confirm
+      </button>
+
+      <button
+        class="fui-command-button fui-confirm-button"
+        data-confirm="cancel"
+      >
+        Cancel
+      </button>
+
+    </div>
+
+    <div class="fui-confirm-cursor"></div>
   `;
 
   ui.appendChild(confirmMenu);
@@ -83,12 +93,28 @@ export function openConfirmMenu({
 
   const buttons = confirmMenu.querySelectorAll(".fui-confirm-button");
 
+  const cursor = confirmMenu.querySelector(".fui-confirm-cursor");
+
   let selectedIndex = 0;
+
+  function updateCursor() {
+    const button = buttons[selectedIndex];
+
+    if (!button || !cursor) {
+      return;
+    }
+
+    cursor.style.top = `${button.offsetTop + button.offsetHeight / 2 - 13}px`;
+
+    cursor.style.height = `${button.offsetHeight}px`;
+  }
 
   function updateSelection() {
     buttons.forEach((button, index) => {
       button.classList.toggle("fui-active", index === selectedIndex);
     });
+
+    updateCursor();
   }
 
   function closeConfirmMenu() {
@@ -97,6 +123,7 @@ export function openConfirmMenu({
   }
 
   let isExecuting = false;
+
   async function executeConfirm() {
     if (isExecuting) {
       return;
@@ -104,7 +131,9 @@ export function openConfirmMenu({
 
     const button = buttons[selectedIndex];
 
-    if (!button) return;
+    if (!button) {
+      return;
+    }
 
     const confirmation = button.dataset.confirm;
 
@@ -129,6 +158,7 @@ export function openConfirmMenu({
       selectedIndex = index;
 
       updateSelection();
+
       executeConfirm();
     });
   });
@@ -141,6 +171,8 @@ export function openConfirmMenu({
       selectedIndex = (selectedIndex + 1) % buttons.length;
 
       updateSelection();
+
+      return;
     }
 
     if (event.key === "ArrowUp") {
@@ -150,6 +182,8 @@ export function openConfirmMenu({
       selectedIndex = (selectedIndex - 1 + buttons.length) % buttons.length;
 
       updateSelection();
+
+      return;
     }
 
     if (event.key === "Enter") {
@@ -157,6 +191,8 @@ export function openConfirmMenu({
       event.stopPropagation();
 
       executeConfirm();
+
+      return;
     }
 
     if (event.key === "Escape") {
@@ -164,8 +200,14 @@ export function openConfirmMenu({
       event.stopPropagation();
 
       closeConfirmMenu();
+
+      return;
     }
   });
 
   updateSelection();
+
+  requestAnimationFrame(() => {
+    updateCursor();
+  });
 }

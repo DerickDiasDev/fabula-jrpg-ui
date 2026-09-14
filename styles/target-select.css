@@ -1,41 +1,58 @@
+@import url("https://fonts.googleapis.com/css2?family=Playpen+Sans:wght@300;400;600&display=swap");
+
 /* =========================================
-    TARGET SELECT MENU
-    ========================================= */
+   TARGET SELECT MENU
+   ========================================= */
 
 .fui-target-select-menu {
   position: fixed;
+
   z-index: 10001;
 
-  width: 190px;
+  width: 220px;
+  height: 264.25px;
+
   box-sizing: border-box;
-  padding: 12px;
 
-  background: rgba(20, 16, 27, 0.92);
+  display: flex;
+  flex-direction: column;
 
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  border-radius: 10px;
+  gap: 0;
 
-  backdrop-filter: blur(8px);
+  padding: 22px 20px 16px 20px;
 
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  background: transparent;
+  border: none;
+  outline: none;
 
   pointer-events: auto;
+}
 
-  transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
+.fui-target-select-menu:focus,
+.fui-target-select-menu:focus-visible {
+  outline: none;
 }
 
 /* =========================================
-   FOCUS
+   FRAME
    ========================================= */
 
-.fui-target-select-menu.fui-ui-focused {
-  border-color: rgba(255, 255, 255, 0.75);
+.fui-target-select-menu::before {
+  content: "";
 
-  box-shadow:
-    0 8px 24px rgba(0, 0, 0, 0.4),
-    0 0 0 2px rgba(255, 255, 255, 0.16);
+  position: absolute;
+  inset: 0;
+
+  z-index: -1;
+
+  background-image: url("../assets/moldura-submenu.svg");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+
+  pointer-events: none;
 }
 
 /* =========================================
@@ -43,40 +60,29 @@
    ========================================= */
 
 .fui-target-select-menu .fui-command-title {
-  display: flex;
-  align-items: center;
+  position: absolute;
 
-  height: 20px;
-  margin-bottom: 8px;
-  padding: 0 8px;
+  top: -18px;
+  left: 28px;
 
-  box-sizing: border-box;
+  padding: 0;
 
-  color: rgba(255, 255, 255, 0.8);
+  font-family: "Playpen Sans", cursive;
+  font-size: 20px;
+  font-weight: 600;
 
-  font-size: 13px;
-  font-weight: bold;
-  line-height: 20px;
-  letter-spacing: 2px;
+  letter-spacing: 0.06em;
 
-  opacity: 0.65;
-}
+  white-space: nowrap;
 
-/* =========================================
-   FOCUS INDICATOR
-   ========================================= */
+  color: #eef1f7;
 
-.fui-target-select-menu.fui-ui-focused .fui-command-title::after {
-  content: "●";
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
 
-  margin-left: 8px;
+  background: none;
+  border: none;
 
-  font-size: 8px;
-  vertical-align: middle;
-
-  opacity: 0.9;
-
-  animation: focus-pulse 1.2s ease-in-out infinite;
+  pointer-events: none;
 }
 
 /* =========================================
@@ -84,22 +90,52 @@
    ========================================= */
 
 .fui-target-select-menu .fui-target-action {
+  flex-shrink: 0;
+
   display: flex;
   align-items: center;
 
   min-height: 20px;
-  margin-bottom: 8px;
-  padding: 0 8px;
+
+  margin-bottom: 6px;
+
+  padding: 0 4px;
+
+  font-family: "Playpen Sans", cursive;
+  font-size: 13px;
+  font-weight: 400;
 
   color: rgba(255, 255, 255, 0.75);
 
-  font-size: 11px;
-  font-weight: 400;
-  line-height: 20px;
-
   white-space: nowrap;
+
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* =========================================
+   TARGET LIST
+   ========================================= */
+
+.fui-target-select-menu .fui-target-list {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 0;
+
+  flex: 1;
+  min-height: 0;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  scrollbar-width: none;
+}
+
+.fui-target-select-menu .fui-target-list::-webkit-scrollbar {
+  display: none;
 }
 
 /* =========================================
@@ -107,7 +143,12 @@
    ========================================= */
 
 .fui-target-select-menu .fui-target-group {
-  margin-bottom: 8px;
+  flex-shrink: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 0;
 }
 
 /* =========================================
@@ -115,14 +156,22 @@
    ========================================= */
 
 .fui-target-select-menu .fui-target-group-title {
-  padding: 4px 8px;
+  height: 24px;
 
-  color: rgba(255, 255, 255, 0.4);
+  box-sizing: border-box;
 
-  font-size: 10px;
-  font-weight: bold;
+  display: flex;
+  align-items: center;
 
-  letter-spacing: 1.5px;
+  padding: 0 4px;
+
+  font-family: "Playpen Sans", cursive;
+  font-size: 11px;
+  font-weight: 600;
+
+  letter-spacing: 0.08em;
+
+  color: rgba(255, 255, 255, 0.45);
 }
 
 /* =========================================
@@ -136,83 +185,185 @@
   align-items: center;
   justify-content: flex-start;
 
-  width: 100%;
-  height: 38px;
+  gap: 8px;
+
+  width: calc(100% - 10px);
+  height: 40px;
+
+  flex-shrink: 0;
 
   box-sizing: border-box;
 
-  padding: 0 12px;
+  padding: 0 18px;
 
-  background: transparent;
-  border: none;
-  border-radius: 6px;
+  border: 1px solid transparent;
+  border-radius: 12px;
 
-  color: white;
+  background:
+    linear-gradient(
+        90deg,
+        rgba(22, 22, 22, 0.9) 0%,
+        rgba(117, 117, 117, 0) 100%
+      )
+      padding-box,
+    linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.8) 0%,
+        rgba(255, 255, 255, 0.05) 100%
+      )
+      border-box;
 
-  font-size: 14px;
+  color: rgba(255, 255, 255, 0.85);
+
+  font-family: "Playpen Sans", cursive;
+  font-size: 16px;
+  font-weight: 300;
+
+  letter-spacing: -0.06em;
+
   text-align: left;
 
   cursor: pointer;
 
+  outline: none;
+
   transition:
-    background 0.12s ease,
-    transform 0.12s ease;
+    width 0.12s ease,
+    box-shadow 0.12s ease,
+    background 0.12s ease;
 }
 
-/* =========================================
-   HOVER
-   ========================================= */
-
-.fui-target-select-menu .fui-target-button:hover {
-  background: rgba(255, 255, 255, 0.1);
+.fui-target-select-menu .fui-target-button:focus,
+.fui-target-select-menu .fui-target-button:focus-visible {
+  outline: none;
 }
-
-/* =========================================
-   ACTIVE / CURSOR
-   ========================================= */
 
 .fui-target-select-menu .fui-target-button.fui-active {
-  background: rgba(255, 255, 255, 0.14);
-
-  transform: translateX(4px);
+  box-shadow: none;
 }
 
-.fui-target-select-menu .fui-target-button.fui-active::before {
-  content: "";
+/* =========================================
+   ACTIVE / HOVER
+   ========================================= */
 
-  position: absolute;
+.fui-target-select-menu.fui-ui-focused .fui-target-button:hover {
+  background:
+    linear-gradient(rgba(40, 40, 44, 0.9), rgba(40, 40, 44, 0.9)) padding-box,
+    linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 1) 0%,
+        rgba(255, 255, 255, 0.1) 100%
+      )
+      border-box;
+}
 
-  left: -28px;
-  top: 50%;
+.fui-target-select-menu.fui-ui-focused .fui-target-button.fui-active {
+  background:
+    linear-gradient(rgba(48, 48, 54, 0.95), rgba(48, 48, 54, 0.95)) padding-box,
+    linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 1) 0%,
+        rgba(255, 255, 255, 0.1) 100%
+      )
+      border-box;
 
-  width: 20px;
-  height: 20px;
+  color: #ffffff;
+}
 
-  background-image: url("../assets/cursor.png");
+.fui-target-select-menu.fui-ui-focused .fui-target-button:hover,
+.fui-target-select-menu.fui-ui-focused .fui-target-button.fui-active {
+  width: 100%;
 
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
+  box-shadow:
+    inset 0 0 13px 1px rgba(90, 130, 255, 0.65),
+    inset 0 0 10px 3px rgba(160, 90, 255, 0.5),
+    inset 0 2px 3px 1px rgba(255, 255, 255, 0.9);
+}
 
-  transform: translateY(-50%);
+/* =========================================
+   TARGET NAME
+   ========================================= */
+
+.fui-target-select-menu .fui-target-name {
+  flex: 1;
+
+  min-width: 0;
+
+  overflow: hidden;
+
+  white-space: nowrap;
+}
+
+.fui-target-select-menu .fui-target-name-inner {
+  display: inline-block;
+
+  will-change: transform;
+}
+
+/* =========================================
+   MARQUEE
+   ========================================= */
+
+.fui-target-select-menu .fui-target-button.fui-marquee .fui-target-name-inner {
+  animation: fui-target-marquee-scroll var(--fui-target-marquee-duration, 3s)
+    linear infinite;
+}
+
+@keyframes fui-target-marquee-scroll {
+  0%,
+  15% {
+    transform: translateX(0);
+  }
+
+  85%,
+  100% {
+    transform: translateX(var(--fui-target-marquee-distance, 0px));
+  }
 }
 
 /* =========================================
    SELECTED TARGET
    ========================================= */
 
-.fui-target-select-menu .fui-target-button.fui-selected {
-  background: rgba(255, 255, 255, 0.08);
-}
-
 .fui-target-select-menu .fui-target-button.fui-selected::after {
   content: "✓";
+
+  flex: 0 0 auto;
 
   margin-left: auto;
 
   color: rgba(255, 255, 255, 0.8);
 
+  font-family: "Playpen Sans", cursive;
   font-size: 13px;
+}
+
+/* =========================================
+   CURSOR
+   ========================================= */
+
+.fui-target-select-menu .fui-target-cursor {
+  position: absolute;
+
+  left: -3px;
+
+  width: 26px;
+  height: 26px;
+
+  background-image: url("../assets/cursor.png");
+
+  background-size: 26px 26px;
+
+  background-repeat: no-repeat;
+  background-position: center;
+
+  pointer-events: none;
+
+  display: none;
+}
+
+.fui-target-select-menu.fui-ui-focused .fui-target-cursor {
+  display: block;
 }
 
 /* =========================================
@@ -220,11 +371,104 @@
    ========================================= */
 
 .fui-target-select-menu .fui-target-count {
-  margin-top: 8px;
-  padding: 6px 8px;
+  flex-shrink: 0;
+
+  height: 22px;
+
+  box-sizing: border-box;
+
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+
+  padding: 4px 4px 0 4px;
+
+  font-family: "Playpen Sans", cursive;
+  font-size: 11px;
+  font-weight: 400;
 
   color: rgba(255, 255, 255, 0.45);
 
-  font-size: 11px;
-  text-align: right;
+  white-space: nowrap;
+}
+
+/* =========================================
+   SCROLLBAR
+   ========================================= */
+
+.fui-target-select-menu .fui-target-scrollbar {
+  position: absolute;
+
+  top: 48px;
+  right: 16px;
+
+  width: 7px;
+  height: 174px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  pointer-events: none;
+
+  opacity: 0;
+
+  transition: opacity 0.12s ease;
+}
+
+.fui-target-select-menu.fui-ui-focused .fui-target-scrollbar {
+  opacity: 1;
+}
+
+.fui-target-select-menu .fui-target-scrollbar-track {
+  position: relative;
+
+  width: 3px;
+
+  flex: 1;
+
+  background: transparent;
+}
+
+.fui-target-select-menu .fui-target-scrollbar-thumb {
+  position: absolute;
+
+  top: 0;
+  left: 0;
+
+  width: 3px;
+  height: 40px;
+
+  border-radius: 3px;
+
+  background: rgba(255, 255, 255, 0.4);
+
+  transition:
+    background 0.12s ease,
+    width 0.12s ease;
+}
+
+.fui-target-select-menu .fui-target-scrollbar-arrow {
+  width: 0;
+  height: 0;
+
+  flex: 0 0 auto;
+
+  opacity: 0.65;
+}
+
+.fui-target-select-menu .fui-target-scrollbar-arrow-up {
+  margin-bottom: 3px;
+
+  border-left: 3px solid transparent;
+  border-right: 3px solid transparent;
+  border-bottom: 4px solid rgba(255, 255, 255, 0.85);
+}
+
+.fui-target-select-menu .fui-target-scrollbar-arrow-down {
+  margin-top: 3px;
+
+  border-left: 3px solid transparent;
+  border-right: 3px solid transparent;
+  border-top: 4px solid rgba(255, 255, 255, 0.85);
 }

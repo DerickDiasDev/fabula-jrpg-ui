@@ -1,41 +1,60 @@
+@import url("https://fonts.googleapis.com/css2?family=Playpen+Sans:wght@300;400;600&display=swap");
+
 /* =========================================
    CONFIRM MENU
    ========================================= */
 
 .fui-confirm-menu {
   position: fixed;
+
   z-index: 10002;
 
-  width: 190px;
+  width: 220px;
+  min-height: 230px;
+
   box-sizing: border-box;
-  padding: 12px;
 
-  background: rgba(20, 16, 27, 0.92);
+  display: flex;
+  flex-direction: column;
 
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  border-radius: 10px;
+  gap: 0;
 
-  backdrop-filter: blur(8px);
+  padding: 22px 20px 16px 20px;
 
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  background: transparent;
+
+  border: none;
+  outline: none;
 
   pointer-events: auto;
+}
 
-  transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
+.fui-confirm-menu:focus,
+.fui-confirm-menu:focus-visible {
+  outline: none;
 }
 
 /* =========================================
-   FOCUS
+   FRAME
    ========================================= */
 
-.fui-confirm-menu.fui-ui-focused {
-  border-color: rgba(255, 255, 255, 0.75);
+.fui-confirm-menu::before {
+  content: "";
 
-  box-shadow:
-    0 8px 24px rgba(0, 0, 0, 0.4),
-    0 0 0 2px rgba(255, 255, 255, 0.16);
+  position: absolute;
+  inset: 0;
+
+  z-index: -1;
+
+  background-image: url("../assets/moldura-submenu.svg");
+
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+
+  pointer-events: none;
 }
 
 /* =========================================
@@ -43,40 +62,30 @@
    ========================================= */
 
 .fui-confirm-menu .fui-command-title {
-  display: flex;
-  align-items: center;
+  position: absolute;
 
-  height: 20px;
-  margin-bottom: 8px;
-  padding: 0 8px;
+  top: -18px;
+  left: 28px;
 
-  box-sizing: border-box;
+  padding: 0;
 
-  color: rgba(255, 255, 255, 0.8);
+  font-family: "Playpen Sans", cursive;
 
-  font-size: 13px;
-  font-weight: bold;
-  line-height: 20px;
-  letter-spacing: 2px;
+  font-size: 20px;
+  font-weight: 600;
 
-  opacity: 0.65;
-}
+  letter-spacing: 0.06em;
 
-/* =========================================
-   FOCUS INDICATOR
-   ========================================= */
+  white-space: nowrap;
 
-.fui-confirm-menu.fui-ui-focused .fui-command-title::after {
-  content: "●";
+  color: #eef1f7;
 
-  margin-left: 8px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
 
-  font-size: 8px;
-  vertical-align: middle;
+  background: none;
+  border: none;
 
-  opacity: 0.9;
-
-  animation: focus-pulse 1.2s ease-in-out infinite;
+  pointer-events: none;
 }
 
 /* =========================================
@@ -88,16 +97,22 @@
   align-items: center;
 
   min-height: 20px;
-  margin-bottom: 12px;
-  padding: 0 8px;
 
-  color: rgba(255, 255, 255, 0.45);
+  margin-bottom: 8px;
 
-  font-size: 11px;
+  padding: 0 4px;
+
+  font-family: "Playpen Sans", cursive;
+
+  font-size: 13px;
   font-weight: 400;
+
+  color: rgba(255, 255, 255, 0.75);
+
   line-height: 20px;
 
   white-space: nowrap;
+
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -107,13 +122,23 @@
    ========================================= */
 
 .fui-confirm-menu .fui-confirm-targets-title {
-  padding: 4px 8px;
+  height: 22px;
 
-  color: rgba(255, 255, 255, 0.4);
+  box-sizing: border-box;
 
-  font-size: 10px;
-  font-weight: bold;
-  letter-spacing: 1.5px;
+  display: flex;
+  align-items: center;
+
+  padding: 0 4px;
+
+  font-family: "Playpen Sans", cursive;
+
+  font-size: 11px;
+  font-weight: 600;
+
+  letter-spacing: 0.08em;
+
+  color: rgba(255, 255, 255, 0.45);
 }
 
 /* =========================================
@@ -121,23 +146,108 @@
    ========================================= */
 
 .fui-confirm-menu .fui-confirm-targets {
+  display: flex;
+  flex-direction: column;
+
+  gap: 0;
+
   margin-bottom: 10px;
+
+  max-height: 96px;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  scrollbar-width: none;
 }
+
+.fui-confirm-menu .fui-confirm-targets::-webkit-scrollbar {
+  display: none;
+}
+
+/* =========================================
+   TARGET
+   ========================================= */
 
 .fui-confirm-menu .fui-confirm-target {
   display: flex;
   align-items: center;
 
-  min-height: 28px;
-  padding: 0 8px;
+  width: 100%;
+  height: 28px;
+
+  box-sizing: border-box;
+
+  padding: 0 4px;
+
+  font-family: "Playpen Sans", cursive;
+
+  font-size: 13px;
+  font-weight: 300;
 
   color: rgba(255, 255, 255, 0.8);
 
-  font-size: 13px;
+  white-space: nowrap;
+
+  overflow: hidden;
 }
 
 /* =========================================
-   BUTTONS
+   TARGET NAME
+   ========================================= */
+
+.fui-confirm-menu .fui-confirm-target-name {
+  min-width: 0;
+  flex: 1;
+
+  overflow: hidden;
+
+  white-space: nowrap;
+}
+
+.fui-confirm-menu .fui-confirm-target-name-inner {
+  display: inline-block;
+
+  white-space: nowrap;
+
+  will-change: transform;
+}
+
+/* =========================================
+   MARQUEE
+   ========================================= */
+
+.fui-confirm-menu .fui-confirm-target-name-inner {
+  text-overflow: ellipsis;
+}
+
+@keyframes fui-confirm-marquee-scroll {
+  0%,
+  15% {
+    transform: translateX(0);
+  }
+
+  85%,
+  100% {
+    transform: translateX(var(--fui-confirm-marquee-distance, 0px));
+  }
+}
+
+/* =========================================
+   BUTTON CONTAINER
+   ========================================= */
+
+.fui-confirm-menu .fui-confirm-buttons {
+  display: flex;
+  flex-direction: column;
+
+  gap: 0;
+
+  margin-top: auto;
+}
+
+/* =========================================
+   BUTTON
    ========================================= */
 
 .fui-confirm-menu .fui-confirm-button {
@@ -147,67 +257,134 @@
   align-items: center;
   justify-content: flex-start;
 
-  width: 100%;
-  height: 38px;
+  width: calc(100% - 10px);
+  height: 40px;
+
+  flex-shrink: 0;
 
   box-sizing: border-box;
 
-  padding: 0 12px;
+  padding: 0 18px;
 
-  background: transparent;
-  border: none;
-  border-radius: 6px;
+  border: 1px solid transparent;
+  border-radius: 12px;
 
-  color: white;
+  background:
+    linear-gradient(
+        90deg,
+        rgba(22, 22, 22, 0.9) 0%,
+        rgba(117, 117, 117, 0) 100%
+      )
+      padding-box,
+    linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.8) 0%,
+        rgba(255, 255, 255, 0.05) 100%
+      )
+      border-box;
 
-  font-size: 14px;
+  color: rgba(255, 255, 255, 0.85);
+
+  font-family: "Playpen Sans", cursive;
+
+  font-size: 16px;
+  font-weight: 300;
+
+  letter-spacing: -0.06em;
+
   text-align: left;
 
   cursor: pointer;
 
+  outline: none;
+
   transition:
-    background 0.12s ease,
-    transform 0.12s ease;
+    width 0.12s ease,
+    box-shadow 0.12s ease,
+    background 0.12s ease;
+}
+
+.fui-confirm-menu .fui-confirm-button:focus,
+.fui-confirm-menu .fui-confirm-button:focus-visible {
+  outline: none;
 }
 
 /* =========================================
    HOVER
    ========================================= */
 
-.fui-confirm-menu .fui-confirm-button:hover {
-  background: rgba(255, 255, 255, 0.1);
+.fui-confirm-menu.fui-ui-focused .fui-confirm-button:hover {
+  background:
+    linear-gradient(rgba(40, 40, 44, 0.9), rgba(40, 40, 44, 0.9)) padding-box,
+    linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 1) 0%,
+        rgba(255, 255, 255, 0.1) 100%
+      )
+      border-box;
 }
 
 /* =========================================
    ACTIVE
    ========================================= */
 
-.fui-confirm-menu .fui-confirm-button.fui-active {
-  background: rgba(255, 255, 255, 0.14);
+.fui-confirm-menu.fui-ui-focused .fui-confirm-button.fui-active {
+  width: 100%;
 
-  transform: translateX(4px);
+  background:
+    linear-gradient(rgba(48, 48, 54, 0.95), rgba(48, 48, 54, 0.95)) padding-box,
+    linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 1) 0%,
+        rgba(255, 255, 255, 0.1) 100%
+      )
+      border-box;
+
+  color: #ffffff;
+
+  box-shadow:
+    inset 0 0 13px 1px rgba(90, 130, 255, 0.65),
+    inset 0 0 10px 3px rgba(160, 90, 255, 0.5),
+    inset 0 2px 3px 1px rgba(255, 255, 255, 0.9);
+}
+
+/* =========================================
+   HOVER GLOW
+   ========================================= */
+
+.fui-confirm-menu.fui-ui-focused .fui-confirm-button:hover {
+  width: 100%;
+
+  box-shadow:
+    inset 0 0 13px 1px rgba(90, 130, 255, 0.65),
+    inset 0 0 10px 3px rgba(160, 90, 255, 0.5),
+    inset 0 2px 3px 1px rgba(255, 255, 255, 0.9);
 }
 
 /* =========================================
    CURSOR
    ========================================= */
 
-.fui-confirm-menu .fui-confirm-button.fui-active::before {
-  content: "";
-
+.fui-confirm-menu .fui-confirm-cursor {
   position: absolute;
 
-  left: -28px;
-  top: 50%;
+  left: -3px;
 
-  width: 20px;
-  height: 20px;
+  width: 26px;
+  height: 26px;
 
   background-image: url("../assets/cursor.png");
 
-  background-size: contain;
+  background-size: 26px 26px;
+
   background-repeat: no-repeat;
   background-position: center;
 
-  transform: translateY(-50%);
+  pointer-events: none;
+
+  display: none;
+}
+
+.fui-confirm-menu.fui-ui-focused .fui-confirm-cursor {
+  display: block;
 }
