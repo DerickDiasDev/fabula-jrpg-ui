@@ -3,16 +3,19 @@
   "title": "Fabula JRPG UI",
   "description": "A JRPG-style combat interface for Project FU, inspired by classic console RPG battle UIs.",
   "version": "1.0.0",
+
   "authors": [
     {
       "name": "Spell",
       "discord": "derick.dias"
     }
   ],
+
   "compatibility": {
     "minimum": "14",
     "verified": "14"
   },
+
   "relationships": {
     "systems": [
       {
@@ -21,7 +24,13 @@
       }
     ]
   },
+
+  "url": "https://github.com/DerickDiasDev/fabula-jrpg-ui",
+  "license": "LICENSE",
+  "readme": "readme.md",
+
   "esmodules": ["scripts/main.js"],
+
   "styles": [
     "styles/base.css",
     "styles/cursor.css",
