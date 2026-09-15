@@ -49,6 +49,26 @@ export function getActiveSubmenu(ui) {
 }
 
 // =====================================================
+// DESTROY SUBMENU
+// =====================================================
+//
+// Runs a dynamically created submenu's _fabulaCleanup (if
+// any) and permanently removes it from the DOM. This is for
+// submenus that are being abandoned for good, as opposed to
+// hideMenu(), which only hides a menu that may still be
+// shown again later via showMenu() during back-navigation.
+// =====================================================
+
+function destroySubmenu(menu) {
+  if (typeof menu._fabulaCleanup === "function") {
+    menu._fabulaCleanup();
+    delete menu._fabulaCleanup;
+  }
+
+  menu.remove();
+}
+
+// =====================================================
 // HIDE ALL SUBMENUS
 // =====================================================
 
@@ -58,13 +78,7 @@ export function hideAllSubmenus(ui) {
   }
 
   ui.querySelectorAll(".fui-submenu").forEach((menu) => {
-    if (typeof menu._fabulaCleanup === "function") {
-      menu._fabulaCleanup();
-      delete menu._fabulaCleanup;
-    }
-
-    menu.classList.remove("fui-ui-focused");
-    menu.hidden = true;
+    destroySubmenu(menu);
   });
 
   const commandMenu = ui.querySelector(".fui-command");
@@ -122,13 +136,7 @@ export function closeActiveSubmenu(ui) {
     return false;
   }
 
-  if (typeof activeSubmenu._fabulaCleanup === "function") {
-    activeSubmenu._fabulaCleanup();
-    delete activeSubmenu._fabulaCleanup;
-  }
-
-  activeSubmenu.hidden = true;
-  activeSubmenu.classList.remove("ui-focused", "fui-ui-focused");
+  destroySubmenu(activeSubmenu);
 
   destroyCanvasCursor(ui);
 

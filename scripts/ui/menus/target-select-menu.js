@@ -1,6 +1,11 @@
 import { openConfirmMenu } from "./confirm-menu.js";
 
-import { showMenu, hideMenu, setCanvasCursor } from "./menu-utils.js";
+import {
+  showMenu,
+  hideMenu,
+  setCanvasCursor,
+  destroyCanvasCursor,
+} from "./menu-utils.js";
 
 import { executeAction } from "../actions/execute-action.js";
 
@@ -599,7 +604,7 @@ export function openTargetSelectMenu({
     isTransitioning = true;
 
     if (actionType === "study") {
-      canvasCursor.destroy();
+      destroyCanvasCursor(ui);
 
       executeAction({
         actor,
@@ -633,7 +638,7 @@ export function openTargetSelectMenu({
   // ===================================================
 
   function closeTargetSelectMenu() {
-    canvasCursor.destroy();
+    destroyCanvasCursor(ui);
 
     hideMenu(targetMenu);
 
