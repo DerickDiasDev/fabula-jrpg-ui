@@ -1,4 +1,4 @@
-import { openTargetSelectMenu } from "./target-select-menu.js";
+import { openTargetSelectMenu } from "../menus/target-select-menu.js";
 
 export function executeStudy(actor, ui) {
   if (!actor) {
@@ -6,9 +6,10 @@ export function executeStudy(actor, ui) {
     return;
   }
 
-  const commandMenu = ui.querySelector(".fui-command");
+  const commandMenu = ui?.querySelector(".fui-command");
 
   if (!commandMenu) {
+    console.error("STUDY: Command Menu não encontrado.");
     return;
   }
 

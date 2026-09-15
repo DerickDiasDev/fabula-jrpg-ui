@@ -253,10 +253,16 @@ function setupHudDragging(ui) {
 function setupDraggable(ui, element, type) {
   if (!element) return;
 
+  if (element._fabulaHudDragHandlers) {
+    return;
+  }
+
   let dragging = false;
   let pointerId = null;
+
   let offsetX = 0;
   let offsetY = 0;
+
   let dragScale = 1;
 
   const onPointerDown = (event) => {
@@ -280,6 +286,7 @@ function setupDraggable(ui, element, type) {
 
     element.style.left = `${rect.left}px`;
     element.style.top = `${rect.top}px`;
+
     element.style.right = "auto";
     element.style.bottom = "auto";
     element.style.transform = "none";
@@ -290,7 +297,9 @@ function setupDraggable(ui, element, type) {
   };
 
   const onPointerMove = (event) => {
-    if (!dragging || event.pointerId !== pointerId) return;
+    if (!dragging || event.pointerId !== pointerId) {
+      return;
+    }
 
     event.preventDefault();
 
@@ -305,6 +314,7 @@ function setupDraggable(ui, element, type) {
     const maxTop = Math.max(0, window.innerHeight - height);
 
     left = Math.max(0, Math.min(left, maxLeft));
+
     top = Math.max(0, Math.min(top, maxTop));
 
     element.style.left = `${left}px`;
@@ -312,7 +322,9 @@ function setupDraggable(ui, element, type) {
   };
 
   const stopDragging = async (event) => {
-    if (!dragging || event.pointerId !== pointerId) return;
+    if (!dragging || event.pointerId !== pointerId) {
+      return;
+    }
 
     dragging = false;
 
@@ -332,12 +344,15 @@ function setupDraggable(ui, element, type) {
   };
 
   element.addEventListener("pointerdown", onPointerDown);
-
   element.addEventListener("pointermove", onPointerMove);
-
   element.addEventListener("pointerup", stopDragging);
-
   element.addEventListener("pointercancel", stopDragging);
+
+  element._fabulaHudDragHandlers = {
+    onPointerDown,
+    onPointerMove,
+    stopDragging,
+  };
 }
 
 async function saveDraggedPosition(element, type) {

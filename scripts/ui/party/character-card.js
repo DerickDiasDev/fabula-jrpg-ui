@@ -1,3 +1,7 @@
+// =====================================================
+// CREATE CHARACTER CARD
+// =====================================================
+
 export function createCharacterCard(actor) {
   const hp = actor.system.resources.hp;
   const mp = actor.system.resources.mp;
@@ -13,23 +17,34 @@ export function createCharacterCard(actor) {
           src="${actor.img}"
           alt="${actor.name}"
         />
+
+      <div class="fui-character-status-effects">
+        ${createStatusEffects(actor)}
+      </div>
       </div>
 
       <div class="fui-character-resources">
         <div class="fui-character-name-row">
-          <span class="fui-character-name">${actor.name}</span>
-          <span class="fui-character-level">NV. ${actor.system.level.value}</span>
+          <span class="fui-character-name">
+            ${actor.name}
+          </span>
+
+          <span class="fui-character-level">
+            NV. ${actor.system.level.value}
+          </span>
         </div>
 
         ${createBarResource("hp", hp)}
         ${createBarResource("mp", mp)}
         ${createIpResource(ip)}
       </div>
-
-      <div class="fui-character-status-effects"></div>
     </div>
   `;
 }
+
+// =====================================================
+// RESOURCE CREATION
+// =====================================================
 
 function createBarResource(type, resource) {
   const percentage =
@@ -41,11 +56,20 @@ function createBarResource(type, resource) {
       data-resource="${type}"
     >
       <div class="fui-resource-header">
-        <span class="fui-resource-label">${type.toUpperCase()}</span>
+        <span class="fui-resource-label">
+          ${type.toUpperCase()}
+        </span>
+
         <span class="fui-resource-value">
-          <span class="fui-resource-value-current">${resource.value}</span
-          ><span class="fui-resource-value-sep">/</span
-          ><span class="fui-resource-value-max">${resource.max}</span>
+          <span class="fui-resource-value-current">
+            ${resource.value}
+          </span>
+
+          <span class="fui-resource-value-sep">/</span>
+
+          <span class="fui-resource-value-max">
+            ${resource.max}
+          </span>
         </span>
       </div>
 
@@ -66,7 +90,9 @@ function createIpResource(resource) {
     const active = index < resource.value;
 
     return `
-        <span class="fui-ip-point ${active ? "fui-active" : ""}">${active ? "◆" : "◇"}</span>
+        <span class="fui-ip-point ${active ? "fui-active" : ""}">
+          ${active ? "◆" : "◇"}
+        </span>
       `;
   }).join("");
 
@@ -76,7 +102,9 @@ function createIpResource(resource) {
       data-resource="ip"
     >
       <div class="fui-resource-header">
-        <span class="fui-resource-label">PI</span>
+        <span class="fui-resource-label">
+          PI
+        </span>
       </div>
 
       <div class="fui-ip-points">
@@ -85,6 +113,34 @@ function createIpResource(resource) {
     </div>
   `;
 }
+
+function createStatusEffects(actor) {
+  const effects = actor.effects.contents.filter(
+    (effect) => effect.statuses?.size > 0 && effect.img,
+  );
+
+  return effects
+    .map((effect) => {
+      const statusName = effect.name ?? "Status";
+
+      return `
+        <div class="fui-status-icon">
+          <img
+            src="${effect.img}"
+            alt="${statusName}"
+          />
+          <span class="fui-status-tooltip">
+            ${statusName}
+          </span>
+        </div>
+      `;
+    })
+    .join("");
+}
+
+// =====================================================
+// RESOURCE UPDATES
+// =====================================================
 
 function updateBarResource(card, type, resource) {
   const resourceElement = card.querySelector(`[data-resource="${type}"]`);
@@ -97,7 +153,9 @@ function updateBarResource(card, type, resource) {
     resource.max > 0 ? (resource.value / resource.max) * 100 : 0;
 
   const fill = resourceElement.querySelector(".fui-resource-fill");
+
   const current = resourceElement.querySelector(".fui-resource-value-current");
+
   const max = resourceElement.querySelector(".fui-resource-value-max");
 
   if (fill) {
@@ -127,33 +185,54 @@ function updateIpResource(card, resource) {
 
   const pointsContainer = resourceElement.querySelector(".fui-ip-points");
 
-  if (pointsContainer) {
-    pointsContainer.innerHTML = Array.from(
-      { length: resource.max },
-      (_, index) => {
-        const active = index < resource.value;
-
-        return `<span class="fui-ip-point ${active ? "fui-active" : ""}">${active ? "◆" : "◇"}</span>`;
-      },
-    ).join("");
-  }
-}
-
-export function updateCharacterCard(actor, ui) {
-  const card = ui.querySelector(`[data-actor-id="${actor.id}"]`);
-
-  if (!card) {
+  if (!pointsContainer) {
     return;
   }
 
-  const hp = actor.system.resources.hp;
-  const mp = actor.system.resources.mp;
-  const ip = actor.system.resources.ip;
+  pointsContainer.innerHTML = Array.from(
+    { length: resource.max },
+    (_, index) => {
+      const active = index < resource.value;
 
+      return `
+        <span class="fui-ip-point ${active ? "fui-active" : ""}">
+          ${active ? "◆" : "◇"}
+        </span>
+      `;
+    },
+  ).join("");
+}
+// =====================================================
+// STATUS UPDATES
+// =====================================================
+
+function updateStatusEffects(card, actor) {
+  const container = card.querySelector(".fui-character-status-effects");
+  if (!container) {
+    return;
+  }
+  container.innerHTML = createStatusEffects(actor);
+}
+
+// =====================================================
+// CHARACTER CARD
+// =====================================================
+
+export function updateCharacterCard(actor, ui) {
+  const card = ui.querySelector(`[data-actor-id="${actor.id}"]`);
+  if (!card) {
+    return;
+  }
+  const { hp, mp, ip } = actor.system.resources;
   updateBarResource(card, "hp", hp);
   updateBarResource(card, "mp", mp);
   updateIpResource(card, ip);
+  updateStatusEffects(card, actor);
 }
+
+// =====================================================
+// ACTIVE COMBATANT
+// =====================================================
 
 export function updateActiveCombatant(combat, ui) {
   ui.querySelectorAll(".fui-character-card").forEach((card) => {

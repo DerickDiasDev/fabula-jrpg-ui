@@ -1,15 +1,18 @@
+// =====================================================
+// MENU VISIBILITY
+// =====================================================
+
 export function showMenu(menu) {
   if (!menu) return;
 
   menu.hidden = false;
-
   menu.classList.add("fui-ui-focused");
-
   menu.focus();
 
-  const commandMenu = menu
-    .closest("#fabula-jrpg-ui")
-    ?.querySelector(".fui-command");
+  const ui = menu.closest("#fabula-jrpg-ui");
+  if (!ui) return;
+
+  const commandMenu = ui.querySelector(".fui-command");
 
   if (commandMenu && menu.classList.contains("fui-submenu")) {
     commandMenu.classList.add("fui-submenu-open");
@@ -23,7 +26,6 @@ export function hideMenu(menu) {
   menu.hidden = true;
 
   const ui = menu.closest("#fabula-jrpg-ui");
-
   if (!ui) return;
 
   const commandMenu = ui.querySelector(".fui-command");
@@ -34,14 +36,31 @@ export function hideMenu(menu) {
   }
 }
 
+// =====================================================
+// ACTIVE SUBMENU
+// =====================================================
+
 export function getActiveSubmenu(ui) {
+  if (!ui) {
+    return null;
+  }
+
   return ui.querySelector(".fui-submenu:not([hidden])");
 }
 
+// =====================================================
+// HIDE ALL SUBMENUS
+// =====================================================
+
 export function hideAllSubmenus(ui) {
+  if (!ui) {
+    return;
+  }
+
   ui.querySelectorAll(".fui-submenu").forEach((menu) => {
     if (typeof menu._fabulaCleanup === "function") {
       menu._fabulaCleanup();
+      delete menu._fabulaCleanup;
     }
 
     menu.classList.remove("fui-ui-focused");
@@ -55,7 +74,15 @@ export function hideAllSubmenus(ui) {
   }
 }
 
+// =====================================================
+// RETURN TO COMMAND
+// =====================================================
+
 export function returnToCommand(ui) {
+  if (!ui) {
+    return;
+  }
+
   hideAllSubmenus(ui);
 
   const commandMenu = ui.querySelector(".fui-command");
@@ -79,7 +106,15 @@ export function returnToCommand(ui) {
   commandMenu.focus();
 }
 
+// =====================================================
+// CLOSE ACTIVE SUBMENU
+// =====================================================
+
 export function closeActiveSubmenu(ui) {
+  if (!ui) {
+    return false;
+  }
+
   const activeSubmenu = getActiveSubmenu(ui);
 
   if (!activeSubmenu) {
@@ -89,28 +124,40 @@ export function closeActiveSubmenu(ui) {
 
   if (typeof activeSubmenu._fabulaCleanup === "function") {
     activeSubmenu._fabulaCleanup();
+    delete activeSubmenu._fabulaCleanup;
   }
 
   activeSubmenu.hidden = true;
-
   activeSubmenu.classList.remove("ui-focused", "fui-ui-focused");
 
   destroyCanvasCursor(ui);
 
-  ui.querySelector(".fui-command")?.classList.add("fui-ui-focused");
+  const commandMenu = ui.querySelector(".fui-command");
 
-  ui.querySelector(".fui-command")?.focus();
+  if (commandMenu) {
+    commandMenu.classList.add("fui-ui-focused");
+    commandMenu.focus();
+  }
 
   return true;
 }
+
+// =====================================================
+// CANVAS CURSOR
+// =====================================================
+
 export function setCanvasCursor(ui, canvasCursor) {
-  if (!ui) return;
+  if (!ui) {
+    return;
+  }
 
   ui._fabulaCanvasCursor = canvasCursor;
 }
 
 export function destroyCanvasCursor(ui) {
-  if (!ui) return;
+  if (!ui) {
+    return;
+  }
 
   ui._fabulaCanvasCursor?.destroy();
   ui._fabulaCanvasCursor = null;

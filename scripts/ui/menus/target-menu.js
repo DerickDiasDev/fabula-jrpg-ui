@@ -1,14 +1,19 @@
 import { openTargetSelectMenu } from "./target-select-menu.js";
 import { showMenu, hideMenu, getActiveSubmenu } from "./menu-utils.js";
-import { createHudCursor } from "./hud-cursor.js";
-import { playUISound } from "./audio.js";
+import { createHudCursor } from "../shared/hud-cursor.js";
+import { playUISound } from "../shared/audio.js";
 
 export function openTargetCountMenu({ actor, action, actionType, ui }) {
   const previousMenu = getActiveSubmenu(ui) || ui.querySelector(".fui-command");
 
-  if (!previousMenu) return;
+  if (!previousMenu) {
+    return;
+  }
 
-  // Captura a posição ANTES de esconder o menu anterior.
+  // =====================================================
+  // CREATE TARGET MENU
+  // =====================================================
+
   const previousRect = previousMenu.getBoundingClientRect();
 
   hideMenu(previousMenu);
@@ -16,6 +21,11 @@ export function openTargetCountMenu({ actor, action, actionType, ui }) {
   const targetMenu = document.createElement("div");
 
   targetMenu.className = "fui-target-menu fui-submenu";
+  targetMenu.tabIndex = 0;
+
+  targetMenu.style.position = "fixed";
+  targetMenu.style.left = `${previousRect.left}px`;
+  targetMenu.style.top = `${previousRect.top}px`;
 
   const actionLabel =
     actionType === "skill"
@@ -28,64 +38,65 @@ export function openTargetCountMenu({ actor, action, actionType, ui }) {
 
   targetMenu.innerHTML = `
     <div class="fui-command-title">
-        Target
+      Target
     </div>
 
     <div class="fui-target-action">
-        ${actionLabel}${action ? ` / ${action.name}` : ""}
+      ${actionLabel}${action ? ` / ${action.name}` : ""}
     </div>
 
     <button
-        class="fui-command-button fui-target-count-button fui-active"
-        data-count="1"
+      class="fui-command-button fui-target-count-button fui-active"
+      data-count="1"
     >
-        1
+      1
     </button>
 
     <button
-        class="fui-command-button fui-target-count-button"
-        data-count="2"
+      class="fui-command-button fui-target-count-button"
+      data-count="2"
     >
-        2
+      2
     </button>
 
     <button
-        class="fui-command-button fui-target-count-button"
-        data-count="3"
+      class="fui-command-button fui-target-count-button"
+      data-count="3"
     >
-        3
+      3
     </button>
 
     <button
-        class="fui-command-button fui-target-count-button"
-        data-count="4"
+      class="fui-command-button fui-target-count-button"
+      data-count="4"
     >
-        4
+      4
     </button>
 
     <button
-        class="fui-command-button fui-target-count-button"
-        data-count="5"
+      class="fui-command-button fui-target-count-button"
+      data-count="5"
     >
-        5
+      5
     </button>
   `;
 
   ui.appendChild(targetMenu);
-
-  targetMenu.tabIndex = 0;
-
-  targetMenu.style.position = "fixed";
-  targetMenu.style.left = `${previousRect.left}px`;
-  targetMenu.style.top = `${previousRect.top}px`;
-
   showMenu(targetMenu);
+
+  // =====================================================
+  // STATE
+  // =====================================================
 
   const buttons = targetMenu.querySelectorAll(".fui-target-count-button");
 
   const cursor = createHudCursor(targetMenu);
 
   let selectedCount = 1;
+
+  // =====================================================
+  // UPDATE SELECTION
+  // =====================================================
 
   function updateSelection() {
     buttons.forEach((button, index) => {
@@ -95,10 +106,18 @@ export function openTargetCountMenu({ actor, action, actionType, ui }) {
     cursor.update(buttons[selectedCount - 1]);
   }
 
+  // =====================================================
+  // CLOSE
+  // =====================================================
+
   function closeTargetCountMenu() {
     hideMenu(targetMenu);
     showMenu(previousMenu);
   }
+
+  // =====================================================
+  // CONFIRM
+  // =====================================================
 
   function confirmTargetCount() {
     openTargetSelectMenu({
@@ -111,6 +130,10 @@ export function openTargetCountMenu({ actor, action, actionType, ui }) {
     });
   }
 
+  // =====================================================
+  // MOUSE
+  // =====================================================
+
   buttons.forEach((button) => {
     button.addEventListener("mouseenter", () => {
       const newCount = Number(button.dataset.count);
@@ -120,17 +143,26 @@ export function openTargetCountMenu({ actor, action, actionType, ui }) {
       }
 
       selectedCount = newCount;
+
       updateSelection();
+
       playUISound("navigate");
     });
 
     button.addEventListener("click", () => {
       selectedCount = Number(button.dataset.count);
+
       updateSelection();
+
       playUISound("confirm");
+
       confirmTargetCount();
     });
   });
+
+  // =====================================================
+  // KEYBOARD
+  // =====================================================
 
   targetMenu.addEventListener("keydown", (event) => {
     if (event.key === "ArrowDown") {
@@ -140,6 +172,7 @@ export function openTargetCountMenu({ actor, action, actionType, ui }) {
       selectedCount = (selectedCount % buttons.length) + 1;
 
       updateSelection();
+
       playUISound("navigate");
     }
 
@@ -151,6 +184,7 @@ export function openTargetCountMenu({ actor, action, actionType, ui }) {
         ((selectedCount - 2 + buttons.length) % buttons.length) + 1;
 
       updateSelection();
+
       playUISound("navigate");
     }
 
@@ -159,6 +193,7 @@ export function openTargetCountMenu({ actor, action, actionType, ui }) {
       event.stopPropagation();
 
       playUISound("confirm");
+
       confirmTargetCount();
     }
 
@@ -167,9 +202,14 @@ export function openTargetCountMenu({ actor, action, actionType, ui }) {
       event.stopPropagation();
 
       playUISound("cancel");
+
       closeTargetCountMenu();
     }
   });
+
+  // =====================================================
+  // INITIAL SELECTION
+  // =====================================================
 
   updateSelection();
 

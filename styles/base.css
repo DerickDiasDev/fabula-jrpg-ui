@@ -1,28 +1,30 @@
+/* =========================================
+   FABULA JRPG UI
+   ========================================= */
+
 #fabula-jrpg-ui {
   position: fixed;
   inset: 0;
-
-  z-index: 10000;
-
+  z-index: 10;
   pointer-events: none;
-
   outline: none;
 }
+
+#fabula-jrpg-ui:has(.fui-command.fui-ui-focused) {
+  z-index: 1000;
+}
+
+/* =========================================
+   HIDDEN
+   ========================================= */
 
 [hidden] {
   display: none !important;
 }
 
-@keyframes focus-pulse {
-  0%,
-  100% {
-    opacity: 0.35;
-  }
-
-  50% {
-    opacity: 1;
-  }
-}
+/* =========================================
+   HUD EDIT MODE
+   ========================================= */
 
 #fabula-jrpg-ui.fui-hud-editing::before {
   content: "HUD EDIT MODE";
@@ -30,98 +32,24 @@
   top: 20px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 10005;
-
+  z-index: 30;
   padding: 6px 14px;
-
   font-family: "Playpen Sans", cursive;
   font-size: 12px;
   letter-spacing: 0.08em;
-
   color: #fff;
   background: rgba(20, 20, 24, 0.9);
   border: 1px solid rgba(255, 255, 255, 0.5);
   border-radius: 4px;
-
   pointer-events: none;
 }
 
-#fabula-jrpg-ui.fui-hud-editing .fui-hud-editable {
-  cursor: move;
-  outline: 1px dashed rgba(255, 255, 255, 0.5);
-  outline-offset: 4px;
-}
-
-.fui-hud-edit-panel {
-  position: fixed;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 10006;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-
-  min-width: 280px;
-  padding: 12px 16px;
-
-  box-sizing: border-box;
-
-  font-family: "Playpen Sans", cursive;
-
-  background: rgba(20, 20, 24, 0.94);
-  border: 1px solid rgba(255, 255, 255, 0.45);
-  border-radius: 6px;
-
-  box-shadow:
-    0 8px 24px rgba(0, 0, 0, 0.45),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
-
-  pointer-events: auto;
-}
-
-.fui-hud-edit-title {
-  color: #fff;
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-}
-
-.fui-hud-edit-help {
-  color: rgba(255, 255, 255, 0.65);
-  font-size: 11px;
-  text-align: center;
-}
-
-.fui-hud-edit-actions {
-  display: flex;
-  gap: 8px;
-}
-
-.fui-hud-edit-actions button {
-  padding: 6px 12px;
-
-  color: #fff;
-  background: rgba(255, 255, 255, 0.08);
-
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  border-radius: 4px;
-
-  font-family: inherit;
-  font-size: 11px;
-
-  cursor: pointer;
-}
-
-.fui-hud-edit-actions button:hover {
-  background: rgba(255, 255, 255, 0.16);
-}
+/* =========================================
+   HUD EDITABLE ELEMENTS
+   ========================================= */
 
 #fabula-jrpg-ui.fui-hud-editing .fui-hud-editable {
   cursor: move;
-
   outline: 1px dashed rgba(255, 255, 255, 0.6);
   outline-offset: 4px;
 }
@@ -131,16 +59,94 @@
   opacity: 0.85;
 }
 
+/* =========================================
+   HUD EDIT PANEL
+   ========================================= */
+
+.fui-hud-edit-panel {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  min-width: 280px;
+  padding: 12px 16px;
+  box-sizing: border-box;
+  font-family: "Playpen Sans", cursive;
+  background: rgba(20, 20, 24, 0.94);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: 6px;
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  pointer-events: auto;
+}
+
+/* =========================================
+   EDIT PANEL TITLE
+   ========================================= */
+
+.fui-hud-edit-title {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+/* =========================================
+   EDIT PANEL HELP
+   ========================================= */
+
+.fui-hud-edit-help {
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 11px;
+  text-align: center;
+}
+
+/* =========================================
+   EDIT PANEL ACTIONS
+   ========================================= */
+
+.fui-hud-edit-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.fui-hud-edit-actions button {
+  padding: 6px 12px;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.fui-hud-edit-actions button:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+/* =========================================
+   COMMAND WRAPPER
+   ========================================= */
+
 .fui-command-wrapper {
   position: absolute;
   left: 24px;
   bottom: 30px;
-
   width: fit-content;
   height: fit-content;
-
   pointer-events: auto;
 }
+
+/* =========================================
+   PARTY WRAPPER
+   ========================================= */
 
 .fui-party-wrapper {
   position: absolute;
@@ -154,6 +160,10 @@
   align-items: flex-end;
   pointer-events: auto;
 }
+
+/* =========================================
+   SCALE VALUE
+   ========================================= */
 
 .fui-scale-value {
   min-width: 42px;

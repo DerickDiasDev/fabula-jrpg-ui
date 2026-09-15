@@ -1,22 +1,26 @@
 const CURSOR_TEXTURE_PATH = "modules/fabula-jrpg-ui/assets/cursor.png";
 
-const CURSOR_SCALE = 1.5;
-const CURSOR_OFFSET_Y = -120;
+const CURSOR_SCALE = 1.7;
+const CURSOR_OFFSET_Y = -140;
 const CURSOR_ROTATION = Math.PI / 2;
 
 const CURSOR_ANIMATION_DISTANCE = 8;
 const CURSOR_ANIMATION_SPEED = 0.08;
+
+function createUnavailableCursor() {
+  return {
+    setFocusedToken() {},
+    setSelectedTokens() {},
+    destroy() {},
+  };
+}
 
 export function createCanvasCursor() {
   const canvasGroup = canvas?.interface;
 
   if (!canvasGroup) {
     console.warn("Canvas Cursor | Interface canvas não disponível.");
-    return {
-      setFocusedToken() {},
-      setSelectedTokens() {},
-      destroy() {},
-    };
+    return createUnavailableCursor();
   }
 
   let cursorTexture = null;
@@ -24,8 +28,15 @@ export function createCanvasCursor() {
   let selectedTokens = [];
   let entries = [];
   let destroyed = false;
-
   let tickerAttached = false;
+
+  function isSelectedToken(token) {
+    return selectedTokens.includes(token);
+  }
+
+  function findEntry(token) {
+    return entries.find((entry) => entry.token === token);
+  }
 
   function createSprite(token, animated) {
     if (!cursorTexture || !token) {
@@ -34,14 +45,13 @@ export function createCanvasCursor() {
 
     const sprite = new PIXI.Sprite(cursorTexture);
 
-    sprite.anchor.set(0.5, 1);
+    sprite.anchor.set(0.5, 0.5);
     sprite.scale.set(CURSOR_SCALE);
     sprite.rotation = CURSOR_ROTATION;
-    sprite.zIndex = 10000;
 
+    sprite.zIndex = 10000;
     sprite.eventMode = "none";
     sprite.interactiveChildren = false;
-
     sprite.visible = true;
     sprite.renderable = true;
 
@@ -79,18 +89,12 @@ export function createCanvasCursor() {
       return;
     }
 
-    const tokenHeight = token.height ?? 0;
-
-    entry.baseY = center.y - tokenHeight / 2 + CURSOR_OFFSET_Y;
-
     entry.sprite.x = center.x;
+    entry.baseY = center.y + CURSOR_OFFSET_Y;
 
-    if (entry.animated) {
-      entry.sprite.y =
-        entry.baseY + Math.sin(entry.phase) * CURSOR_ANIMATION_DISTANCE;
-    } else {
-      entry.sprite.y = entry.baseY;
-    }
+    entry.sprite.y = entry.animated
+      ? entry.baseY + Math.sin(entry.phase) * CURSOR_ANIMATION_DISTANCE
+      : entry.baseY;
 
     entry.sprite.visible = true;
   }
@@ -104,22 +108,12 @@ export function createCanvasCursor() {
     entry.sprite.destroy();
   }
 
-  function isSelectedToken(token) {
-    return selectedTokens.includes(token);
-  }
-
-  function findEntry(token) {
-    return entries.find((entry) => entry.token === token);
-  }
-
-  function rebuildEntries() {
-    if (destroyed || !cursorTexture) {
-      return;
-    }
-
+  function clearEntries() {
     entries.forEach(destroyEntry);
     entries = [];
+  }
 
+  function getCursorTokens() {
     const tokens = [];
 
     if (focusedToken) {
@@ -144,7 +138,19 @@ export function createCanvasCursor() {
       });
     });
 
-    tokens.forEach(({ token, animated }) => {
+    return tokens;
+  }
+
+  function rebuildEntries() {
+    if (destroyed || !cursorTexture) {
+      return;
+    }
+
+    clearEntries();
+
+    const cursorTokens = getCursorTokens();
+
+    cursorTokens.forEach(({ token, animated }) => {
       const entry = createSprite(token, animated);
 
       if (entry) {
@@ -175,7 +181,7 @@ export function createCanvasCursor() {
     });
   }
 
-  function sync() {
+  function syncEntries() {
     if (destroyed || !cursorTexture) {
       return;
     }
@@ -206,8 +212,16 @@ export function createCanvasCursor() {
     }
 
     canvas.app.ticker.add(updateAnimationState);
-
     tickerAttached = true;
+  }
+
+  function detachTicker() {
+    if (!tickerAttached || !canvas?.app?.ticker) {
+      return;
+    }
+
+    canvas.app.ticker.remove(updateAnimationState);
+    tickerAttached = false;
   }
 
   function loadTexture() {
@@ -276,13 +290,8 @@ export function createCanvasCursor() {
 
     destroyed = true;
 
-    if (tickerAttached && canvas?.app?.ticker) {
-      canvas.app.ticker.remove(updateAnimationState);
-      tickerAttached = false;
-    }
-
-    entries.forEach(destroyEntry);
-    entries = [];
+    detachTicker();
+    clearEntries();
 
     focusedToken = null;
     selectedTokens = [];

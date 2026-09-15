@@ -6,25 +6,17 @@
 
 .fui-target-select-menu {
   position: fixed;
-
-  z-index: 10001;
-
+  z-index: 20;
   width: 220px;
   height: 264.25px;
-
   box-sizing: border-box;
-
   display: flex;
   flex-direction: column;
-
   gap: 0;
-
-  padding: 22px 20px 16px 20px;
-
+  padding: 22px 20px 16px;
   background: transparent;
   border: none;
   outline: none;
-
   pointer-events: auto;
 }
 
@@ -39,19 +31,14 @@
 
 .fui-target-select-menu::before {
   content: "";
-
   position: absolute;
   inset: 0;
-
   z-index: -1;
-
   background-image: url("../assets/moldura-submenu.svg");
   background-size: 100% 100%;
   background-repeat: no-repeat;
-
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-
   pointer-events: none;
 }
 
@@ -61,27 +48,18 @@
 
 .fui-target-select-menu .fui-command-title {
   position: absolute;
-
   top: -18px;
   left: 28px;
-
   padding: 0;
-
   font-family: "Playpen Sans", cursive;
   font-size: 20px;
   font-weight: 600;
-
   letter-spacing: 0.06em;
-
   white-space: nowrap;
-
   color: #eef1f7;
-
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
-
   background: none;
   border: none;
-
   pointer-events: none;
 }
 
@@ -91,24 +69,16 @@
 
 .fui-target-select-menu .fui-target-action {
   flex-shrink: 0;
-
   display: flex;
   align-items: center;
-
   min-height: 20px;
-
   margin-bottom: 6px;
-
   padding: 0 4px;
-
   font-family: "Playpen Sans", cursive;
   font-size: 13px;
   font-weight: 400;
-
   color: rgba(255, 255, 255, 0.75);
-
   white-space: nowrap;
-
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -119,18 +89,13 @@
 
 .fui-target-select-menu .fui-target-list {
   position: relative;
-
   display: flex;
   flex-direction: column;
-
   gap: 0;
-
   flex: 1;
   min-height: 0;
-
   overflow-y: auto;
   overflow-x: hidden;
-
   scrollbar-width: none;
 }
 
@@ -144,10 +109,8 @@
 
 .fui-target-select-menu .fui-target-group {
   flex-shrink: 0;
-
   display: flex;
   flex-direction: column;
-
   gap: 0;
 }
 
@@ -157,21 +120,78 @@
 
 .fui-target-select-menu .fui-target-group-title {
   height: 24px;
-
   box-sizing: border-box;
-
   display: flex;
   align-items: center;
-
+  justify-content: center;
   padding: 0 4px;
-
   font-family: "Playpen Sans", cursive;
   font-size: 11px;
   font-weight: 600;
-
   letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.6);
+}
 
-  color: rgba(255, 255, 255, 0.45);
+.fui-target-select-menu .fui-target-group-title-text {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 72px;
+  transition:
+    color 0.2s ease,
+    text-shadow 0.2s ease;
+}
+
+.fui-target-select-menu .fui-target-group-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  font-family: Arial, sans-serif;
+  font-size: 9px;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.7);
+  opacity: 0.45;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease,
+    color 0.2s ease;
+  pointer-events: none;
+}
+
+@keyframes fui-target-arrow-breathe-left {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: translateX(0);
+  }
+
+  50% {
+    opacity: 0.9;
+    transform: translateX(-2px);
+  }
+}
+
+@keyframes fui-target-arrow-breathe-right {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: translateX(0);
+  }
+
+  50% {
+    opacity: 0.9;
+    transform: translateX(2px);
+  }
+}
+
+.fui-target-select-menu.fui-ui-focused .fui-target-group-arrow-left {
+  animation: fui-target-arrow-breathe-left 2s ease-in-out infinite;
+}
+
+.fui-target-select-menu.fui-ui-focused .fui-target-group-arrow-right {
+  animation: fui-target-arrow-breathe-right 2s ease-in-out infinite;
 }
 
 /* =========================================
@@ -180,25 +200,17 @@
 
 .fui-target-select-menu .fui-target-button {
   position: relative;
-
   display: flex;
   align-items: center;
   justify-content: flex-start;
-
   gap: 8px;
-
   width: calc(100% - 10px);
   height: 40px;
-
   flex-shrink: 0;
-
   box-sizing: border-box;
-
   padding: 0 18px;
-
   border: 1px solid transparent;
   border-radius: 12px;
-
   background:
     linear-gradient(
         90deg,
@@ -212,21 +224,14 @@
         rgba(255, 255, 255, 0.05) 100%
       )
       border-box;
-
   color: rgba(255, 255, 255, 0.85);
-
   font-family: "Playpen Sans", cursive;
   font-size: 16px;
   font-weight: 300;
-
   letter-spacing: -0.06em;
-
   text-align: left;
-
   cursor: pointer;
-
   outline: none;
-
   transition:
     width 0.12s ease,
     box-shadow 0.12s ease,
@@ -266,7 +271,6 @@
         rgba(255, 255, 255, 0.1) 100%
       )
       border-box;
-
   color: #ffffff;
 }
 
@@ -284,17 +288,13 @@
 
 .fui-target-select-menu .fui-target-name {
   flex: 1;
-
   min-width: 0;
-
   overflow: hidden;
-
   white-space: nowrap;
 }
 
 .fui-target-select-menu .fui-target-name-inner {
   display: inline-block;
-
   will-change: transform;
 }
 
@@ -325,13 +325,9 @@
 
 .fui-target-select-menu .fui-target-button.fui-selected::after {
   content: "✓";
-
   flex: 0 0 auto;
-
   margin-left: auto;
-
   color: rgba(255, 255, 255, 0.8);
-
   font-family: "Playpen Sans", cursive;
   font-size: 13px;
 }
@@ -342,23 +338,16 @@
 
 .fui-target-select-menu .fui-target-count {
   flex-shrink: 0;
-
   height: 22px;
-
   box-sizing: border-box;
-
   display: flex;
   align-items: flex-end;
   justify-content: flex-end;
-
-  padding: 4px 4px 0 4px;
-
+  padding: 4px 4px 0;
   font-family: "Playpen Sans", cursive;
   font-size: 11px;
   font-weight: 400;
-
   color: rgba(255, 255, 255, 0.45);
-
   white-space: nowrap;
 }
 
@@ -368,21 +357,15 @@
 
 .fui-target-select-menu .fui-target-scrollbar {
   position: absolute;
-
   top: 48px;
   right: 16px;
-
   width: 7px;
   height: 174px;
-
   display: flex;
   flex-direction: column;
   align-items: center;
-
   pointer-events: none;
-
   opacity: 0;
-
   transition: opacity 0.12s ease;
 }
 
@@ -392,27 +375,19 @@
 
 .fui-target-select-menu .fui-target-scrollbar-track {
   position: relative;
-
   width: 3px;
-
   flex: 1;
-
   background: transparent;
 }
 
 .fui-target-select-menu .fui-target-scrollbar-thumb {
   position: absolute;
-
   top: 0;
   left: 0;
-
   width: 3px;
   height: 40px;
-
   border-radius: 3px;
-
   background: rgba(255, 255, 255, 0.4);
-
   transition:
     background 0.12s ease,
     width 0.12s ease;
@@ -421,15 +396,12 @@
 .fui-target-select-menu .fui-target-scrollbar-arrow {
   width: 0;
   height: 0;
-
   flex: 0 0 auto;
-
   opacity: 0.65;
 }
 
 .fui-target-select-menu .fui-target-scrollbar-arrow-up {
   margin-bottom: 3px;
-
   border-left: 3px solid transparent;
   border-right: 3px solid transparent;
   border-bottom: 4px solid rgba(255, 255, 255, 0.85);
@@ -437,8 +409,75 @@
 
 .fui-target-select-menu .fui-target-scrollbar-arrow-down {
   margin-top: 3px;
-
   border-left: 3px solid transparent;
   border-right: 3px solid transparent;
   border-top: 4px solid rgba(255, 255, 255, 0.85);
+}
+
+/* =========================================
+   TARGET GROUP SWIPE
+   ========================================= */
+
+.fui-target-select-menu .fui-target-group.fui-target-group-enter-left {
+  animation: fui-target-group-enter-left 0.18s ease-out both;
+}
+
+.fui-target-select-menu .fui-target-group.fui-target-group-enter-right {
+  animation: fui-target-group-enter-right 0.18s ease-out both;
+}
+
+.fui-target-select-menu .fui-target-group.fui-target-group-exit-left {
+  animation: fui-target-group-exit-left 0.18s ease-in both;
+}
+
+.fui-target-select-menu .fui-target-group.fui-target-group-exit-right {
+  animation: fui-target-group-exit-right 0.18s ease-in both;
+}
+
+@keyframes fui-target-group-enter-left {
+  from {
+    opacity: 0;
+    transform: translateX(-28px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fui-target-group-enter-right {
+  from {
+    opacity: 0;
+    transform: translateX(28px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fui-target-group-exit-left {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateX(-28px);
+  }
+}
+
+@keyframes fui-target-group-exit-right {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateX(28px);
+  }
 }

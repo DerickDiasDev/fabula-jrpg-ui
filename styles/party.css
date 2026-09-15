@@ -1,16 +1,10 @@
 @import url("https://fonts.googleapis.com/css2?family=Gabriela&display=swap");
 
-/* =========================================
-   PARTY STATS (outer glass frame)
-   Responsivo ao número de membros
-   ========================================= */
-
 .fui-party-stats {
   position: relative;
   left: auto;
   bottom: auto;
   transform: none;
-
   display: flex;
   align-items: flex-end;
   gap: 16px;
@@ -18,129 +12,60 @@
   max-width: calc(100vw - 340px);
   padding: 22px 16px 14px;
   box-sizing: border-box;
-  background: rgba(12, 16, 24, 0.4);
-  backdrop-filter: blur(14px) saturate(140%);
-  -webkit-backdrop-filter: blur(14px) saturate(140%);
-  border: 1px solid transparent;
-  border-image: linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.85) 0%,
-      rgba(255, 255, 255, 0.05) 35%,
-      rgba(255, 255, 255, 0.05) 65%,
-      rgba(255, 255, 255, 0.45) 100%
-    )
-    1;
-  border-radius: 6px;
-  box-shadow:
-    0 8px 24px rgba(0, 0, 0, 0.45),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
   pointer-events: auto;
 }
 
-/* =========================================
-   PARTY STATS BANNER
-   (sem blur — em texto pequeno o blur cria
-   um risco/artefato no meio)
-   ========================================= */
-
-.fui-party-stats::after {
-  content: "PARTY";
-
-  position: absolute;
-
-  top: -13px;
-  left: 50%;
-
-  transform: translateX(-50%);
-
-  padding: 4px 26px;
-
-  font-family: "Gabriela", serif;
-  font-size: 12px;
-  font-weight: 700;
-
-  letter-spacing: 0.16em;
-
-  color: #eef1f7;
-
-  background: rgb(20, 24, 34);
-
-  border: 1px solid transparent;
-
-  border-image: linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.8) 0%,
-      rgba(255, 255, 255, 0.05) 35%,
-      rgba(255, 255, 255, 0.05) 65%,
-      rgba(255, 255, 255, 0.4) 100%
-    )
-    1;
-
-  border-radius: 4px;
-
-  box-shadow: 0 0 12px rgba(140, 180, 255, 0.25);
-
-  pointer-events: none;
-}
-
-/* =========================================
-   CHARACTER CARD (sem background próprio)
-   ========================================= */
-
 .fui-character-card {
   position: relative;
+  isolation: isolate;
   display: flex;
   flex-direction: column;
-
   flex: 0 1 190px;
   width: 190px;
   max-width: 190px;
   min-width: 0;
-
+  min-height: 0;
   padding: 8px;
   box-sizing: border-box;
-
   background: transparent;
   border: none;
-
-  transition: transform 0.2s ease;
+  opacity: 1;
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
 }
 
-/* =========================================
-   MOLDURA (todos os cards)
-   ========================================= */
-
-.fui-character-card::before {
+.fui-character-card::after {
   content: "";
-
   position: absolute;
-
-  inset: -8px;
-
-  z-index: -1;
-
-  background-image: url("../assets/moldura.svg");
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-
+  inset: -6px;
+  z-index: -2;
+  background: rgba(12, 16, 24, 0.35);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 8px;
   pointer-events: none;
 }
 
-/* =========================================
-   ACTIVE TURN
-   ========================================= */
+.fui-character-card::before {
+  content: "";
+  position: absolute;
+  inset: -8px;
+  z-index: -1;
+  background-image: url("../assets/moldura.svg");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  pointer-events: none;
+}
 
 .fui-character-card.fui-active-turn {
   transform: translateY(-8px);
+  opacity: 1;
 }
 
 .fui-character-card.fui-active-turn::before {
   background-image: url("../assets/moldura-active.svg");
 }
-
-/* =========================================
-   CHARACTER NAME + LEVEL
-   ========================================= */
 
 .fui-character-name-row {
   display: flex;
@@ -152,13 +77,9 @@
   font-family: "Gabriela", serif;
   font-size: 14px;
   font-weight: 600;
-
   letter-spacing: 0.02em;
-
   line-height: 1.1;
-
   color: #f2f4fa;
-
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
 }
 
@@ -166,34 +87,20 @@
   font-family: "Gabriela", serif;
   font-size: 11px;
   font-weight: 700;
-
   letter-spacing: 0.04em;
-
   line-height: 1.1;
-
   color: rgba(238, 241, 247, 0.7);
-
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
 }
 
-/* =========================================
-   PORTRAIT
-   ========================================= */
-
 .fui-character-portrait {
   position: relative;
-
   width: 100%;
   aspect-ratio: 1 / 1;
-
   overflow: hidden;
-
   box-sizing: border-box;
-
   background: rgba(0, 0, 0, 0.3);
-
   border: 1px solid transparent;
-
   border-image: linear-gradient(
       180deg,
       rgba(255, 255, 255, 0.7) 0%,
@@ -202,56 +109,39 @@
       rgba(255, 255, 255, 0.35) 100%
     )
     1;
-
   border-radius: 3px;
 }
 
 .fui-character-portrait::after {
   content: "";
-
   position: absolute;
-
   inset: 0;
-
   box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
-
   pointer-events: none;
+  z-index: 4;
 }
 
 .fui-character-portrait img {
   display: block;
-
   width: 100%;
   height: 100%;
-
   object-fit: cover;
 }
-
-/* =========================================
-   RESOURCES
-   ========================================= */
 
 .fui-character-resources {
   display: flex;
   flex-direction: column;
-
   width: 100%;
-
   margin-top: 7px;
-
   gap: 5px;
 }
 
 .fui-character-resource {
   display: flex;
   flex-direction: column;
-
   width: 100%;
-
   gap: 2px;
-
   font-family: "Gabriela", serif;
-
   color: #eef1f7;
 }
 
@@ -264,26 +154,18 @@
 .fui-resource-label {
   font-size: 11px;
   font-weight: 400;
-
   letter-spacing: 0.06em;
-
-  color: rgba(238, 241, 247, 0.75);
-
   line-height: 1;
-
+  color: rgba(238, 241, 247, 0.75);
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
 }
 
 .fui-resource-value {
   font-size: 20px;
   font-weight: 700;
-
   line-height: 1;
-
   white-space: nowrap;
-
   font-variant-numeric: tabular-nums;
-
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
 }
 
@@ -291,134 +173,149 @@
 .fui-resource-value-sep {
   font-size: 0.75em;
   font-weight: 600;
-
   color: rgba(238, 241, 247, 0.7);
 }
 
-/* =========================================
-   RESOURCE BAR
-   ========================================= */
-
 .fui-resource-bar {
   position: relative;
-
   width: 100%;
   height: 8px;
-
   overflow: hidden;
-
   background: rgba(255, 255, 255, 0.1);
-
   border: 1px solid rgba(255, 255, 255, 0.2);
-
   border-radius: 2px;
-
   box-sizing: border-box;
 }
 
 .fui-resource-fill {
   height: 100%;
-
   transition: width 0.3s ease;
 }
 
-/* =========================================
-   HP
-   ========================================= */
-
 .fui-resource-fill.fui-hp {
   background: linear-gradient(90deg, #3fdb6c 0%, #7ef29a 100%);
-
   box-shadow: 0 0 6px rgba(63, 219, 108, 0.7);
 }
 
-/* =========================================
-   HP CRISIS MARKER
-   ========================================= */
-
 .fui-resource-crisis-marker {
   position: absolute;
-
   left: 50%;
   top: 0;
   bottom: 0;
-
   width: 1px;
-
   z-index: 2;
-
   background: rgba(255, 255, 255, 0.6);
 }
 
-/* =========================================
-   CRISIS
-   ========================================= */
-
 .fui-character-resource.fui-resource-critical .fui-resource-fill.fui-hp {
   background: linear-gradient(90deg, #b8c93f 0%, #d9e37e 100%);
-
   box-shadow: 0 0 6px rgba(184, 201, 63, 0.7);
 }
 
-/* =========================================
-   MP
-   ========================================= */
-
 .fui-resource-fill.fui-mp {
   background: linear-gradient(90deg, #3f9fdb 0%, #7ecbff 100%);
-
   box-shadow: 0 0 6px rgba(63, 159, 219, 0.7);
 }
 
-/* =========================================
-   PI (bright glowing yellow)
-   ========================================= */
-
 .fui-ip-points {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(11, 1fr);
+  grid-template-rows: repeat(2, 14px);
   align-items: center;
-
-  gap: 3px;
-
+  justify-items: center;
+  width: 100%;
   min-width: 0;
-
   margin-top: 2px;
+  row-gap: 1px;
+  min-height: 29px;
 }
 
 .fui-ip-point {
-  display: inline-flex;
-
+  display: flex;
   align-items: center;
   justify-content: center;
-
+  width: 14px;
+  height: 14px;
   font-size: 13px;
   line-height: 1;
-
   color: rgba(255, 255, 255, 0.25);
 }
 
 .fui-ip-point.fui-active {
   color: #ffe066;
-
   text-shadow:
     0 0 4px #ffe066,
     0 0 8px rgba(255, 224, 102, 0.8);
 }
 
-/* =========================================
-   STATUS EFFECTS
-   ========================================= */
-
 .fui-character-status-effects {
   position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  grid-auto-rows: 20px;
+  align-items: center;
+  justify-items: center;
+  gap: 1px;
+  min-height: 22px;
+  padding: 3px 5px;
+  box-sizing: border-box;
+  pointer-events: auto;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(0, 0, 0, 0.35) 30%,
+    rgba(0, 0, 0, 0.8) 100%
+  );
+  z-index: 5;
+}
 
-  right: -22px;
-  top: 8px;
-
+.fui-status-icon {
+  position: relative;
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  box-sizing: border-box;
+}
 
-  gap: 3px;
+.fui-status-icon img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.8));
+}
 
+.fui-status-tooltip {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 6px);
+  transform: translateX(-50%);
+  padding: 4px 8px;
+  white-space: nowrap;
+  font-family: "Gabriela", serif;
+  font-size: 11px;
+  line-height: 1;
+  color: #eef1f7;
+  background: rgba(12, 16, 24, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 3px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  visibility: hidden;
   pointer-events: none;
+  transition:
+    opacity 0.15s ease,
+    transform 0.15s ease;
+  z-index: 20;
+}
+
+.fui-status-icon:hover .fui-status-tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(-2px);
 }
