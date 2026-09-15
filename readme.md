@@ -1,412 +1,125 @@
 # Fabula JRPG UI
 
-A custom JRPG-style combat interface for **Fabula Ultima** running on **Foundry Virtual Tabletop**.
+A JRPG-style combat interface for **Fabula Ultima**, built for the **Project FU** system on Foundry Virtual Tabletop.
 
-The project aims to provide a more game-like combat experience inspired by classic and modern JRPGs, while keeping **Project FU** as the source of truth for Fabula Ultima's rules and action execution.
-
-> **Status:** _Work in Progress_
-
-## Overview
-
-Fabula JRPG UI replaces parts of the standard Foundry interaction flow with a custom combat interface designed around the structure commonly found in JRPGs.
-
-The current focus is combat rather than replacing the complete character sheet or Foundry's entire UI.
-
-The main interaction flow is:
-
-```text
-COMMAND
-
- ├── ATTACK
- ├── SKILL
- ├── STUDY
- ├── EQUIPMENT
- ├── GUARD
- ├── ITEM
- ├── HINDER
- └── OBJECTIVE
-```
-
-Actions that require targets continue through a target-selection flow:
-
-```text
-COMMAND
-   ↓
-ACTION
-   ↓
-TARGET COUNT
-   ↓
-TARGET SELECT
-   ↓
-CONFIRM
-   ↓
-EXECUTE
-```
-
-The UI is responsible for presenting and collecting player input. Project FU remains responsible for executing the underlying Fabula Ultima rules whenever possible.
-
-## Screenshots
-
-### Command Menu
-
-The Command menu provides keyboard and mouse-driven access to the character's available combat actions.
-
-![Fabula JRPG UI - Command Menu](assets/screenshots/jrpg-ui-command-focus.png)
-
-### Full Combat UI
-
-The current interface combines the Command menu with the Party HUD and character combat information.
-
-![Fabula JRPG UI - Full View](assets/screenshots/jrpg-ui-full-view.png)
+Fabula JRPG UI provides an immersive combat HUD inspired by classic console JRPG battle interfaces.
 
 ## Features
 
-### Combat Command Menu
-
-- Attack
-- Skill
-- Study
-- Equipment
-- Guard
-- Item
-- Hinder
-- Objective
-- Actor-aware command state
+- JRPG-style combat command menu
+- Attack, Skill, Item, Study, Guard, Equipment, Hinder and Objective actions
+- Weapon and skill selection
+- Manual target count selection
+- Party and enemy target selection
+- Multi-target selection
+- Visual target cursor on the Foundry canvas
+- Active combatant highlighting
+- Party HUD with character portraits
+- HP, MP and IP display
+- Active status effect display
+- KO state visualization
+- UI navigation and interaction sounds
+- Configurable UI sound volume
+- Customizable HUD scale and position
 - Keyboard and mouse navigation
-- Command focus state
+- Multiplayer-compatible combat HUD
 
-### Action Menus
+## Requirements
 
-- Weapon-based Attack selection
-- Skill selection
-- Consumable Item selection
-- Skill resource cost display
-- Item IP cost display
-- Keyboard navigation
-- Mouse hover navigation
-- Scrolling support
-- Long action name marquee animation
-- Dynamic action lists based on the selected actor
+- Foundry Virtual Tabletop v14
+- Project FU
 
-### Party HUD
+Fabula JRPG UI is designed specifically for the Project FU system.
 
-- Character portraits pulled directly from Project FU Actors
-- Character name and level display
-- HP and MP resource bars
-- HP Crisis indicator
-- IP point display
-- Active combatant indication
-- Dynamic character information updates
-- Active status effect indicators
-- Status effect tooltips
-- SVG-based ornamental frames
-- Active-turn visual state
-- Inactive character opacity state
+## Installation
 
-### Target Selection
+### From Foundry
 
-- Party and enemy grouping
-- Manual target selection
-- Multiple target selection
-- Configurable target count
-- Target selection independent of ally/enemy restrictions
-- Visual Canvas Token cursor
-- Selected target highlighting
-- Target group navigation
-- Animated target group transitions
-- Target list scrolling
-- Long target name marquee animation
-- Keyboard and mouse navigation
+Once the module is available in the Foundry package browser:
 
-Target restrictions are intentionally handled through player selection rather than attempting to reproduce every possible Fabula Ultima targeting rule inside the UI.
+1. Open **Add-on Modules**.
+2. Select **Install Module**.
+3. Search for **Fabula JRPG UI**.
+4. Install and enable the module in your world.
 
-This allows abilities with unusual targeting behavior to remain compatible with the underlying Project FU rules.
+### Manual Installation
 
-### Confirmation
-
-- Action confirmation menu
-- Selected action display
-- Selected target display
-- Confirm / Cancel navigation
-- Keyboard and mouse interaction
-- Canvas target cursor cleanup after confirmation
-
-### Audio Feedback
-
-The combat interface includes local UI sound effects for interaction feedback.
-
-Current sound events include:
-
-- `navigate` — option navigation
-- `swipe` — switching between target groups
-- `confirm` — confirming an action or selecting a target
-- `cancel` — returning to the previous menu or cancelling an action
-
-Audio is handled locally by each client and does not broadcast UI interaction sounds to other players.
-
-### Keyboard Navigation
-
-The combat interface is designed to be playable primarily through keyboard navigation.
-
-Current controls include:
-
-- `Arrow Up / Down` — navigate options
-- `Arrow Left / Right` — switch target groups
-- `Enter` — confirm/select
-- `Escape` — return to the previous menu
-- `F` — focus the Command menu
-
-Mouse interaction is also supported throughout the combat menus where applicable.
-
-### Multiplayer
-
-The combat HUD is designed to work independently for each connected client.
-
-Current multiplayer behavior includes:
-
-- Combat HUD initialization when combat starts
-- Per-client HUD state
-- Per-client selected Command actor
-- Player ownership validation for character selection
-- Active combatant synchronization
-- Multiplayer testing through external networking tools such as ngrok
-
-## Project FU Integration
-
-This project does not attempt to recreate Fabula Ultima's rule system.
-
-Instead, the UI integrates with Project FU's existing systems whenever possible.
-
-For example:
-
-- **Study** delegates execution to `ActionHandler.handleStudyAction()`
-- **Equipment** delegates execution to `ActionHandler.equipment()`
-- Actions use Project FU's existing item/action rolling system
-- Selected targets are synchronized with Foundry's native targeting before execution
-- Action resources and costs are read directly from Project FU item data
-- Character resources are read directly from Project FU Actor data
-- Combatant and turn information is read from Foundry's active Combat
-
-This keeps the custom interface separate from the underlying game rules.
-
-## Architecture
-
-The project follows a lightweight modular structure:
+Download the latest release from the project's GitHub repository and extract the module into:
 
 ```text
-fabula-jrpg-ui/
-
-├── assets/
-│   ├── audio/
-│   │   ├── ui-navigate.ogg
-│   │   ├── ui-swipe.ogg
-│   │   ├── ui-confirm.ogg
-│   │   └── ui-cancel.ogg
-│   │
-│   ├── cursor.png
-│   ├── moldura.svg
-│   ├── moldura-active.svg
-│   ├── moldura-command.svg
-│   └── screenshots/
-│       ├── jrpg-ui-command-focus.png
-│       └── jrpg-ui-full-view.png
-│
-├── scripts/
-│   ├── main.js
-│   │
-│   └── ui/
-│       ├── character-card.js
-│       ├── command-menu.js
-│       │
-│       ├── hud/
-│       │   ├── hud-controller.js
-│       │   └── hud-customization.js
-│       │
-│       ├── menus/
-│       │   ├── action-menu.js
-│       │   ├── confirm-menu.js
-│       │   ├── menu-utils.js
-│       │   ├── target-menu.js
-│       │   └── target-select-menu.js
-│       │
-│       ├── actions/
-│       │   ├── execute-action.js
-│       │   ├── simple-actions.js
-│       │   └── study-action.js
-│       │
-│       └── shared/
-│           ├── audio.js
-│           ├── canvas-cursor.js
-│           └── hud-cursor.js
-│
-├── styles/
-│   ├── action.css
-│   ├── base.css
-│   ├── command.css
-│   ├── confirm.css
-│   ├── party.css
-│   ├── target.css
-│   └── target-select.css
-│
-├── module.json
-├── .gitignore
-└── README.md
+FoundryVTT/Data/modules/fabula-jrpg-ui/
 ```
 
-The project intentionally avoids unnecessary abstraction while the combat UI is still being developed.
+After installation, enable **Fabula JRPG UI** in your world's Add-on Modules.
 
-The architecture separates the main responsibilities into:
+## Usage
 
-- **HUD** — lifecycle, layout, customization, and persistence
-- **Menus** — menu creation, navigation, visibility, and transitions
-- **Actions** — interaction with Project FU and action execution
-- **Shared utilities** — audio, HUD cursor, and Canvas cursor functionality
+Start an active combat with at least one character combatant.
 
-## Design Principles
+The Fabula JRPG UI will automatically appear when combat starts.
 
-### UI First, Rules Second
+Press **F** to focus the command menu.
 
-The custom UI handles presentation, navigation, selection, and interaction.
+Keyboard navigation supports:
 
-Game rules should remain inside Project FU whenever an existing Project FU mechanism can perform the required operation.
+- `Arrow Up / Down` — Navigate menu options
+- `Arrow Left / Right` — Switch between target groups
+- `Enter` — Confirm
+- `Escape` — Return to the previous menu
 
-### Modular Menus
+Mouse interaction is also supported.
 
-Each major interaction is separated into its own module so that individual parts of the combat flow can be developed and refactored independently.
+## Configuration
 
-### Simple Architecture
+Fabula JRPG UI provides client-side configuration options for:
 
-The project favors straightforward code over premature abstraction.
+### HUD
 
-The architecture may evolve as the UI becomes more complex, but complexity should be introduced only when it provides a clear benefit.
+- Command menu scale
+- Party HUD scale
+- HUD positioning
+- Reset HUD layout
 
-### JRPG-Inspired, Not JRPG-Restricted
+### Audio
 
-The interface takes inspiration from classic and modern JRPG combat interfaces, particularly their focus on clear action selection, character status presentation, audiovisual feedback, and keyboard-driven navigation.
+- UI sound volume
 
-Visual consistency should not take priority over correct Fabula Ultima behavior.
+Configuration can be accessed through:
 
-### Visual Direction
+**Game Settings → Configure Settings → Module Settings → Fabula JRPG UI**
 
-The current interface combines ornamental fantasy framing with JRPG-inspired interaction patterns and a translucent/glass-inspired visual language.
+## Targeting
 
-The visual direction is influenced by games such as **Octopath Traveler II**, while remaining adapted to the needs of a tabletop RPG interface.
+Fabula JRPG UI uses player-selected targeting rather than automatically determining valid targets.
 
-The goal is not to reproduce a specific game's interface, but to create a coherent JRPG-inspired combat HUD for Fabula Ultima.
+This allows players to manually select targets when an action may interact with different types of targets depending on the situation.
 
-## Roadmap
+Combatants are organized into:
 
-### Combat UI
+- Party
+- Enemies
 
-- [x] Command menu
-- [x] Attack menu
-- [x] Skill menu
-- [x] Item menu
-- [x] Study
-- [x] Equipment
-- [x] Guard
-- [x] Hinder
-- [x] Objective
-- [x] Target count selection
-- [x] Target selection
-- [x] Confirmation menu
-- [x] Project FU action execution
-- [x] Keyboard navigation
-- [x] Mouse interaction
-- [x] Escape-based menu navigation
-- [x] Target group navigation
-- [x] Target group swipe animation
-- [x] Canvas Token cursor
-- [x] UI sound effects
+Multiple targets can be selected when supported by the action.
 
-### Party HUD
+## Compatibility
 
-- [x] Party HUD
-- [x] Character portrait integration
-- [x] Character name and level display
-- [x] HP/MP resource display
-- [x] IP point display
-- [x] HP Crisis indicator
-- [x] Dynamic active character display
-- [x] Status effect indicators
-- [x] Status effect tooltips
-- [x] Focused Command menu state
-- [x] Customizable HUD scaling
-- [x] Customizable HUD positioning
-- [x] Per-client HUD customization
+Currently developed and tested for:
 
-### Visual Design
+- Foundry Virtual Tabletop v14
+- Project FU
 
-- [x] Party HUD redesign
-- [x] Command menu redesign
-- [x] Translucent/glass-inspired UI
-- [x] SVG ornamental frames
-- [x] Character portrait integration
-- [x] HP/MP resource display
-- [x] IP point display
-- [x] HP Crisis indicator
-- [x] Focused Command menu state
-- [x] Active combatant visual state
-- [x] Inactive character visual state
-- [ ] Final visual polish
+Other systems are not supported.
 
-### Architecture
+## Credits
 
-- [x] Modular HUD controller
-- [x] Modular command menu
-- [x] Modular action menus
-- [x] Modular target selection
-- [x] Modular confirmation menu
-- [x] Shared HUD cursor
-- [x] Shared Canvas cursor
-- [x] Menu lifecycle utilities
-- [ ] Final menu lifecycle audit
-- [ ] Remove remaining dead code
-- [ ] Final CSS cleanup
-- [ ] Final import/export audit
+Created by **Spell**.
 
-### Future Work
+Discord: **derick.dias**
 
-- [ ] Optional Zero Power visual indicator
-- [ ] Refine turn-state visual feedback
-- [ ] Audio volume settings
-- [ ] Individual UI sound settings
-- [ ] Additional combat UI polish
-- [ ] Broader Project FU integration
-- [ ] Final multiplayer testing
-
-## Development
-
-This project is currently being developed as a Foundry VTT module.
-
-The module should be installed inside the Foundry:
-
-```text
-Data/modules/
-```
-
-directory during development.
-
-After making changes to the source files, reload Foundry to test the updated module.
-
-During development, the module may also be tested in multiplayer sessions using external networking tools such as ngrok.
-
-The current development environment uses **Foundry VTT v14** with **Project FU**.
-
-## Contributing
-
-The project is currently under active development and its architecture may change significantly.
-
-At this stage, development is primarily focused on establishing the combat UI and its integration with Project FU before expanding into broader functionality.
-
-Contributions should preserve the separation between the custom UI layer and Project FU's underlying game rules whenever possible.
+Built for the Project FU system.
 
 ## License
 
-License information will be added once the project's distribution and licensing model has been decided.
+Fabula JRPG UI is released under the **MIT License**.
 
-## Acknowledgements
-
-- **Fabula Ultima** — tabletop roleplaying game by Need Games
-- **Project FU** — Foundry VTT system implementation for Fabula Ultima
-- **Foundry Virtual Tabletop** — virtual tabletop platform
+See the [`LICENSE`](LICENSE) file for the complete license text.
