@@ -1,5 +1,11 @@
 # Fabula JRPG UI
 
+[![Version](https://img.shields.io/github/v/release/DerickDiasDev/fabula-jrpg-ui?label=Version)](https://github.com/DerickDiasDev/fabula-jrpg-ui/releases)
+[![Foundry VTT](https://img.shields.io/badge/Foundry%20VTT-v14-informational)](https://foundryvtt.com/)
+[![Project FU](https://img.shields.io/badge/System-Project%20FU-informational)](https://github.com/League-of-Fabula/FoundryVTT-Fabula-Ultima)
+[![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
+[![Discord](https://img.shields.io/badge/Discord-derick.dias-5865F2?logo=discord&logoColor=white)](https://discord.com/users/225264620103794698)
+
 A JRPG-style combat interface for **Fabula Ultima**, built for the **Project FU** system on Foundry Virtual Tabletop.
 
 Fabula JRPG UI provides an immersive combat HUD inspired by classic console JRPG battle interfaces.
