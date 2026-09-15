@@ -1,24 +1,52 @@
 <form class="fabula-hud-config">
 
+  <!-- COMMAND SCALE -->
   <div class="form-group">
-    <label for="scale">HUD Scale</label>
+    <label for="commandScale">Command Scale</label>
 
     <div class="form-fields">
       <input
-        type="number"
-        name="scale"
-        value="{{layout.scale}}"
+        type="range"
+        name="commandScale"
+        id="commandScale"
+        value="{{layout.command.scale}}"
         min="0.5"
         max="2"
         step="0.05"
       />
+
+      <span class="fui-scale-value" data-scale-value="command">
+        {{layout.command.scale}}
+      </span>
+    </div>
+  </div>
+
+  <!-- PARTY SCALE -->
+  <div class="form-group">
+    <label for="partyScale">Party Scale</label>
+
+    <div class="form-fields">
+      <input
+        type="range"
+        name="partyScale"
+        id="partyScale"
+        value="{{layout.party.scale}}"
+        min="0.5"
+        max="2"
+        step="0.05"
+      />
+
+      <span class="fui-scale-value" data-scale-value="party">
+        {{layout.party.scale}}
+      </span>
     </div>
   </div>
 
   <p class="notes">
-    Adjust the overall HUD scale and position.
+    Adjust the size of each HUD component independently.
   </p>
 
+  <!-- POSITION -->
   <div class="form-group">
     <label>HUD Position</label>
 
@@ -30,6 +58,7 @@
     </div>
   </div>
 
+  <!-- RESET -->
   <div class="form-group">
     <label>Reset</label>
 

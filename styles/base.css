@@ -130,3 +130,34 @@
   cursor: grabbing;
   opacity: 0.85;
 }
+
+.fui-command-wrapper {
+  position: absolute;
+  left: 24px;
+  bottom: 30px;
+
+  width: fit-content;
+  height: fit-content;
+
+  pointer-events: auto;
+}
+
+.fui-party-wrapper {
+  position: absolute;
+  left: 50%;
+  bottom: 24px;
+  width: fit-content;
+  height: fit-content;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  pointer-events: auto;
+}
+
+.fui-scale-value {
+  min-width: 42px;
+  margin-left: 8px;
+  text-align: right;
+  font-family: monospace;
+}

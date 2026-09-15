@@ -5,31 +5,17 @@
    ========================================= */
 
 .fui-command {
-  position: absolute;
-
-  left: 24px;
-  bottom: 30px;
-
   width: 210px;
-
   box-sizing: border-box;
-
   display: flex;
   flex-direction: column;
-
   gap: 0;
-
   padding: 12px 20px;
-
   background: transparent;
   border: none;
-
   outline: none;
-
   opacity: 0.55;
-
   transition: opacity 0.15s ease;
-
   pointer-events: auto;
 }
 
