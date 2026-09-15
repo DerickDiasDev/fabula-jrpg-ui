@@ -31,23 +31,15 @@ function createRollModifiers() {
 }
 
 async function executeStudy(actor) {
-  console.log("EXECUTE: iniciando Study pelo Project FU...");
-
   const actionHandler = new game.projectfu.ActionHandler(actor);
 
   await actionHandler.handleStudyAction();
-
-  console.log("EXECUTE: Study concluído.");
 }
 
 async function executeRoll(action) {
   const modifiers = createRollModifiers();
 
-  console.log("EXECUTE: disparando roll nativo do Project FU...");
-
   await action.roll(modifiers);
-
-  console.log("EXECUTE: ação concluída.");
 }
 
 export async function executeAction({
@@ -57,12 +49,6 @@ export async function executeAction({
   targetIds,
   ui,
 }) {
-  console.log("=== EXECUTE ACTION ===");
-  console.log("Actor:", actor?.name);
-  console.log("Action:", action?.name);
-  console.log("Action Type:", actionType);
-  console.log("Target IDs:", targetIds);
-
   if (!actor) {
     console.error("EXECUTE: ator não encontrado.");
     return;
@@ -74,11 +60,6 @@ export async function executeAction({
   }
 
   const targetTokens = getTargetTokens(targetIds);
-
-  console.log(
-    "Targets:",
-    targetTokens.map((token) => token.actor?.name),
-  );
 
   if (targetTokens.length === 0) {
     console.error("EXECUTE: nenhum alvo encontrado.");

@@ -16,8 +16,6 @@ Hooks.once("init", () => {
 });
 
 Hooks.once("ready", () => {
-  console.log("Fabula JRPG UI | Ready");
-
   refreshFabulaUI(game.combat);
 });
 
@@ -26,8 +24,6 @@ Hooks.once("ready", () => {
 // =====================================================
 
 Hooks.on("combatStart", (combat) => {
-  console.log("Fabula JRPG UI | Combat started");
-
   refreshFabulaUI(combat);
 });
 
@@ -148,8 +144,6 @@ Hooks.on("controlToken", (token, controlled) => {
 
   const selectedToken = ownedTokens[0];
   const selectedActor = selectedToken.actor;
-
-  console.log("Fabula JRPG UI | Command Actor alterado:", selectedActor.name);
 
   updateFabulaCommandActor(selectedActor);
 });

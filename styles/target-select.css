@@ -243,10 +243,6 @@
   outline: none;
 }
 
-.fui-target-select-menu .fui-target-button.fui-active {
-  box-shadow: none;
-}
-
 /* =========================================
    ACTIVE / HOVER
    ========================================= */
@@ -388,9 +384,6 @@
   height: 40px;
   border-radius: 3px;
   background: rgba(255, 255, 255, 0.4);
-  transition:
-    background 0.12s ease,
-    width 0.12s ease;
 }
 
 .fui-target-select-menu .fui-target-scrollbar-arrow {

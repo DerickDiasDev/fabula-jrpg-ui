@@ -34,10 +34,6 @@ export function createCanvasCursor() {
     return selectedTokens.includes(token);
   }
 
-  function findEntry(token) {
-    return entries.find((entry) => entry.token === token);
-  }
-
   function createSprite(token, animated) {
     if (!cursorTexture || !token) {
       return null;
@@ -48,7 +44,6 @@ export function createCanvasCursor() {
     sprite.anchor.set(0.5, 0.5);
     sprite.scale.set(CURSOR_SCALE);
     sprite.rotation = CURSOR_ROTATION;
-
     sprite.zIndex = 10000;
     sprite.eventMode = "none";
     sprite.interactiveChildren = false;
@@ -64,7 +59,6 @@ export function createCanvasCursor() {
     };
 
     canvasGroup.addChild(sprite);
-
     updateEntryPosition(entry);
 
     return entry;
@@ -181,27 +175,6 @@ export function createCanvasCursor() {
     });
   }
 
-  function syncEntries() {
-    if (destroyed || !cursorTexture) {
-      return;
-    }
-
-    entries.forEach((entry) => {
-      const stillFocused = entry.token === focusedToken;
-      const stillSelected = isSelectedToken(entry.token);
-
-      if (!stillFocused && !stillSelected) {
-        return;
-      }
-
-      entry.animated = stillSelected;
-
-      updateEntryPosition(entry);
-    });
-
-    rebuildEntries();
-  }
-
   function attachTicker() {
     if (tickerAttached) {
       return;
@@ -233,13 +206,6 @@ export function createCanvasCursor() {
 
         cursorTexture = texture;
 
-        console.log(
-          "Canvas Cursor | Texture carregada:",
-          texture?.width,
-          texture?.height,
-          texture?.valid,
-        );
-
         attachTicker();
         rebuildEntries();
       })
@@ -255,8 +221,6 @@ export function createCanvasCursor() {
 
     focusedToken = token ?? null;
 
-    console.log("Canvas Cursor | Focus:", focusedToken?.name ?? null);
-
     if (!cursorTexture) {
       return;
     }
@@ -270,11 +234,6 @@ export function createCanvasCursor() {
     }
 
     selectedTokens = Array.isArray(tokens) ? tokens.filter(Boolean) : [];
-
-    console.log(
-      "Canvas Cursor | Selected:",
-      selectedTokens.map((token) => token.name),
-    );
 
     if (!cursorTexture) {
       return;

@@ -27,3 +27,6 @@ AGORA
            Release
 
 IMPORTANTE!: Configuraçoes das HUD e do modulo como um todo
+
+
+Console logs

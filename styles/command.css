@@ -141,17 +141,6 @@
 }
 
 /* =========================================
-   ZERA O box-shadow padrão do botão.
-   (Antes usava .active, que conflitava com o
-   CSS core do Foundry/ProjectFU; agora usamos
-   .fui-active, que é exclusivo deste módulo)
-   ========================================= */
-
-.fui-command > .fui-command-button.fui-active {
-  box-shadow: none;
-}
-
-/* =========================================
    COMMAND HOVER
    (só reage quando o painel está focado)
    ========================================= */
@@ -206,23 +195,3 @@
    (classe opcional, ainda não aplicada a
    nenhum botão)
    ========================================= */
-
-.fui-command > .fui-command-button.fui-blocked {
-  color: rgba(255, 255, 255, 0.3);
-
-  cursor: default;
-}
-
-.fui-command.fui-ui-focused > .fui-command-button.fui-blocked:hover {
-  background:
-    linear-gradient(rgba(15, 15, 15, 0.9), rgba(117, 117, 117, 0)) padding-box,
-    linear-gradient(
-        90deg,
-        rgba(255, 255, 255, 1) 0%,
-        rgba(255, 255, 255, 0.1) 100%
-      )
-      border-box;
-
-  width: 100%;
-  box-shadow: none;
-}

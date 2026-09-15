@@ -35,11 +35,6 @@ export function updateCommandActor(actor, ui) {
   selectedActor = actor ?? null;
 
   commandMenu.dataset.actorName = selectedActor?.name ?? "";
-
-  console.log(
-    "Fabula JRPG UI | Command Actor:",
-    selectedActor?.name ?? "nenhum",
-  );
 }
 
 export function getCommandActor() {
@@ -228,8 +223,6 @@ function executeCommand(ui, selectedIndex, buttons) {
   if (executeSimpleCommand(command, actor, ui)) {
     return;
   }
-
-  console.log("Command:", command);
 }
 
 // =====================================================

@@ -174,22 +174,6 @@
 }
 
 /* =========================================
-   MARQUEE
-   ========================================= */
-
-@keyframes fui-confirm-marquee-scroll {
-  0%,
-  15% {
-    transform: translateX(0);
-  }
-
-  85%,
-  100% {
-    transform: translateX(var(--fui-confirm-marquee-distance, 0px));
-  }
-}
-
-/* =========================================
    BUTTON CONTAINER
    ========================================= */
 
