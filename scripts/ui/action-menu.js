@@ -1,6 +1,7 @@
 import { openTargetCountMenu } from "./target-menu.js";
 import { showMenu, hideMenu, returnToCommand } from "./menu-utils.js";
 import { createHudCursor } from "./hud-cursor.js";
+import { playUISound } from "./audio.js";
 
 export function openActionMenu({ actor, actions, actionType, ui }) {
   const commandMenu = ui.querySelector(".fui-command");
@@ -11,6 +12,7 @@ export function openActionMenu({ actor, actions, actionType, ui }) {
 
   const menuClass = `fui-${actionType}-menu`;
   const openClass = `fui-${actionType}-menu-open`;
+
   const existingMenu = ui.querySelector(`.${menuClass}`);
 
   if (existingMenu) {
@@ -24,7 +26,6 @@ export function openActionMenu({ actor, actions, actionType, ui }) {
   commandMenu.classList.remove("fui-ui-focused");
 
   const actionMenu = document.createElement("div");
-
   actionMenu.className = `${menuClass} fui-action-menu fui-submenu`;
 
   const title = actionType.charAt(0).toUpperCase() + actionType.slice(1);
@@ -68,7 +69,7 @@ export function openActionMenu({ actor, actions, actionType, ui }) {
     </div>
 
     <div class="fui-action-subtitle">
-      Select one : 
+      Select one :
     </div>
 
     <div class="fui-action-list">
@@ -132,9 +133,11 @@ export function openActionMenu({ actor, actions, actionType, ui }) {
   const cursor = createHudCursor(actionMenu);
 
   const scrollbar = actionMenu.querySelector(".fui-action-scrollbar");
+
   const scrollbarTrack = actionMenu.querySelector(
     ".fui-action-scrollbar-track",
   );
+
   const scrollbarThumb = actionMenu.querySelector(
     ".fui-action-scrollbar-thumb",
   );
@@ -192,6 +195,7 @@ export function openActionMenu({ actor, actions, actionType, ui }) {
     const duration = Math.max(2, overflow / pixelsPerSecond + 1.5);
 
     innerEl.style.setProperty("--fui-marquee-distance", `-${overflow}px`);
+
     innerEl.style.setProperty("--fui-marquee-duration", `${duration}s`);
 
     button.classList.add("fui-marquee");
@@ -219,15 +223,17 @@ export function openActionMenu({ actor, actions, actionType, ui }) {
     });
   }
 
-  function updateActionSelection() {
+  function updateActionSelection(shouldScroll = true) {
     actionButtons.forEach((button, index) => {
       button.classList.toggle("fui-active", index === selectedAction);
     });
 
-    actionButtons[selectedAction]?.scrollIntoView({
-      block: "nearest",
-      inline: "nearest",
-    });
+    if (shouldScroll) {
+      actionButtons[selectedAction]?.scrollIntoView({
+        block: "nearest",
+        inline: "nearest",
+      });
+    }
 
     cursor.update(actionButtons[selectedAction]);
 
@@ -247,7 +253,9 @@ export function openActionMenu({ actor, actions, actionType, ui }) {
   function executeSelectedAction() {
     const button = actionButtons[selectedAction];
 
-    if (!button) return;
+    if (!button) {
+      return;
+    }
 
     const actionId = button.dataset.actionId;
     const action = actor.items.get(actionId);
@@ -269,11 +277,19 @@ export function openActionMenu({ actor, actions, actionType, ui }) {
     button.addEventListener("click", () => {
       selectedAction = index;
       updateActionSelection();
+      playUISound("confirm");
       executeSelectedAction();
     });
 
     button.addEventListener("mouseenter", () => {
-      applyMarqueeIfNeeded(button);
+      if (selectedAction === index) {
+        applyMarqueeIfNeeded(button);
+        return;
+      }
+
+      selectedAction = index;
+      updateActionSelection(false);
+      playUISound("navigate");
     });
 
     button.addEventListener("mouseleave", () => {
@@ -295,6 +311,8 @@ export function openActionMenu({ actor, actions, actionType, ui }) {
       selectedAction = (selectedAction + 1) % actionButtons.length;
 
       updateActionSelection();
+      playUISound("navigate");
+
       return;
     }
 
@@ -310,6 +328,8 @@ export function openActionMenu({ actor, actions, actionType, ui }) {
         (selectedAction - 1 + actionButtons.length) % actionButtons.length;
 
       updateActionSelection();
+      playUISound("navigate");
+
       return;
     }
 
@@ -317,7 +337,9 @@ export function openActionMenu({ actor, actions, actionType, ui }) {
       event.preventDefault();
       event.stopPropagation();
 
+      playUISound("confirm");
       executeSelectedAction();
+
       return;
     }
 
@@ -325,7 +347,9 @@ export function openActionMenu({ actor, actions, actionType, ui }) {
       event.preventDefault();
       event.stopPropagation();
 
+      playUISound("cancel");
       closeActionMenu();
+
       return;
     }
   });

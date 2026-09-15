@@ -8,6 +8,7 @@ import { executeStudy } from "./study-action.js";
 import { executeEquipment } from "./equipment-action.js";
 
 import { getActiveSubmenu } from "./menu-utils.js";
+import { playUISound } from "./audio.js";
 
 // =====================================================
 // SELECTED ACTOR
@@ -266,8 +267,8 @@ export function setupCommandMenu(ui) {
       event.stopPropagation();
 
       selectedIndex = (selectedIndex + 1) % buttons.length;
-
       updateSelection();
+      playUISound("navigate");
     }
 
     if (event.key === "ArrowUp") {
@@ -275,20 +276,23 @@ export function setupCommandMenu(ui) {
       event.stopPropagation();
 
       selectedIndex = (selectedIndex - 1 + buttons.length) % buttons.length;
-
       updateSelection();
+      playUISound("navigate");
     }
 
     if (event.key === "Enter") {
       event.preventDefault();
       event.stopPropagation();
 
+      playUISound("confirm");
       executeCommand();
     }
 
     if (event.key === "Escape") {
       event.preventDefault();
       event.stopPropagation();
+
+      playUISound("cancel");
     }
   });
 
@@ -297,10 +301,20 @@ export function setupCommandMenu(ui) {
   // ===================================================
 
   buttons.forEach((button, index) => {
+    button.addEventListener("mouseenter", () => {
+      if (selectedIndex === index) {
+        return;
+      }
+
+      selectedIndex = index;
+      updateSelection();
+      playUISound("navigate");
+    });
+
     button.addEventListener("click", () => {
       selectedIndex = index;
-
       updateSelection();
+      playUISound("confirm");
       executeCommand();
     });
   });

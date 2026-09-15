@@ -3,6 +3,7 @@ import { showMenu, hideMenu, setCanvasCursor } from "./menu-utils.js";
 import { executeAction } from "./execute-action.js";
 import { createHudCursor } from "./hud-cursor.js";
 import { createCanvasCursor } from "./canvas-cursor.js";
+import { playUISound } from "./audio.js";
 
 export function openTargetSelectMenu({
   actor,
@@ -13,16 +14,11 @@ export function openTargetSelectMenu({
   previousMenu,
 }) {
   const previousRect = previousMenu.getBoundingClientRect();
-
   const isCommandMenu = previousMenu.classList.contains("fui-command");
 
   if (!isCommandMenu) {
     hideMenu(previousMenu);
   }
-
-  // =====================================================
-  // TARGET DATA
-  // =====================================================
 
   const combatants = game.combat?.combatants.contents ?? [];
 
@@ -37,13 +33,8 @@ export function openTargetSelectMenu({
       return false;
     }
 
-    // KO/Death não pode ser alvo.
     return !actor?.statuses?.has("ko");
   });
-
-  // =====================================================
-  // ACTION LABEL
-  // =====================================================
 
   const actionLabel =
     actionType === "skill"
@@ -54,30 +45,21 @@ export function openTargetSelectMenu({
           ? "Study"
           : "Attack";
 
-  // =====================================================
-  // CREATE MENU
-  // =====================================================
-
   const targetMenu = document.createElement("div");
-
   targetMenu.className = "fui-target-select-menu fui-submenu";
 
   targetMenu.innerHTML = `
     <div class="fui-command-title">
       TARGET
     </div>
-
     <div class="fui-target-action">
       ${actionLabel}${action ? ` / ${action.name}` : ""}
     </div>
-
     <div class="fui-target-list">
-
       <div class="fui-target-group" data-target-group="party">
         <div class="fui-target-group-title">
           PARTY
         </div>
-
         ${party
           .map(
             (combatant) => `
@@ -95,12 +77,10 @@ export function openTargetSelectMenu({
           )
           .join("")}
       </div>
-
       <div class="fui-target-group" data-target-group="enemies">
         <div class="fui-target-group-title">
           ENEMIES
         </div>
-
         ${enemies
           .map(
             (combatant) => `
@@ -118,28 +98,21 @@ export function openTargetSelectMenu({
           )
           .join("")}
       </div>
-
     </div>
-
     <div class="fui-target-count">
       Selected: 0/${targetCount}
     </div>
-
     <div class="fui-target-scrollbar">
       <div class="fui-target-scrollbar-arrow fui-target-scrollbar-arrow-up"></div>
-
       <div class="fui-target-scrollbar-track">
         <div class="fui-target-scrollbar-thumb"></div>
       </div>
-
       <div class="fui-target-scrollbar-arrow fui-target-scrollbar-arrow-down"></div>
     </div>
   `;
 
   ui.appendChild(targetMenu);
-
   targetMenu.tabIndex = 0;
-
   targetMenu.style.position = "fixed";
 
   if (isCommandMenu) {
@@ -152,23 +125,17 @@ export function openTargetSelectMenu({
 
   showMenu(targetMenu);
 
-  // =====================================================
-  // DOM REFERENCES
-  // =====================================================
-
   const targetList = targetMenu.querySelector(".fui-target-list");
 
   const targetGroups = {
     party: targetMenu.querySelector('[data-target-group="party"]'),
-
     enemies: targetMenu.querySelector('[data-target-group="enemies"]'),
   };
 
   const targetButtons = targetMenu.querySelectorAll(".fui-target-button");
-
   const cursor = createHudCursor(targetMenu);
-
   const canvasCursor = createCanvasCursor();
+
   setCanvasCursor(ui, canvasCursor);
 
   const scrollbar = targetMenu.querySelector(".fui-target-scrollbar");
@@ -181,10 +148,6 @@ export function openTargetSelectMenu({
     ".fui-target-scrollbar-thumb",
   );
 
-  // =====================================================
-  // GROUP STATE
-  // =====================================================
-
   const groups = [
     {
       id: "party",
@@ -193,7 +156,6 @@ export function openTargetSelectMenu({
         targetGroups.party?.querySelectorAll(".fui-target-button") ?? [],
       ),
     },
-
     {
       id: "enemies",
       element: targetGroups.enemies,
@@ -203,18 +165,10 @@ export function openTargetSelectMenu({
     },
   ];
 
-  // PARTY começa selecionado quando existir.
-  // Caso esteja vazio, começa em ENEMIES.
   let activeGroupIndex = groups[0].buttons.length > 0 ? 0 : 1;
 
-  // Cada grupo mantém sua própria posição.
   const groupSelectedIndexes = [0, 0];
-
   const selectedTargets = new Set();
-
-  // =====================================================
-  // GROUP HELPERS
-  // =====================================================
 
   function getActiveGroup() {
     return groups[activeGroupIndex];
@@ -250,10 +204,6 @@ export function openTargetSelectMenu({
     return activeGroupIndex;
   }
 
-  // =====================================================
-  // GROUP VISUAL STATE
-  // =====================================================
-
   function updateGroupVisibility() {
     groups.forEach((group, index) => {
       if (!group.element) {
@@ -264,13 +214,6 @@ export function openTargetSelectMenu({
     });
   }
 
-  // =====================================================
-  // FOCUSED BUTTON
-  // =====================================================
-  //
-  // Botão atualmente focado, considerando o grupo ativo
-  // (Party ou Enemies). Usado pelo cursor da HUD.
-
   function getFocusedButton() {
     const activeButtons = getActiveButtons();
     const selectedIndex = getSelectedIndex();
@@ -278,24 +221,11 @@ export function openTargetSelectMenu({
     return activeButtons[selectedIndex];
   }
 
-  // =====================================================
-  // TOKEN LOOKUP (Canvas Cursor)
-  // =====================================================
-  //
-  // Resolve o Token no Canvas correspondente a um
-  // combatant, usado apenas para posicionar o Canvas
-  // Cursor. Não interfere na lógica de seleção, que
-  // continua baseada em combatant.id.
-
   function getTokenForCombatantId(combatantId) {
     const combatant = game.combat?.combatants.get(combatantId);
 
     return combatant?.token?.object ?? null;
   }
-
-  // =====================================================
-  // SCROLLBAR
-  // =====================================================
 
   function updateTargetScrollbar() {
     if (!targetList || !scrollbar || !scrollbarTrack || !scrollbarThumb) {
@@ -329,10 +259,6 @@ export function openTargetSelectMenu({
     scrollbarThumb.style.transform = `translateY(${thumbTop}px)`;
   }
 
-  // =====================================================
-  // MARQUEE
-  // =====================================================
-
   function applyMarqueeIfNeeded(button) {
     const nameEl = button.querySelector(".fui-target-name");
     const innerEl = button.querySelector(".fui-target-name-inner");
@@ -349,7 +275,6 @@ export function openTargetSelectMenu({
     }
 
     const pixelsPerSecond = 40;
-
     const duration = Math.max(2, overflow / pixelsPerSecond + 1.5);
 
     innerEl.style.setProperty(
@@ -368,7 +293,6 @@ export function openTargetSelectMenu({
     button.classList.remove("fui-marquee");
 
     innerEl?.style.removeProperty("--fui-target-marquee-distance");
-
     innerEl?.style.removeProperty("--fui-target-marquee-duration");
   }
 
@@ -384,10 +308,6 @@ export function openTargetSelectMenu({
       }
     });
   }
-
-  // =====================================================
-  // SELECTION / FOCUS
-  // =====================================================
 
   function updateSelection() {
     const activeButtons = getActiveButtons();
@@ -420,10 +340,6 @@ export function openTargetSelectMenu({
     requestAnimationFrame(updateTargetMarquee);
   }
 
-  // =====================================================
-  // SELECTED TARGETS
-  // =====================================================
-
   function updateSelectedTargets() {
     targetButtons.forEach((button) => {
       const selected = selectedTargets.has(button.dataset.combatantId);
@@ -442,26 +358,20 @@ export function openTargetSelectMenu({
     );
   }
 
-  // =====================================================
-  // CHANGE GROUP
-  // =====================================================
-
   function changeGroup(direction) {
     const nextGroupIndex = findNextAvailableGroup(direction);
 
     if (nextGroupIndex === activeGroupIndex) {
-      return;
+      return false;
     }
 
     activeGroupIndex = nextGroupIndex;
 
     updateGroupVisibility();
     updateSelection();
-  }
 
-  // =====================================================
-  // SELECT TARGET
-  // =====================================================
+    return true;
+  }
 
   function selectTarget() {
     const activeButtons = getActiveButtons();
@@ -486,18 +396,17 @@ export function openTargetSelectMenu({
 
     selectedTargets.add(combatantId);
     updateSelectedTargets();
+    playUISound("confirm");
 
     return selectedTargets.size === targetCount;
   }
 
-  // =====================================================
-  // CONFIRMATION
-  // =====================================================
-
   let isTransitioning = false;
 
   function openConfirmation() {
-    if (isTransitioning) return;
+    if (isTransitioning) {
+      return;
+    }
 
     isTransitioning = true;
 
@@ -511,13 +420,12 @@ export function openTargetSelectMenu({
         targetIds: [...selectedTargets],
         ui,
       });
+
       return;
     }
 
-    // Guarda a posição ANTES de remover o Target Select
     const targetSelectRect = targetMenu.getBoundingClientRect();
 
-    // Remove o Target Select do DOM
     targetMenu.remove();
 
     openConfirmMenu({
@@ -532,38 +440,24 @@ export function openTargetSelectMenu({
     });
   }
 
-  // =====================================================
-  // CLOSE MENU
-  // =====================================================
-
   function closeTargetSelectMenu() {
     canvasCursor.destroy();
-
     hideMenu(targetMenu);
 
     if (isCommandMenu) {
       previousMenu.classList.add("fui-ui-focused");
       previousMenu.tabIndex = 0;
       previousMenu.focus();
-
       return;
     }
 
     showMenu(previousMenu);
   }
 
-  // =====================================================
-  // SCROLL
-  // =====================================================
-
   targetList?.addEventListener("scroll", () => {
     cursor.update(getFocusedButton());
     updateTargetScrollbar();
   });
-
-  // =====================================================
-  // BUTTON EVENTS
-  // =====================================================
 
   targetButtons.forEach((button) => {
     button.addEventListener("click", () => {
@@ -575,9 +469,7 @@ export function openTargetSelectMenu({
 
       if (groupIndex !== -1) {
         activeGroupIndex = groupIndex;
-
         setSelectedIndex(groups[groupIndex].buttons.indexOf(button));
-
         updateGroupVisibility();
       }
 
@@ -599,15 +491,7 @@ export function openTargetSelectMenu({
     });
   });
 
-  // =====================================================
-  // KEYBOARD NAVIGATION
-  // =====================================================
-
   targetMenu.addEventListener("keydown", (event) => {
-    // ---------------------------------------------------
-    // UP
-    // ---------------------------------------------------
-
     if (event.key === "ArrowUp") {
       event.preventDefault();
       event.stopPropagation();
@@ -625,13 +509,10 @@ export function openTargetSelectMenu({
       );
 
       updateSelection();
+      playUISound("navigate");
 
       return;
     }
-
-    // ---------------------------------------------------
-    // DOWN
-    // ---------------------------------------------------
 
     if (event.key === "ArrowDown") {
       event.preventDefault();
@@ -648,39 +529,32 @@ export function openTargetSelectMenu({
       setSelectedIndex((currentIndex + 1) % activeButtons.length);
 
       updateSelection();
+      playUISound("navigate");
 
       return;
     }
-
-    // ---------------------------------------------------
-    // LEFT
-    // ---------------------------------------------------
 
     if (event.key === "ArrowLeft") {
       event.preventDefault();
       event.stopPropagation();
 
-      changeGroup(-1);
+      if (changeGroup(-1)) {
+        playUISound("swipe");
+      }
 
       return;
     }
-
-    // ---------------------------------------------------
-    // RIGHT
-    // ---------------------------------------------------
 
     if (event.key === "ArrowRight") {
       event.preventDefault();
       event.stopPropagation();
 
-      changeGroup(1);
+      if (changeGroup(1)) {
+        playUISound("swipe");
+      }
 
       return;
     }
-
-    // ---------------------------------------------------
-    // ENTER
-    // ---------------------------------------------------
 
     if (event.key === "Enter") {
       event.preventDefault();
@@ -695,23 +569,16 @@ export function openTargetSelectMenu({
       return;
     }
 
-    // ---------------------------------------------------
-    // ESCAPE
-    // ---------------------------------------------------
-
     if (event.key === "Escape") {
       event.preventDefault();
       event.stopPropagation();
 
+      playUISound("cancel");
       closeTargetSelectMenu();
 
       return;
     }
   });
-
-  // =====================================================
-  // INITIAL STATE
-  // =====================================================
 
   updateGroupVisibility();
   updateSelection();

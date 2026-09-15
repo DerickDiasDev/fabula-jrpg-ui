@@ -3,6 +3,7 @@ import { executeAction } from "./execute-action.js";
 import { showMenu, hideMenu, destroyCanvasCursor } from "./menu-utils.js";
 
 import { createHudCursor } from "./hud-cursor.js";
+import { playUISound } from "./audio.js";
 
 export function openConfirmMenu({
   actor,
@@ -150,9 +151,26 @@ export function openConfirmMenu({
   }
 
   buttons.forEach((button, index) => {
+    button.addEventListener("mouseenter", () => {
+      if (selectedIndex === index) {
+        return;
+      }
+
+      selectedIndex = index;
+      updateSelection();
+      playUISound("navigate");
+    });
+
     button.addEventListener("click", () => {
       selectedIndex = index;
       updateSelection();
+
+      if (button.dataset.confirm === "cancel") {
+        playUISound("cancel");
+      } else {
+        playUISound("confirm");
+      }
+
       executeConfirm();
     });
   });
@@ -163,8 +181,8 @@ export function openConfirmMenu({
       event.stopPropagation();
 
       selectedIndex = (selectedIndex + 1) % buttons.length;
-
       updateSelection();
+      playUISound("navigate");
       return;
     }
 
@@ -175,6 +193,7 @@ export function openConfirmMenu({
       selectedIndex = (selectedIndex - 1 + buttons.length) % buttons.length;
 
       updateSelection();
+      playUISound("navigate");
       return;
     }
 
@@ -182,6 +201,7 @@ export function openConfirmMenu({
       event.preventDefault();
       event.stopPropagation();
 
+      playUISound("confirm");
       executeConfirm();
       return;
     }
@@ -190,6 +210,7 @@ export function openConfirmMenu({
       event.preventDefault();
       event.stopPropagation();
 
+      playUISound("cancel");
       closeConfirmMenu();
       return;
     }

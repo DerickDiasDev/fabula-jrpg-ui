@@ -1,6 +1,7 @@
 import { openTargetSelectMenu } from "./target-select-menu.js";
 import { showMenu, hideMenu, getActiveSubmenu } from "./menu-utils.js";
 import { createHudCursor } from "./hud-cursor.js";
+import { playUISound } from "./audio.js";
 
 export function openTargetCountMenu({ actor, action, actionType, ui }) {
   const previousMenu = getActiveSubmenu(ui) || ui.querySelector(".fui-command");
@@ -111,10 +112,22 @@ export function openTargetCountMenu({ actor, action, actionType, ui }) {
   }
 
   buttons.forEach((button) => {
+    button.addEventListener("mouseenter", () => {
+      const newCount = Number(button.dataset.count);
+
+      if (selectedCount === newCount) {
+        return;
+      }
+
+      selectedCount = newCount;
+      updateSelection();
+      playUISound("navigate");
+    });
+
     button.addEventListener("click", () => {
       selectedCount = Number(button.dataset.count);
-
       updateSelection();
+      playUISound("confirm");
       confirmTargetCount();
     });
   });
@@ -127,6 +140,7 @@ export function openTargetCountMenu({ actor, action, actionType, ui }) {
       selectedCount = (selectedCount % buttons.length) + 1;
 
       updateSelection();
+      playUISound("navigate");
     }
 
     if (event.key === "ArrowUp") {
@@ -137,12 +151,14 @@ export function openTargetCountMenu({ actor, action, actionType, ui }) {
         ((selectedCount - 2 + buttons.length) % buttons.length) + 1;
 
       updateSelection();
+      playUISound("navigate");
     }
 
     if (event.key === "Enter") {
       event.preventDefault();
       event.stopPropagation();
 
+      playUISound("confirm");
       confirmTargetCount();
     }
 
@@ -150,6 +166,7 @@ export function openTargetCountMenu({ actor, action, actionType, ui }) {
       event.preventDefault();
       event.stopPropagation();
 
+      playUISound("cancel");
       closeTargetCountMenu();
     }
   });
