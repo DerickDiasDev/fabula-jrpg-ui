@@ -6,13 +6,14 @@ import {
 } from "./ui/hud/hud-controller.js";
 
 import { registerHudSettings } from "./ui/hud/hud-customization.js";
-
+import { registerAudioSettings } from "./ui/shared/audio.js";
 // =====================================================
 // FOUNDry READY
 // =====================================================
 
 Hooks.once("init", () => {
   registerHudSettings();
+  registerAudioSettings();
 });
 
 Hooks.once("ready", () => {
@@ -36,11 +37,41 @@ Hooks.on("updateCombat", (combat) => {
 });
 
 // =====================================================
-// ACTOR UPDATES
+// ACTOR / STATUS UPDATES
 // =====================================================
 
 Hooks.on("updateActor", (updatedActor) => {
   updateFabulaActorCard(updatedActor);
+});
+
+Hooks.on("createActiveEffect", (effect) => {
+  const actor = effect.parent;
+
+  if (!actor) {
+    return;
+  }
+
+  updateFabulaActorCard(actor);
+});
+
+Hooks.on("updateActiveEffect", (effect) => {
+  const actor = effect.parent;
+
+  if (!actor) {
+    return;
+  }
+
+  updateFabulaActorCard(actor);
+});
+
+Hooks.on("deleteActiveEffect", (effect) => {
+  const actor = effect.parent;
+
+  if (!actor) {
+    return;
+  }
+
+  updateFabulaActorCard(actor);
 });
 
 // =====================================================
@@ -81,11 +112,6 @@ Hooks.on("controlToken", (token, controlled) => {
   const isOwner = actor.testUserPermission(game.user, "OWNER");
 
   if (!isOwner) {
-    console.log(
-      "Fabula JRPG UI | Token selecionado não pertence ao jogador:",
-      token.name,
-    );
-
     return;
   }
 
@@ -120,11 +146,6 @@ Hooks.on("controlToken", (token, controlled) => {
   if (ownedTokens.length > 1) {
     foundry.ui.notifications.warn(
       "Selecione apenas um personagem para usar o Command Menu.",
-    );
-
-    console.warn(
-      "Fabula JRPG UI | Mais de um Token próprio selecionado:",
-      ownedTokens.map((controlledToken) => controlledToken.name),
     );
 
     return;

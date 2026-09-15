@@ -3,13 +3,14 @@
 // =====================================================
 
 export function createCharacterCard(actor) {
+  const isKo = actor.statuses?.has("ko");
   const hp = actor.system.resources.hp;
   const mp = actor.system.resources.mp;
   const ip = actor.system.resources.ip;
 
   return `
     <div
-      class="fui-character-card"
+      class="fui-character-card${isKo ? " fui-ko" : ""}"
       data-actor-id="${actor.id}"
     >
       <div class="fui-character-portrait">
@@ -220,14 +221,16 @@ function updateStatusEffects(card, actor) {
 
 export function updateCharacterCard(actor, ui) {
   const card = ui.querySelector(`[data-actor-id="${actor.id}"]`);
-  if (!card) {
-    return;
-  }
+  if (!card) return;
+
   const { hp, mp, ip } = actor.system.resources;
+
   updateBarResource(card, "hp", hp);
   updateBarResource(card, "mp", mp);
   updateIpResource(card, ip);
   updateStatusEffects(card, actor);
+
+  card.classList.toggle("fui-ko", actor.statuses?.has("ko"));
 }
 
 // =====================================================
