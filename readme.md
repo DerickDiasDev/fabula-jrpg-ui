@@ -299,7 +299,7 @@ The goal is not to reproduce a specific game's interface, but to create a cohere
 - [ ] Add customizable and responsive UI scaling
 - [ ] Add target group swipe animation
 - [ ] Add status effect indicators to Party HUD
-- [ ] Add optional Poder Zero visual indicator
+- [ ] Add optional Zero Power visual indicator
 - [ ] Refine turn-state visual feedback
 - [ ] Refactor and audit UI architecture
 
