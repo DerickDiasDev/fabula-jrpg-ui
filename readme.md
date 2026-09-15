@@ -4,7 +4,7 @@ A custom JRPG-style combat interface for **Fabula Ultima** running on **Foundry 
 
 The project aims to provide a more game-like combat experience inspired by classic and modern JRPGs, while keeping **Project FU** as the source of truth for Fabula Ultima's rules and action execution.
 
-> **Status:** Work in Progress
+> **Status:** _Work in Progress_
 
 ## Overview
 
@@ -44,7 +44,7 @@ The UI is responsible for presenting and collecting player input. Project FU rem
 
 ### Command Menu
 
-The Command menu provides keyboard-driven access to the character's available combat actions.
+The Command menu provides keyboard and mouse-driven access to the character's available combat actions.
 
 ![Fabula JRPG UI - Command Menu](assets/screenshots/jrpg-ui-command-focus.png)
 
@@ -74,6 +74,10 @@ The current interface combines the Command menu with the Party HUD and character
 - Consumable Item selection
 - Skill resource cost display
 - Item IP cost display
+- Keyboard navigation
+- Mouse hover navigation
+- Scrolling support
+- Long action name marquee animation
 
 ### Party HUD
 
@@ -81,8 +85,9 @@ The current interface combines the Command menu with the Party HUD and character
 - Character name and level display
 - HP and MP resource bars
 - HP Crisis indicator
-- PI point display
+- IP point display
 - Active combatant indication
+- Dynamic character information updates
 - Glass-panel visual design
 - SVG-based ornamental frames
 
@@ -93,6 +98,31 @@ The current interface combines the Command menu with the Party HUD and character
 - Multiple target selection
 - Configurable target count
 - Target selection independent of ally/enemy restrictions
+- Visual Canvas Token cursor
+- Selected target highlighting
+- Target group navigation
+- Target list scrolling
+
+### Confirmation
+
+- Action confirmation menu
+- Selected action display
+- Selected target display
+- Confirm / Cancel navigation
+- Canvas target cursor cleanup after confirmation
+
+### Audio Feedback
+
+The combat interface includes local UI sound effects for interaction feedback.
+
+Current sound events include:
+
+- `navigate` — option navigation
+- `swipe` — switching between target groups
+- `confirm` — confirming an action or selecting a target
+- `cancel` — returning to the previous menu or cancelling an action
+
+Audio is handled locally by each client and does not broadcast UI interaction sounds to other players.
 
 ### Keyboard Navigation
 
@@ -101,9 +131,12 @@ The combat interface is designed to be playable primarily through keyboard navig
 Current controls include:
 
 - `Arrow Up / Down` — navigate options
+- `Arrow Left / Right` — switch target groups
 - `Enter` — confirm/select
 - `Escape` — return to the previous menu
 - `F` — focus the Command menu
+
+Mouse interaction is also supported throughout the combat menus where applicable.
 
 ## Project FU Integration
 
@@ -117,6 +150,7 @@ For example:
 - **Equipment** delegates execution to `ActionHandler.equipment()`
 - Actions use Project FU's existing item/action rolling system
 - Selected targets are synchronized with Foundry's native targeting before execution
+- Action resources and costs are read directly from Project FU item data
 
 This keeps the custom interface separate from the underlying game rules.
 
@@ -128,18 +162,28 @@ The project currently follows a lightweight modular structure:
 fabula-jrpg-ui/
 
 ├── assets/
+│   ├── audio/
+│   │   ├── ui-navigate.ogg
+│   │   ├── ui-swipe.ogg
+│   │   ├── ui-confirm.ogg
+│   │   └── ui-cancel.ogg
+│   │
 │   ├── cursor.png
 │   ├── moldura.svg
 │   ├── moldura-active.svg
 │   ├── moldura-command.svg
+│   │
 │   └── screenshots/
 │       ├── jrpg-ui-command-focus.png
 │       └── jrpg-ui-full-view.png
 │
 ├── scripts/
 │   ├── main.js
+│   │
 │   └── ui/
 │       ├── action-menu.js
+│       ├── audio.js
+│       ├── canvas-cursor.js
 │       ├── character-card.js
 │       ├── command-menu.js
 │       ├── confirm-menu.js
@@ -147,6 +191,7 @@ fabula-jrpg-ui/
 │       ├── execute-action.js
 │       ├── guard-action.js
 │       ├── hinder-action.js
+│       ├── hud-cursor.js
 │       ├── menu-utils.js
 │       ├── objective-action.js
 │       ├── study-action.js
@@ -189,7 +234,7 @@ The architecture may evolve as the UI becomes more complex, but complexity shoul
 
 ### JRPG-Inspired, Not JRPG-Restricted
 
-The interface takes inspiration from classic and modern JRPG combat interfaces, particularly their focus on clear action selection, character status presentation, and keyboard-driven navigation.
+The interface takes inspiration from classic and modern JRPG combat interfaces, particularly their focus on clear action selection, character status presentation, audiovisual feedback, and keyboard-driven navigation.
 
 Visual consistency should not take priority over correct Fabula Ultima behavior.
 
@@ -219,7 +264,22 @@ The goal is not to reproduce a specific game's interface, but to create a cohere
 - [x] Confirmation menu
 - [x] Project FU action execution
 - [x] Keyboard navigation
+- [x] Mouse interaction
 - [x] Escape-based menu navigation
+- [x] Target group navigation
+- [x] Canvas Token cursor
+- [x] UI sound effects
+
+### Party HUD
+
+- [x] Party HUD
+- [x] Character portrait integration
+- [x] Character name and level display
+- [x] HP/MP resource display
+- [x] IP point display
+- [x] HP Crisis indicator
+- [x] Dynamic active character display
+- [x] Focused Command menu state
 
 ### Visual Design
 
@@ -229,26 +289,19 @@ The goal is not to reproduce a specific game's interface, but to create a cohere
 - [x] SVG ornamental frames
 - [x] Character portrait integration
 - [x] HP/MP resource display
-- [x] PI point display
+- [x] IP point display
 - [x] HP Crisis indicator
 - [x] Focused Command menu state
 - [x] Dynamic active character display
 
 ### Future Work
 
-- [ ] Refine glow and cursor effects
-- [ ] Improve target selection presentation
-- [ ] Apply the visual language to Attack and Skill menus
-- [ ] Apply the visual language to Target Count
-- [ ] Apply the visual language to Target Select
-- [ ] Apply the visual language to Confirm
-- [ ] Add richer combat feedback
-- [ ] Add status effect indicators
-- [ ] Add visual indicators for Poder Zero
-- [ ] Support individual Command UI states for each player character
-- [ ] Improve turn-state handling
-- [ ] Expand Project FU integration
-- [ ] Consider additional combat actions and interactions
+- [ ] Add customizable and responsive UI scaling
+- [ ] Add target group swipe animation
+- [ ] Add status effect indicators to Party HUD
+- [ ] Add optional Poder Zero visual indicator
+- [ ] Refine turn-state visual feedback
+- [ ] Refactor and audit UI architecture
 
 ## Development
 
@@ -257,6 +310,8 @@ This project is currently being developed as a Foundry VTT module.
 The module should be installed inside the Foundry `Data/modules/` directory during development.
 
 After making changes to the source files, reload Foundry to test the updated module.
+
+During development, the module may also be tested in multiplayer sessions using external networking tools such as ngrok.
 
 ## Contributing
 
