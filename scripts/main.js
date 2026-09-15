@@ -7,6 +7,7 @@ import {
 import { setupCommandMenu, updateCommandActor } from "./ui/command-menu.js";
 
 import { closeActiveSubmenu } from "./ui/menu-utils.js";
+import { registerHudSettings, applyHudLayout } from "./ui/hud-customization.js";
 
 // =====================================================
 // UI LIFECYCLE
@@ -128,6 +129,8 @@ export function createFabulaUI() {
 
   document.body.appendChild(ui);
 
+  applyHudLayout(ui);
+
   ui.focus();
 
   // ===================================================
@@ -217,6 +220,9 @@ function refreshFabulaUI(combat) {
 // =====================================================
 // FOUNDry READY
 // =====================================================
+Hooks.once("init", () => {
+  registerHudSettings();
+});
 
 Hooks.once("ready", () => {
   console.log("Fabula JRPG UI | Ready");

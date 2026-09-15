@@ -1,0 +1,51 @@
+<form class="fabula-hud-config">
+
+  <div class="form-group">
+    <label for="scale">HUD Scale</label>
+
+    <div class="form-fields">
+      <input
+        type="number"
+        name="scale"
+        value="{{layout.scale}}"
+        min="0.5"
+        max="2"
+        step="0.05"
+      />
+    </div>
+  </div>
+
+  <p class="notes">
+    Adjust the overall HUD scale and position.
+  </p>
+
+  <div class="form-group">
+    <label>HUD Position</label>
+
+    <div class="form-fields">
+      <button type="button" data-action="edit-position">
+        <i class="fas fa-arrows-alt"></i>
+        Edit HUD Position
+      </button>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>Reset</label>
+
+    <div class="form-fields">
+      <button type="button" data-action="reset-position">
+        <i class="fas fa-undo"></i>
+        Reset Positions
+      </button>
+    </div>
+  </div>
+
+  <footer class="sheet-footer flexrow">
+    <button type="submit">
+      <i class="fas fa-save"></i>
+      Save
+    </button>
+  </footer>
+
+</form>
