@@ -125,7 +125,14 @@ function createTargetMenuHTML({
 
   return `
     <div class="fui-command-title">
-      TARGET
+      <button
+        class="fui-menu-back"
+        type="button"
+        aria-label="Back"
+      >
+        ←
+      </button>
+      <span>Target</span>
     </div>
 
     <div class="fui-target-action">
@@ -325,6 +332,8 @@ export function openTargetSelectMenu({
   // ===================================================
   // ELEMENTS
   // ===================================================
+
+  const backButton = targetMenu.querySelector(".fui-menu-back");
 
   const targetList = targetMenu.querySelector(".fui-target-list");
 
@@ -653,6 +662,14 @@ export function openTargetSelectMenu({
 
     showMenu(previousMenu);
   }
+
+  backButton?.addEventListener("click", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    playUISound("cancel");
+    closeTargetSelectMenu();
+  });
 
   // ===================================================
   // SCROLL

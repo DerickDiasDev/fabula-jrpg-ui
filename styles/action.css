@@ -43,27 +43,6 @@
 }
 
 /* =========================================
-   TITLE
-   ========================================= */
-
-.fui-action-menu .fui-command-title {
-  position: absolute;
-  top: -18px;
-  left: 28px;
-  padding: 0;
-  font-family: "Playpen Sans", cursive;
-  font-size: 20px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  white-space: nowrap;
-  color: #eef1f7;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
-  background: none;
-  border: none;
-  pointer-events: none;
-}
-
-/* =========================================
    SUBTITLE
    ========================================= */
 

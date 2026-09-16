@@ -38,7 +38,14 @@ export function openTargetCountMenu({ actor, action, actionType, ui }) {
 
   targetMenu.innerHTML = `
     <div class="fui-command-title">
-      Target
+      <button
+        class="fui-menu-back"
+        type="button"
+        aria-label="Back"
+      >
+        ←
+      </button>
+      <span>Target</span>
     </div>
 
     <div class="fui-target-action">
@@ -89,10 +96,9 @@ export function openTargetCountMenu({ actor, action, actionType, ui }) {
   // =====================================================
 
   const buttons = targetMenu.querySelectorAll(".fui-target-count-button");
-
   const cursor = createHudCursor(targetMenu);
-
   let selectedCount = 1;
+  const backButton = targetMenu.querySelector(".fui-menu-back");
 
   // =====================================================
   // UPDATE SELECTION
@@ -114,6 +120,14 @@ export function openTargetCountMenu({ actor, action, actionType, ui }) {
     hideMenu(targetMenu);
     showMenu(previousMenu);
   }
+
+  backButton?.addEventListener("click", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    playUISound("cancel");
+    closeTargetCountMenu();
+  });
 
   // =====================================================
   // CONFIRM

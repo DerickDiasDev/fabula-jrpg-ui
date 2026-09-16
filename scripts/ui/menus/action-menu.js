@@ -60,7 +60,14 @@ function createActionMenuHTML(actions, actionType) {
 
   return `
     <div class="fui-command-title">
-      ${title}
+      <button
+        class="fui-menu-back"
+        type="button"
+        aria-label="Back"
+      >
+        ←
+      </button>
+      <span>${title}</span>
     </div>
 
     <div class="fui-action-subtitle">
@@ -268,6 +275,7 @@ export function openActionMenu({ actor, actions, actionType, ui }) {
   const actionButtons = Array.from(
     actionMenu.querySelectorAll(".fui-action-button"),
   );
+  const backButton = actionMenu.querySelector(".fui-menu-back");
 
   const cursor = createHudCursor(actionMenu);
 
@@ -369,14 +377,19 @@ export function openActionMenu({ actor, actions, actionType, ui }) {
   // MOUSE / CLICK
   // ===================================================
 
+  backButton?.addEventListener("click", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    playUISound("cancel");
+    closeActionMenu();
+  });
+
   actionButtons.forEach((button, index) => {
     button.addEventListener("click", () => {
       selectedAction = index;
-
       updateActionSelection();
-
       playUISound("confirm");
-
       executeSelectedAction();
     });
 
@@ -387,9 +400,7 @@ export function openActionMenu({ actor, actions, actionType, ui }) {
       }
 
       selectedAction = index;
-
       updateActionSelection(false);
-
       playUISound("navigate");
     });
 

@@ -171,3 +171,86 @@
   text-align: right;
   font-family: monospace;
 }
+
+/* =========================================
+   TITLE
+   ========================================= */
+
+.fui-command-title {
+  position: absolute;
+  height: 20px;
+  top: -18px;
+  left: 28px;
+
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 0;
+
+  font-family: "Playpen Sans", cursive;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+
+  color: #eef1f7;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+
+  background: none;
+  border: none;
+
+  pointer-events: none;
+}
+
+.fui-menu-back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 24px;
+  height: 24px;
+
+  margin: 0;
+  padding: 0;
+
+  border: none;
+  background: none;
+
+  color: #eef1f7;
+  font-family: inherit;
+  font-size: 22px;
+  font-weight: 900;
+  line-height: 1;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+
+  -webkit-text-stroke: 0.5px currentColor;
+
+  cursor: pointer;
+  pointer-events: auto;
+
+  transition:
+    transform 0.08s ease,
+    opacity 0.08s ease,
+    filter 0.08s ease;
+}
+
+.fui-menu-back:hover {
+  transform: translateX(-2px);
+  filter: brightness(1.2);
+}
+
+.fui-menu-back:active {
+  border: none;
+  outline: none;
+  box-shadow: none;
+  transform: translateX(-1px) scale(0.9);
+  opacity: 0.7;
+  filter: brightness(0.85);
+}
+
+.fui-menu-back:focus-visible {
+  outline: none;
+  box-shadow: none;
+  filter: brightness(1.2);
+}

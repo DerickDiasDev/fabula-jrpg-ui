@@ -65,7 +65,14 @@ function createConfirmMenuHTML({ action, actionType, targets }) {
 
   return `
     <div class="fui-command-title">
-      CONFIRM
+      <button
+        class="fui-menu-back"
+        type="button"
+        aria-label="Back"
+      >
+        ←
+      </button>
+      <span>Confirm</span>
     </div>
 
     <div class="fui-confirm-content">
@@ -137,12 +144,9 @@ export function openConfirmMenu({
   const confirmMenu = document.createElement("div");
 
   confirmMenu.className = "fui-confirm-menu fui-submenu";
-
   confirmMenu.tabIndex = 0;
-
   confirmMenu.style.position = "fixed";
   confirmMenu.style.left = `${previousRect.left}px`;
-
   confirmMenu.style.top = `${previousRect.top}px`;
 
   confirmMenu.innerHTML = createConfirmMenuHTML({
@@ -152,8 +156,9 @@ export function openConfirmMenu({
   });
 
   ui.appendChild(confirmMenu);
-
   showMenu(confirmMenu);
+
+  const backButton = confirmMenu.querySelector(".fui-menu-back");
 
   // ===================================================
   // STATE
@@ -191,6 +196,14 @@ export function openConfirmMenu({
 
     showMenu(previousMenu);
   }
+
+  backButton?.addEventListener("click", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    playUISound("cancel");
+    closeConfirmMenu();
+  });
 
   // ===================================================
   // EXECUTE
