@@ -137,6 +137,18 @@ export function createFabulaUI() {
       return;
     }
 
+    const activeElement = document.activeElement;
+
+    if (
+      activeElement instanceof HTMLInputElement ||
+      activeElement instanceof HTMLTextAreaElement ||
+      activeElement instanceof HTMLSelectElement ||
+      activeElement?.isContentEditable ||
+      activeElement instanceof HTMLButtonElement
+    ) {
+      return;
+    }
+
     const activeSubmenu = ui.querySelector(".fui-submenu:not([hidden])");
 
     if (activeSubmenu) {
