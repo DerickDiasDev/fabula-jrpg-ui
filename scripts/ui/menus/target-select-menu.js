@@ -563,6 +563,23 @@ export function openTargetSelectMenu({
     return true;
   }
 
+  const groupArrows = targetMenu.querySelectorAll(".fui-target-group-arrow");
+
+  groupArrows.forEach((arrow) => {
+    arrow.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+
+      const direction = arrow.classList.contains("fui-target-group-arrow-left")
+        ? -1
+        : 1;
+
+      if (changeGroup(direction)) {
+        playUISound("swipe");
+      }
+    });
+  });
+
   // ===================================================
   // SELECT TARGET
   // ===================================================
