@@ -2,7 +2,7 @@
   "id": "fabula-jrpg-ui",
   "title": "Fabula JRPG UI",
   "description": "A JRPG-style combat interface for Project FU, inspired by classic console RPG battle UIs.",
-  "version": "1.0.0",
+  "version": "1.0.1",
 
   "authors": [
     {
