@@ -101,7 +101,9 @@ function openItemActionMenu({ actor, ui, itemType, actionType, emptyMessage }) {
 // =====================================================
 
 function executeAttack(actor, ui) {
-  const weapons = actor.items.contents.filter((item) => item.type === "weapon");
+  const weapons = actor.items.filter((item) =>
+    ["weapon", "customWeapon"].includes(item.type),
+  );
 
   if (weapons.length === 0) {
     foundry.ui.notifications.warn("Nenhuma arma disponível.");

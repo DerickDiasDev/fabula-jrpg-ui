@@ -10,12 +10,7 @@ import {
 } from "../command/command-menu.js";
 
 import { applyHudLayout } from "./hud-customization.js";
-
 import { closeActiveSubmenu } from "../menus/menu-utils.js";
-
-// =====================================================
-// REMOVE HUD
-// =====================================================
 
 export function removeFabulaUI() {
   const ui = document.querySelector("#fabula-jrpg-ui");
@@ -26,45 +21,24 @@ export function removeFabulaUI() {
 
   if (ui._fabulaKeydownHandler) {
     document.removeEventListener("keydown", ui._fabulaKeydownHandler);
-
     delete ui._fabulaKeydownHandler;
   }
 
   ui.remove();
 }
 
-// =====================================================
-// CREATE HUD
-// =====================================================
-
 export function createFabulaUI() {
-  // Nunca criar HUD duplicada.
   if (document.querySelector("#fabula-jrpg-ui")) {
     return;
   }
 
-  if (!game.combat?.active) {
-    return;
-  }
-
-  // ===================================================
-  // PARTY ACTORS
-  // ===================================================
-
-  const actors = game.combat.combatants.contents
-    .map((combatant) => combatant.actor)
-    .filter((actor) => actor?.type === "character");
-
-  // ===================================================
-  // INITIAL COMMAND ACTOR
-  // ===================================================
+  const actors = game.actors.contents.filter(
+    (actor) => actor.type === "character",
+  );
 
   const currentActor = game.combat?.combatant?.actor ?? null;
   const currentActorName = currentActor?.name ?? "";
-
-  // ===================================================
-  // CREATE HUD
-  // ===================================================
+  const isCombatActive = game.combat?.active ?? false;
 
   const ui = document.createElement("div");
 
@@ -72,7 +46,7 @@ export function createFabulaUI() {
   ui.tabIndex = 0;
 
   ui.innerHTML = `
-    <div class="fui-command-wrapper">
+    <div class="fui-command-wrapper" ${isCombatActive ? "" : "hidden"}>
       <div
         class="fui-command"
         data-actor-name="${currentActorName}"
@@ -80,31 +54,24 @@ export function createFabulaUI() {
         <button class="fui-command-button fui-active">
           <span>Attack</span>
         </button>
-
         <button class="fui-command-button">
           <span>Skill</span>
         </button>
-
         <button class="fui-command-button">
           <span>Study</span>
         </button>
-
         <button class="fui-command-button">
           <span>Guard</span>
         </button>
-
         <button class="fui-command-button">
           <span>Item</span>
         </button>
-
         <button class="fui-command-button">
           <span>Equipment</span>
         </button>
-
         <button class="fui-command-button">
           <span>Hinder</span>
         </button>
-
         <button class="fui-command-button">
           <span>Objective</span>
         </button>
@@ -120,19 +87,15 @@ export function createFabulaUI() {
 
   document.body.appendChild(ui);
 
-  // ===================================================
-  // HUD LAYOUT
-  // ===================================================
-
   applyHudLayout(ui);
 
   ui.focus();
 
-  // ===================================================
-  // KEYBOARD
-  // ===================================================
-
   const keydownHandler = (event) => {
+    if (!game.combat?.active) {
+      return;
+    }
+
     if (event.key.toLowerCase() !== "f") {
       return;
     }
@@ -172,49 +135,39 @@ export function createFabulaUI() {
 
   document.addEventListener("keydown", keydownHandler);
 
-  // ===================================================
-  // COMMAND MENU
-  // ===================================================
-
   setupCommandMenu(ui);
 
-  // ===================================================
-  // INITIAL STATE
-  // ===================================================
-
-  updateActiveCombatant(game.combat, ui);
-  updateCommandActor(currentActor, ui);
+  if (game.combat?.active) {
+    updateActiveCombatant(game.combat, ui);
+    updateCommandActor(currentActor, ui);
+  }
 }
 
-// =====================================================
-// REFRESH HUD
-// =====================================================
-
-export function refreshFabulaUI(combat) {
-  if (!combat?.active) {
-    removeFabulaUI();
-    return;
-  }
-
+export function refreshFabulaUI(combat = game.combat) {
   createFabulaUI();
 
   const ui = document.querySelector("#fabula-jrpg-ui");
-
   if (!ui) {
     return;
   }
 
-  // Atualiza somente o personagem
-  // cujo turno está ativo.
-  //
-  // NÃO altera o Command Actor.
+  const commandWrapper = ui.querySelector(".fui-command-wrapper");
+
+  if (commandWrapper) {
+    commandWrapper.hidden = !combat?.active;
+  }
+
+  if (!combat?.active) {
+    return;
+  }
+
+  applyHudLayout(ui);
 
   updateActiveCombatant(combat, ui);
-}
 
-// =====================================================
-// UPDATE ACTOR CARD
-// =====================================================
+  const currentActor = combat.combatant?.actor ?? null;
+  updateCommandActor(currentActor, ui);
+}
 
 export function updateFabulaActorCard(actor) {
   const ui = document.querySelector("#fabula-jrpg-ui");
@@ -225,10 +178,6 @@ export function updateFabulaActorCard(actor) {
 
   updateCharacterCard(actor, ui);
 }
-
-// =====================================================
-// UPDATE COMMAND ACTOR
-// =====================================================
 
 export function updateFabulaCommandActor(actor) {
   const ui = document.querySelector("#fabula-jrpg-ui");
