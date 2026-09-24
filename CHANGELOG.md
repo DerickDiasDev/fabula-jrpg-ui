@@ -2,6 +2,19 @@
 
 All notable changes to Fabula JRPG UI will be documented in this file.
 
+## [Unreleased]
+
+### Added
+
+- Persistent Party HUD outside of active Combat.
+
+### Changed
+
+- Player HUD lifecycle is now independent from Combat.
+- Party UI now persists outside of active Combat, while the Command HUD remains contextual to Combat.
+- Party members are now managed independently from Combatants.
+- HUD layout is recalculated correctly when the Command HUD becomes visible.
+
 ## [1.0.1] - 2026-09-16
 
 ### Fixed

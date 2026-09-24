@@ -2,7 +2,8 @@
 // CREATE CHARACTER CARD
 // =====================================================
 
-export function createCharacterCard(actor) {
+export function createCharacterCard(member) {
+  const actor = member.actor;
   const isKo = actor.statuses?.has("ko");
   const hp = actor.system.resources.hp;
   const mp = actor.system.resources.mp;

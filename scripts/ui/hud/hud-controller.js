@@ -12,6 +12,8 @@ import {
 import { applyHudLayout } from "./hud-customization.js";
 import { closeActiveSubmenu } from "../menus/menu-utils.js";
 
+import { getPartyMembers } from "../party/party-data.js";
+
 export function removeFabulaUI() {
   const ui = document.querySelector("#fabula-jrpg-ui");
 
@@ -31,10 +33,6 @@ export function createFabulaUI() {
   if (document.querySelector("#fabula-jrpg-ui")) {
     return;
   }
-
-  const actors = game.actors.contents.filter(
-    (actor) => actor.type === "character",
-  );
 
   const currentActor = game.combat?.combatant?.actor ?? null;
   const currentActorName = currentActor?.name ?? "";
@@ -80,7 +78,7 @@ export function createFabulaUI() {
 
     <div class="fui-party-wrapper">
       <div class="fui-party-stats">
-        ${actors.map(createCharacterCard).join("")}
+        ${getPartyMembers().map(createCharacterCard).join("")}
       </div>
     </div>
   `;
