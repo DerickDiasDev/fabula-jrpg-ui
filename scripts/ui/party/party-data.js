@@ -6,3 +6,13 @@ export function getPartyMembers() {
     .map(createPartyMember)
     .filter(Boolean);
 }
+
+export function getPartyMemberByActor(actor) {
+  if (!actor) {
+    return null;
+  }
+
+  return (
+    getPartyMembers().find((member) => member.actor.id === actor.id) ?? null
+  );
+}

@@ -1,19 +1,15 @@
 import { openConfirmMenu } from "./confirm-menu.js";
 
-import {
-  showMenu,
-  hideMenu,
-  setCanvasCursor,
-  destroyCanvasCursor,
-} from "./menu-utils.js";
+import { showMenu, hideMenu } from "./menu-utils.js";
 
 import { executeAction } from "../actions/execute-action.js";
 
 import { createHudCursor } from "../shared/hud-cursor.js";
 
-import { createCanvasCursor } from "../shared/canvas-cursor.js";
-
 import { playUISound } from "../shared/audio.js";
+
+import { createCanvasTargetVisual } from "../target/target-visual.js";
+//import { createCardTargetVisual } from "../target/card-target-visual.js";
 
 // =====================================================
 // TARGET GROUPS
@@ -269,16 +265,6 @@ function updateTargetMarquee(targetButtons) {
 }
 
 // =====================================================
-// TOKEN
-// =====================================================
-
-function getTokenForCombatantId(combatantId) {
-  const combatant = game.combat?.combatants.get(combatantId);
-
-  return combatant?.token?.object ?? null;
-}
-
-// =====================================================
 // OPEN TARGET SELECT MENU
 // =====================================================
 
@@ -349,9 +335,11 @@ export function openTargetSelectMenu({
 
   const cursor = createHudCursor(targetMenu);
 
-  const canvasCursor = createCanvasCursor();
+  const targetVisual = createCanvasTargetVisual();
 
-  setCanvasCursor(ui, canvasCursor);
+  targetMenu._fabulaCleanup = () => {
+    targetVisual.destroy();
+  };
 
   const scrollbar = targetMenu.querySelector(".fui-target-scrollbar");
 
@@ -479,11 +467,7 @@ export function openTargetSelectMenu({
 
     cursor.update(activeButton);
 
-    canvasCursor.setFocusedToken(
-      activeButton
-        ? getTokenForCombatantId(activeButton.dataset.combatantId)
-        : null,
-    );
+    targetVisual.setFocusedTarget(activeButton?.dataset.combatantId ?? null);
 
     requestAnimationFrame(() =>
       updateTargetScrollbar(
@@ -514,9 +498,7 @@ export function openTargetSelectMenu({
       counter.textContent = `Selected: ${selectedTargets.size}/${targetCount}`;
     }
 
-    canvasCursor.setSelectedTokens(
-      [...selectedTargets].map(getTokenForCombatantId).filter(Boolean),
-    );
+    targetVisual.setSelectedTargets([...selectedTargets]);
   }
 
   // ===================================================
@@ -630,7 +612,7 @@ export function openTargetSelectMenu({
     isTransitioning = true;
 
     if (actionType === "study") {
-      destroyCanvasCursor(ui);
+      delete targetMenu._fabulaCleanup;
 
       executeAction({
         actor,
@@ -638,6 +620,8 @@ export function openTargetSelectMenu({
         actionType,
         targetIds: [...selectedTargets],
         ui,
+      }).finally(() => {
+        targetVisual.destroy();
       });
 
       return;
@@ -645,6 +629,7 @@ export function openTargetSelectMenu({
 
     const targetSelectRect = targetMenu.getBoundingClientRect();
 
+    delete targetMenu._fabulaCleanup;
     targetMenu.remove();
 
     openConfirmMenu({
@@ -655,7 +640,7 @@ export function openTargetSelectMenu({
       ui,
       previousMenu,
       positionRect: targetSelectRect,
-      canvasCursor,
+      targetVisual,
     });
   }
 
@@ -664,16 +649,17 @@ export function openTargetSelectMenu({
   // ===================================================
 
   function closeTargetSelectMenu() {
-    destroyCanvasCursor(ui);
+    if (typeof targetMenu._fabulaCleanup === "function") {
+      targetMenu._fabulaCleanup();
+      delete targetMenu._fabulaCleanup;
+    }
 
     hideMenu(targetMenu);
 
     if (isCommandMenu) {
       previousMenu.classList.add("fui-ui-focused");
-
       previousMenu.tabIndex = 0;
       previousMenu.focus();
-
       return;
     }
 

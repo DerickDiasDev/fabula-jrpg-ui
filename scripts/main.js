@@ -1,11 +1,14 @@
 import {
   refreshFabulaUI,
   updateFabulaActorCard,
-  updateFabulaCommandActor,
 } from "./ui/hud/hud-controller.js";
 
 import { registerHudSettings } from "./ui/hud/hud-customization.js";
 import { registerAudioSettings } from "./ui/shared/audio.js";
+
+import { getPartyMemberByActor } from "./ui/party/party-data.js";
+
+import { selectCharacter } from "./ui/interaction/character-interaction.js";
 
 Hooks.once("init", () => {
   registerHudSettings();
@@ -109,7 +112,19 @@ Hooks.on("controlToken", (token, controlled) => {
   const selectedToken = ownedTokens[0];
   const selectedActor = selectedToken.actor;
 
-  updateFabulaCommandActor(selectedActor);
+  const ui = document.querySelector("#fabula-jrpg-ui");
+
+  if (!ui) {
+    return;
+  }
+
+  const member = getPartyMemberByActor(selectedActor);
+
+  if (!member) {
+    return;
+  }
+
+  selectCharacter(member, ui);
 });
 
 Hooks.on("deleteCombat", () => {

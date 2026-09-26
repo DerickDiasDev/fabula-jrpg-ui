@@ -1,4 +1,4 @@
-import { showMenu, hideMenu, destroyCanvasCursor } from "./menu-utils.js";
+import { showMenu, hideMenu } from "./menu-utils.js";
 
 import { executeAction } from "../actions/execute-action.js";
 
@@ -121,7 +121,7 @@ export function openConfirmMenu({
   ui,
   previousMenu,
   positionRect,
-  canvasCursor,
+  targetVisual,
 }) {
   // ===================================================
   // POSITION
@@ -170,6 +170,10 @@ export function openConfirmMenu({
 
   const cursor = createHudCursor(confirmMenu);
 
+  confirmMenu._fabulaCleanup = () => {
+    targetVisual.destroy();
+  };
+
   let selectedIndex = 0;
   let isExecuting = false;
 
@@ -191,9 +195,7 @@ export function openConfirmMenu({
 
   function closeConfirmMenu() {
     hideMenu(confirmMenu);
-
-    destroyCanvasCursor(ui);
-
+    targetVisual.destroy();
     showMenu(previousMenu);
   }
 
@@ -222,18 +224,10 @@ export function openConfirmMenu({
 
     const confirmation = button.dataset.confirm;
 
-    // -----------------------------------------------
-    // CANCEL
-    // -----------------------------------------------
-
     if (confirmation === "cancel") {
       closeConfirmMenu();
       return;
     }
-
-    // -----------------------------------------------
-    // EXECUTE
-    // -----------------------------------------------
 
     isExecuting = true;
 
@@ -245,9 +239,8 @@ export function openConfirmMenu({
         targetIds,
         ui,
       });
-
-      destroyCanvasCursor(ui);
     } finally {
+      targetVisual.destroy();
       isExecuting = false;
     }
   }

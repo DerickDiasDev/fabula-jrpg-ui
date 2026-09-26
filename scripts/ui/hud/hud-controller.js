@@ -9,10 +9,12 @@ import {
   updateCommandActor,
 } from "../command/command-menu.js";
 
+import { setupCardInteraction } from "../interaction/card-interaction.js";
+
 import { applyHudLayout } from "./hud-customization.js";
 import { closeActiveSubmenu } from "../menus/menu-utils.js";
-
 import { getPartyMembers } from "../party/party-data.js";
+import { selectCharacter } from "../interaction/character-interaction.js";
 
 export function removeFabulaUI() {
   const ui = document.querySelector("#fabula-jrpg-ui");
@@ -84,9 +86,9 @@ export function createFabulaUI() {
   `;
 
   document.body.appendChild(ui);
+  setupCardInteraction(ui);
 
   applyHudLayout(ui);
-
   ui.focus();
 
   const keydownHandler = (event) => {
@@ -177,13 +179,18 @@ export function updateFabulaActorCard(actor) {
   updateCharacterCard(actor, ui);
 }
 
-export function updateFabulaCommandActor(actor) {
+export function updateFabulaCommandActor(actor, token = null) {
   const ui = document.querySelector("#fabula-jrpg-ui");
 
   if (!ui || !actor) {
     return;
   }
 
-  closeActiveSubmenu(ui);
-  updateCommandActor(actor, ui);
+  selectCharacter(
+    {
+      actor,
+      token,
+    },
+    ui,
+  );
 }
