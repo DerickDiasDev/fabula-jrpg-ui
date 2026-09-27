@@ -1,34 +1,22 @@
-import { createCanvasCursor } from "../shared/canvas-cursor.js";
+import { createCanvasTargetVisual } from "./canvas-target-visual.js";
+import { createCardTargetVisual } from "./card-target-visual.js";
 
 // =====================================================
 // TARGET VISUAL
 // =====================================================
 
-export function createCanvasTargetVisual() {
-  const canvasCursor = createCanvasCursor();
-
-  function getToken(combatantId) {
-    const combatant = game.combat?.combatants.get(combatantId);
-    return combatant?.token?.object ?? null;
+export function createTargetVisual(type = "canvas") {
+  if (type === "card") {
+    return createCardTargetVisual();
   }
 
-  function setFocusedTarget(combatantId) {
-    const token = combatantId ? getToken(combatantId) : null;
-    canvasCursor.setFocusedToken(token);
-  }
+  return createCanvasTargetVisual();
+}
 
-  function setSelectedTargets(combatantIds) {
-    const tokens = combatantIds.map(getToken).filter(Boolean);
-    canvasCursor.setSelectedTokens(tokens);
-  }
-
-  function destroy() {
-    canvasCursor.destroy();
-  }
-
+export function createThemeTargetVisuals(theme) {
   return {
-    setFocusedTarget,
-    setSelectedTargets,
-    destroy,
+    party: createTargetVisual(theme.targetVisuals?.party),
+
+    enemies: createTargetVisual(theme.targetVisuals?.enemies),
   };
 }

@@ -1,5 +1,4 @@
 import {
-  createCharacterCard,
   updateActiveCombatant,
   updateCharacterCard,
 } from "../party/character-card.js";
@@ -10,11 +9,13 @@ import {
 } from "../command/command-menu.js";
 
 import { setupCardInteraction } from "../interaction/card-interaction.js";
-
+import { getCurrentTheme, applyTheme } from "../theme/theme-manager.js";
 import { applyHudLayout } from "./hud-customization.js";
-import { closeActiveSubmenu } from "../menus/menu-utils.js";
+
 import { getPartyMembers } from "../party/party-data.js";
+import { createPartyRenderer } from "../theme/party-renderer.js";
 import { selectCharacter } from "../interaction/character-interaction.js";
+import { createCommandRenderer } from "../theme/command-renderer.js";
 
 export function removeFabulaUI() {
   const ui = document.querySelector("#fabula-jrpg-ui");
@@ -41,51 +42,29 @@ export function createFabulaUI() {
   const isCombatActive = game.combat?.active ?? false;
 
   const ui = document.createElement("div");
-
   ui.id = "fabula-jrpg-ui";
+
+  const theme = getCurrentTheme();
+  ui.dataset.theme = theme.id;
+  const partyRenderer = createPartyRenderer(theme);
+  const commandRenderer = createCommandRenderer(theme);
+
   ui.tabIndex = 0;
 
   ui.innerHTML = `
     <div class="fui-command-wrapper" ${isCombatActive ? "" : "hidden"}>
-      <div
-        class="fui-command"
-        data-actor-name="${currentActorName}"
-      >
-        <button class="fui-command-button fui-active">
-          <span>Attack</span>
-        </button>
-        <button class="fui-command-button">
-          <span>Skill</span>
-        </button>
-        <button class="fui-command-button">
-          <span>Study</span>
-        </button>
-        <button class="fui-command-button">
-          <span>Guard</span>
-        </button>
-        <button class="fui-command-button">
-          <span>Item</span>
-        </button>
-        <button class="fui-command-button">
-          <span>Equipment</span>
-        </button>
-        <button class="fui-command-button">
-          <span>Hinder</span>
-        </button>
-        <button class="fui-command-button">
-          <span>Objective</span>
-        </button>
-      </div>
+      ${commandRenderer.render(currentActorName)}
     </div>
 
     <div class="fui-party-wrapper">
       <div class="fui-party-stats">
-        ${getPartyMembers().map(createCharacterCard).join("")}
+        ${partyRenderer.render(getPartyMembers())}
       </div>
     </div>
-  `;
+`;
 
   document.body.appendChild(ui);
+  applyTheme(theme, ui);
   setupCardInteraction(ui);
 
   applyHudLayout(ui);

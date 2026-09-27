@@ -1,6 +1,6 @@
-import { openConfirmMenu } from "./confirm-menu.js";
+import { openConfirmMenu } from "../menus/confirm-menu.js";
 
-import { showMenu, hideMenu } from "./menu-utils.js";
+import { showMenu, hideMenu } from "../menus/menu-utils.js";
 
 import { executeAction } from "../actions/execute-action.js";
 
@@ -8,162 +8,15 @@ import { createHudCursor } from "../shared/hud-cursor.js";
 
 import { playUISound } from "../shared/audio.js";
 
-import { createCanvasTargetVisual } from "../target/target-visual.js";
-//import { createCardTargetVisual } from "../target/card-target-visual.js";
+import { createTargetMenuHTML } from "./target-menu-view.js";
 
-// =====================================================
-// TARGET GROUPS
-// =====================================================
+import { getCurrentTheme } from "../theme/theme-manager.js";
 
-function getCombatantGroups() {
-  const combatants = game.combat?.combatants.contents ?? [];
+import { createThemeTargetVisuals } from "./target-visual.js";
 
-  const party = combatants.filter(
-    (combatant) => combatant.actor?.type === "character",
-  );
+import { getCombatantGroups, createTargetGroups } from "./target-groups.js";
 
-  const enemies = combatants.filter((combatant) => {
-    const actor = combatant.actor;
-
-    if (actor?.type === "character") {
-      return false;
-    }
-
-    return !actor?.statuses?.has("ko");
-  });
-
-  return {
-    party,
-    enemies,
-  };
-}
-
-// =====================================================
-// ACTION LABEL
-// =====================================================
-
-function getActionLabel(actionType) {
-  if (actionType === "skill") {
-    return "Skill";
-  }
-
-  if (actionType === "item") {
-    return "Item";
-  }
-
-  if (actionType === "study") {
-    return "Study";
-  }
-
-  return "Attack";
-}
-
-// =====================================================
-// TARGET BUTTON
-// =====================================================
-
-function createTargetButton(combatant) {
-  return `
-    <button
-      class="fui-command-button fui-target-button"
-      data-combatant-id="${combatant.id}"
-    >
-      <span class="fui-target-name">
-        <span class="fui-target-name-inner">
-          ${combatant.actor?.name ?? "Unknown"}
-        </span>
-      </span>
-    </button>
-  `;
-}
-
-// =====================================================
-// TARGET GROUP
-// =====================================================
-
-function createTargetGroup(id, label, combatants) {
-  return `
-    <div
-      class="fui-target-group"
-      data-target-group="${id}"
-    >
-      <div class="fui-target-group-title">
-        <span class="fui-target-group-arrow fui-target-group-arrow-left">
-          ◀
-        </span>
-
-        <span class="fui-target-group-title-text">
-          ${label}
-        </span>
-
-        <span class="fui-target-group-arrow fui-target-group-arrow-right">
-          ▶
-        </span>
-      </div>
-
-      ${combatants.map(createTargetButton).join("")}
-    </div>
-  `;
-}
-
-// =====================================================
-// TARGET MENU HTML
-// =====================================================
-
-function createTargetMenuHTML({
-  action,
-  actionType,
-  targetCount,
-  party,
-  enemies,
-}) {
-  const actionLabel = getActionLabel(actionType);
-
-  return `
-    <div class="fui-command-title">
-      <button
-        class="fui-menu-back"
-        type="button"
-        aria-label="Back"
-      >
-        ←
-      </button>
-      <span>Target</span>
-    </div>
-
-    <div class="fui-target-action">
-      ${actionLabel}${action ? ` / ${action.name}` : ""}
-    </div>
-
-    <div class="fui-target-list">
-      ${createTargetGroup("party", "PARTY", party)}
-
-      ${createTargetGroup("enemies", "ENEMIES", enemies)}
-    </div>
-
-    <div class="fui-target-count">
-      Selected: 0/${targetCount}
-    </div>
-
-    <div class="fui-target-scrollbar">
-      <div
-        class="fui-target-scrollbar-arrow fui-target-scrollbar-arrow-up"
-      ></div>
-
-      <div class="fui-target-scrollbar-track">
-        <div class="fui-target-scrollbar-thumb"></div>
-      </div>
-
-      <div
-        class="fui-target-scrollbar-arrow fui-target-scrollbar-arrow-down"
-      ></div>
-    </div>
-  `;
-}
-
-// =====================================================
-// SCROLLBAR
-// =====================================================
+import { createTargetSelection } from "./target-selection.js";
 
 function updateTargetScrollbar(
   targetList,
@@ -176,7 +29,6 @@ function updateTargetScrollbar(
   }
 
   const scrollHeight = targetList.scrollHeight;
-
   const visibleHeight = targetList.clientHeight;
 
   if (scrollHeight <= visibleHeight) {
@@ -203,10 +55,6 @@ function updateTargetScrollbar(
 
   scrollbarThumb.style.transform = `translateY(${thumbTop}px)`;
 }
-
-// =====================================================
-// MARQUEE
-// =====================================================
 
 function applyMarqueeIfNeeded(button) {
   const nameElement = button.querySelector(".fui-target-name");
@@ -264,10 +112,6 @@ function updateTargetMarquee(targetButtons) {
   });
 }
 
-// =====================================================
-// OPEN TARGET SELECT MENU
-// =====================================================
-
 export function openTargetSelectMenu({
   actor,
   action,
@@ -301,6 +145,7 @@ export function openTargetSelectMenu({
   ui.appendChild(targetMenu);
 
   targetMenu.tabIndex = 0;
+
   targetMenu.style.position = "fixed";
 
   if (isCommandMenu) {
@@ -315,19 +160,9 @@ export function openTargetSelectMenu({
 
   showMenu(targetMenu);
 
-  // ===================================================
-  // ELEMENTS
-  // ===================================================
-
   const backButton = targetMenu.querySelector(".fui-menu-back");
 
   const targetList = targetMenu.querySelector(".fui-target-list");
-
-  const targetGroups = {
-    party: targetMenu.querySelector('[data-target-group="party"]'),
-
-    enemies: targetMenu.querySelector('[data-target-group="enemies"]'),
-  };
 
   const targetButtons = Array.from(
     targetMenu.querySelectorAll(".fui-target-button"),
@@ -335,10 +170,13 @@ export function openTargetSelectMenu({
 
   const cursor = createHudCursor(targetMenu);
 
-  const targetVisual = createCanvasTargetVisual();
+  const theme = getCurrentTheme();
+
+  const targetVisuals = createThemeTargetVisuals(theme);
 
   targetMenu._fabulaCleanup = () => {
-    targetVisual.destroy();
+    targetVisuals.party.destroy();
+    targetVisuals.enemies.destroy();
   };
 
   const scrollbar = targetMenu.querySelector(".fui-target-scrollbar");
@@ -351,75 +189,33 @@ export function openTargetSelectMenu({
     ".fui-target-scrollbar-thumb",
   );
 
-  // ===================================================
-  // GROUPS
-  // ===================================================
+  const combatantGroups = createTargetGroups({
+    party,
+    enemies,
+  });
 
-  const groups = [
-    {
-      id: "party",
-      element: targetGroups.party,
+  const groups = combatantGroups.map((group) => {
+    const element = targetMenu.querySelector(
+      `[data-target-group="${group.id}"]`,
+    );
+
+    return {
+      id: group.id,
+      element,
       buttons: Array.from(
-        targetGroups.party?.querySelectorAll(".fui-target-button") ?? [],
+        element?.querySelectorAll(".fui-target-button") ?? [],
       ),
-    },
+    };
+  });
 
-    {
-      id: "enemies",
-      element: targetGroups.enemies,
-      buttons: Array.from(
-        targetGroups.enemies?.querySelectorAll(".fui-target-button") ?? [],
-      ),
-    },
-  ];
-
-  let activeGroupIndex = groups[0].buttons.length > 0 ? 0 : 1;
-
-  const groupSelectedIndexes = [0, 0];
-
-  const selectedTargets = new Set();
+  const selection = createTargetSelection(groups);
 
   let isTransitioning = false;
-
-  // ===================================================
-  // GROUP HELPERS
-  // ===================================================
-
-  function getActiveGroup() {
-    return groups[activeGroupIndex];
-  }
-
-  function getActiveButtons() {
-    return getActiveGroup()?.buttons ?? [];
-  }
-
-  function getSelectedIndex() {
-    return groupSelectedIndexes[activeGroupIndex] ?? 0;
-  }
-
-  function setSelectedIndex(index) {
-    groupSelectedIndexes[activeGroupIndex] = index;
-  }
-
-  function findNextAvailableGroup(direction) {
-    if (groups.length <= 1) {
-      return activeGroupIndex;
-    }
-
-    let nextIndex = activeGroupIndex;
-
-    for (let i = 0; i < groups.length; i++) {
-      nextIndex = (nextIndex + direction + groups.length) % groups.length;
-
-      if (groups[nextIndex].buttons.length > 0) {
-        return nextIndex;
-      }
-    }
-
-    return activeGroupIndex;
-  }
+  let isGroupTransitioning = false;
 
   function updateGroupVisibility() {
+    const activeGroupIndex = selection.getActiveGroupIndex();
+
     groups.forEach((group, index) => {
       if (!group.element) {
         return;
@@ -429,26 +225,10 @@ export function openTargetSelectMenu({
     });
   }
 
-  // ===================================================
-  // FOCUSED BUTTON
-  // ===================================================
-
-  function getFocusedButton() {
-    const activeButtons = getActiveButtons();
-
-    const selectedIndex = getSelectedIndex();
-
-    return activeButtons[selectedIndex];
-  }
-
-  // ===================================================
-  // SELECTION UPDATE
-  // ===================================================
-
   function updateSelection() {
-    const activeButtons = getActiveButtons();
+    const activeButtons = selection.getActiveButtons();
 
-    const selectedIndex = getSelectedIndex();
+    const selectedIndex = selection.getSelectedIndex();
 
     targetButtons.forEach((button) => {
       button.classList.remove("fui-active");
@@ -465,29 +245,31 @@ export function openTargetSelectMenu({
       });
     }
 
-    cursor.update(activeButton);
+    cursor.update(selection.getFocusedButton());
 
-    targetVisual.setFocusedTarget(activeButton?.dataset.combatantId ?? null);
+    const activeGroup = selection.getActiveGroup();
 
-    requestAnimationFrame(() =>
+    targetVisuals[activeGroup?.id]?.setFocusedTarget(
+      activeButton?.dataset.combatantId ?? null,
+    );
+
+    requestAnimationFrame(() => {
       updateTargetScrollbar(
         targetList,
         scrollbar,
         scrollbarTrack,
         scrollbarThumb,
-      ),
-    );
+      );
+    });
 
-    requestAnimationFrame(() => updateTargetMarquee(targetButtons));
+    requestAnimationFrame(() => {
+      updateTargetMarquee(targetButtons);
+    });
   }
-
-  // ===================================================
-  // SELECTED TARGETS
-  // ===================================================
 
   function updateSelectedTargets() {
     targetButtons.forEach((button) => {
-      const selected = selectedTargets.has(button.dataset.combatantId);
+      const selected = selection.isSelected(button.dataset.combatantId);
 
       button.classList.toggle("fui-selected", selected);
     });
@@ -495,53 +277,97 @@ export function openTargetSelectMenu({
     const counter = targetMenu.querySelector(".fui-target-count");
 
     if (counter) {
-      counter.textContent = `Selected: ${selectedTargets.size}/${targetCount}`;
+      counter.textContent = `Selected: ${
+        selection.getSelectedTargets().size
+      }/${targetCount}`;
     }
 
-    targetVisual.setSelectedTargets([...selectedTargets]);
+    const selectedByGroup = {
+      party: [],
+      enemies: [],
+    };
+
+    for (const combatantId of selection.getSelectedTargetIds()) {
+      const button = targetButtons.find(
+        (button) => button.dataset.combatantId === combatantId,
+      );
+
+      const group = button?.closest(".fui-target-group")?.dataset.targetGroup;
+
+      if (group && selectedByGroup[group]) {
+        selectedByGroup[group].push(combatantId);
+      }
+    }
+
+    targetVisuals.party.setSelectedTargets(selectedByGroup.party);
+
+    targetVisuals.enemies.setSelectedTargets(selectedByGroup.enemies);
   }
 
-  // ===================================================
-  // CHANGE GROUP
-  // ===================================================
+  function resetTargetSelection() {
+    selection.clear();
 
-  let isGroupTransitioning = false;
+    updateSelectedTargets();
+  }
+
   function changeGroup(direction) {
     if (isGroupTransitioning) {
       return false;
     }
-    const nextGroupIndex = findNextAvailableGroup(direction);
+
+    const activeGroupIndex = selection.getActiveGroupIndex();
+
+    const nextGroupIndex = selection.findNextAvailableGroup(direction);
+
     if (nextGroupIndex === activeGroupIndex) {
       return false;
     }
+
     const currentGroup = groups[activeGroupIndex];
+
     const nextGroup = groups[nextGroupIndex];
+
     if (!currentGroup?.element || !nextGroup?.element) {
       return false;
     }
+
     isGroupTransitioning = true;
+
+    targetVisuals[currentGroup.id]?.setFocusedTarget(null);
+
     const isForward = direction > 0;
+
     const exitClass = isForward
       ? "fui-target-group-exit-left"
       : "fui-target-group-exit-right";
+
     const enterClass = isForward
       ? "fui-target-group-enter-right"
       : "fui-target-group-enter-left";
+
     currentGroup.element.hidden = false;
     nextGroup.element.hidden = false;
+
     currentGroup.element.classList.add(exitClass);
     nextGroup.element.classList.add(enterClass);
+
     const finishTransition = () => {
       currentGroup.element.classList.remove(exitClass);
       nextGroup.element.classList.remove(enterClass);
+
       currentGroup.element.hidden = true;
-      activeGroupIndex = nextGroupIndex;
+
+      selection.changeGroup(direction);
+
       updateSelection();
+
       isGroupTransitioning = false;
     };
+
     nextGroup.element.addEventListener("animationend", finishTransition, {
       once: true,
     });
+
     return true;
   }
 
@@ -562,16 +388,8 @@ export function openTargetSelectMenu({
     });
   });
 
-  // ===================================================
-  // SELECT TARGET
-  // ===================================================
-
   function selectTarget() {
-    const activeButtons = getActiveButtons();
-
-    const selectedIndex = getSelectedIndex();
-
-    const button = activeButtons[selectedIndex];
+    const button = selection.getFocusedButton();
 
     if (!button) {
       return false;
@@ -579,30 +397,26 @@ export function openTargetSelectMenu({
 
     const combatantId = button.dataset.combatantId;
 
-    if (selectedTargets.has(combatantId)) {
-      selectedTargets.delete(combatantId);
+    if (selection.isSelected(combatantId)) {
+      selection.deselect(combatantId);
 
       updateSelectedTargets();
 
       return false;
     }
 
-    if (selectedTargets.size >= targetCount) {
+    if (selection.getSelectedTargets().size >= targetCount) {
       return false;
     }
 
-    selectedTargets.add(combatantId);
+    selection.select(combatantId);
 
     updateSelectedTargets();
 
     playUISound("confirm");
 
-    return selectedTargets.size === targetCount;
+    return selection.getSelectedTargets().size === targetCount;
   }
-
-  // ===================================================
-  // OPEN CONFIRMATION
-  // ===================================================
 
   function openConfirmation() {
     if (isTransitioning) {
@@ -618,10 +432,11 @@ export function openTargetSelectMenu({
         actor,
         action,
         actionType,
-        targetIds: [...selectedTargets],
+        targetIds: selection.getSelectedTargetIds(),
         ui,
       }).finally(() => {
-        targetVisual.destroy();
+        targetVisuals.party.destroy();
+        targetVisuals.enemies.destroy();
       });
 
       return;
@@ -630,27 +445,28 @@ export function openTargetSelectMenu({
     const targetSelectRect = targetMenu.getBoundingClientRect();
 
     delete targetMenu._fabulaCleanup;
-    targetMenu.remove();
+
+    hideMenu(targetMenu);
 
     openConfirmMenu({
       actor,
       action,
       actionType,
-      targetIds: [...selectedTargets],
+      targetIds: selection.getSelectedTargetIds(),
       ui,
       previousMenu,
       positionRect: targetSelectRect,
-      targetVisual,
+      targetVisuals,
+      onClose: resetTargetSelection,
     });
   }
 
-  // ===================================================
-  // CLOSE TARGET SELECT
-  // ===================================================
-
   function closeTargetSelectMenu() {
+    resetTargetSelection();
+
     if (typeof targetMenu._fabulaCleanup === "function") {
       targetMenu._fabulaCleanup();
+
       delete targetMenu._fabulaCleanup;
     }
 
@@ -658,8 +474,10 @@ export function openTargetSelectMenu({
 
     if (isCommandMenu) {
       previousMenu.classList.add("fui-ui-focused");
+
       previousMenu.tabIndex = 0;
       previousMenu.focus();
+
       return;
     }
 
@@ -671,15 +489,12 @@ export function openTargetSelectMenu({
     event.stopPropagation();
 
     playUISound("cancel");
+
     closeTargetSelectMenu();
   });
 
-  // ===================================================
-  // SCROLL
-  // ===================================================
-
   targetList?.addEventListener("scroll", () => {
-    cursor.update(getFocusedButton());
+    cursor.update(selection.getFocusedButton());
 
     updateTargetScrollbar(
       targetList,
@@ -688,11 +503,6 @@ export function openTargetSelectMenu({
       scrollbarThumb,
     );
   });
-
-  // ===================================================
-  // MOUSE / CLICK
-  // ===================================================
-
   targetButtons.forEach((button) => {
     button.addEventListener("click", () => {
       const groupElement = button.closest(".fui-target-group");
@@ -702,9 +512,9 @@ export function openTargetSelectMenu({
       );
 
       if (groupIndex !== -1) {
-        activeGroupIndex = groupIndex;
+        selection.setActiveGroupIndex(groupIndex);
 
-        setSelectedIndex(groups[groupIndex].buttons.indexOf(button));
+        selection.setSelectedIndex(groups[groupIndex].buttons.indexOf(button));
 
         updateGroupVisibility();
       }
@@ -727,30 +537,15 @@ export function openTargetSelectMenu({
     });
   });
 
-  // ===================================================
-  // KEYBOARD
-  // ===================================================
-
   targetMenu.addEventListener("keydown", (event) => {
     if (event.key === "ArrowUp") {
       event.preventDefault();
       event.stopPropagation();
 
-      const activeButtons = getActiveButtons();
-
-      if (activeButtons.length === 0) {
-        return;
+      if (selection.moveSelection(-1)) {
+        updateSelection();
+        playUISound("navigate");
       }
-
-      const currentIndex = getSelectedIndex();
-
-      setSelectedIndex(
-        (currentIndex - 1 + activeButtons.length) % activeButtons.length,
-      );
-
-      updateSelection();
-
-      playUISound("navigate");
 
       return;
     }
@@ -759,19 +554,10 @@ export function openTargetSelectMenu({
       event.preventDefault();
       event.stopPropagation();
 
-      const activeButtons = getActiveButtons();
-
-      if (activeButtons.length === 0) {
-        return;
+      if (selection.moveSelection(1)) {
+        updateSelection();
+        playUISound("navigate");
       }
-
-      const currentIndex = getSelectedIndex();
-
-      setSelectedIndex((currentIndex + 1) % activeButtons.length);
-
-      updateSelection();
-
-      playUISound("navigate");
 
       return;
     }
@@ -823,10 +609,6 @@ export function openTargetSelectMenu({
     }
   });
 
-  // ===================================================
-  // INITIAL STATE
-  // ===================================================
-
   updateGroupVisibility();
   updateSelection();
   updateSelectedTargets();
@@ -839,7 +621,7 @@ export function openTargetSelectMenu({
       scrollbarThumb,
     );
 
-    cursor.update(getFocusedButton());
+    cursor.update(selection.getFocusedButton());
 
     updateTargetMarquee(targetButtons);
   });

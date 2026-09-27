@@ -52,7 +52,7 @@
   position: absolute;
   inset: -8px;
   z-index: -1;
-  background-image: url("../assets/moldura.svg");
+  background-image: url("../../../assets/moldura.svg");
   background-size: 100% 100%;
   background-repeat: no-repeat;
   pointer-events: none;
@@ -64,7 +64,7 @@
 }
 
 .fui-character-card.fui-active-turn::before {
-  background-image: url("../assets/moldura-active.svg");
+  background-image: url("../../../assets/moldura-active.svg");
 }
 
 .fui-character-name-row {
@@ -398,7 +398,7 @@
 }
 
 .fui-character-card.fui-target-focused::before {
-  background-image: url("../assets/moldura-active.svg");
+  background-image: url("../../../assets/moldura-active.svg");
 }
 
 .fui-character-card.fui-target-selected {

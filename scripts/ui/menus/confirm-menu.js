@@ -1,9 +1,6 @@
 import { showMenu, hideMenu } from "./menu-utils.js";
-
 import { executeAction } from "../actions/execute-action.js";
-
 import { createHudCursor } from "../shared/hud-cursor.js";
-
 import { playUISound } from "../shared/audio.js";
 
 // =====================================================
@@ -72,11 +69,11 @@ function createConfirmMenuHTML({ action, actionType, targets }) {
       >
         ←
       </button>
+
       <span>Confirm</span>
     </div>
 
     <div class="fui-confirm-content">
-
       <div class="fui-confirm-action">
         ${actionLabel} / ${action.name}
       </div>
@@ -104,7 +101,6 @@ function createConfirmMenuHTML({ action, actionType, targets }) {
           Cancel
         </button>
       </div>
-
     </div>
   `;
 }
@@ -121,7 +117,8 @@ export function openConfirmMenu({
   ui,
   previousMenu,
   positionRect,
-  targetVisual,
+  targetVisuals,
+  onClose,
 }) {
   // ===================================================
   // POSITION
@@ -144,6 +141,7 @@ export function openConfirmMenu({
   const confirmMenu = document.createElement("div");
 
   confirmMenu.className = "fui-confirm-menu fui-submenu";
+
   confirmMenu.tabIndex = 0;
   confirmMenu.style.position = "fixed";
   confirmMenu.style.left = `${previousRect.left}px`;
@@ -156,6 +154,7 @@ export function openConfirmMenu({
   });
 
   ui.appendChild(confirmMenu);
+
   showMenu(confirmMenu);
 
   const backButton = confirmMenu.querySelector(".fui-menu-back");
@@ -170,12 +169,41 @@ export function openConfirmMenu({
 
   const cursor = createHudCursor(confirmMenu);
 
-  confirmMenu._fabulaCleanup = () => {
-    targetVisual.destroy();
-  };
-
   let selectedIndex = 0;
   let isExecuting = false;
+  let isClosed = false;
+
+  // ===================================================
+  // CLEANUP VISUALS
+  // ===================================================
+
+  function destroyTargetVisuals() {
+    if (!targetVisuals) {
+      return;
+    }
+
+    targetVisuals.party?.destroy();
+    targetVisuals.enemies?.destroy();
+  }
+
+  // ===================================================
+  // CLEANUP
+  // ===================================================
+
+  function cleanup() {
+    if (isClosed) {
+      return;
+    }
+
+    isClosed = true;
+
+    destroyTargetVisuals();
+    onClose?.();
+
+    confirmMenu.remove();
+  }
+
+  confirmMenu._fabulaCleanup = cleanup;
 
   // ===================================================
   // SELECTION
@@ -194,8 +222,8 @@ export function openConfirmMenu({
   // ===================================================
 
   function closeConfirmMenu() {
-    hideMenu(confirmMenu);
-    targetVisual.destroy();
+    cleanup();
+
     showMenu(previousMenu);
   }
 
@@ -204,6 +232,7 @@ export function openConfirmMenu({
     event.stopPropagation();
 
     playUISound("cancel");
+
     closeConfirmMenu();
   });
 
@@ -212,7 +241,7 @@ export function openConfirmMenu({
   // ===================================================
 
   async function executeConfirm() {
-    if (isExecuting) {
+    if (isExecuting || isClosed) {
       return;
     }
 
@@ -240,7 +269,8 @@ export function openConfirmMenu({
         ui,
       });
     } finally {
-      targetVisual.destroy();
+      cleanup();
+
       isExecuting = false;
     }
   }

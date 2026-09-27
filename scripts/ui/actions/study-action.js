@@ -1,4 +1,4 @@
-import { openTargetSelectMenu } from "../menus/target-select-menu.js";
+import { openTargetSelectMenu } from "../target/target-select-menu.js";
 
 export function executeStudy(actor, ui) {
   if (!actor) {
