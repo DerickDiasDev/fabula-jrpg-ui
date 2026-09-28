@@ -1,0 +1,171 @@
+/* =====================================================
+   WIZARDRY PARTY
+   ===================================================== */
+
+.fui-wizardry-party {
+  position: relative;
+
+  display: grid;
+  grid-template-columns: repeat(2, minmax(220px, 1fr));
+
+  width: 520px;
+  gap: 6px;
+
+  pointer-events: auto;
+}
+
+/* =====================================================
+   PARTY MEMBER
+   ===================================================== */
+
+.fui-wizardry-party-member {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  width: 100%;
+  min-height: 58px;
+
+  padding: 8px 12px;
+
+  box-sizing: border-box;
+
+  color: rgba(220, 230, 220, 0.9);
+
+  background: linear-gradient(
+    90deg,
+    rgba(12, 15, 14, 0.96),
+    rgba(22, 26, 24, 0.92)
+  );
+
+  border: 1px solid rgba(125, 135, 125, 0.28);
+
+  border-radius: 1px;
+
+  text-align: left;
+
+  cursor: pointer;
+
+  transition:
+    border-color 120ms ease,
+    background 120ms ease,
+    transform 120ms ease;
+}
+
+/* =====================================================
+   HOVER
+   ===================================================== */
+
+.fui-wizardry-party-member:hover {
+  background: linear-gradient(
+    90deg,
+    rgba(25, 30, 27, 0.98),
+    rgba(34, 40, 36, 0.94)
+  );
+
+  border-color: rgba(180, 190, 175, 0.5);
+
+  transform: translateY(-1px);
+}
+
+/* =====================================================
+   SELECTED
+   ===================================================== */
+
+.fui-wizardry-party-member.fui-wizardry-selected {
+  border-color: rgba(210, 220, 200, 0.9);
+
+  background: linear-gradient(
+    90deg,
+    rgba(45, 52, 46, 0.98),
+    rgba(28, 34, 30, 0.96)
+  );
+
+  box-shadow:
+    inset 0 0 0 1px rgba(210, 220, 200, 0.18),
+    0 0 8px rgba(190, 200, 180, 0.12);
+}
+
+/* =====================================================
+   NAME
+   ===================================================== */
+
+.fui-wizardry-party-member-name {
+  display: block;
+
+  overflow: hidden;
+
+  font-family: Georgia, "Times New Roman", serif;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  line-height: 1.2;
+
+  letter-spacing: 0.04em;
+
+  color: rgba(220, 230, 215, 0.94);
+
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* =====================================================
+   ADD TO COMBAT
+   ===================================================== */
+
+.fui-wizardry-add-to-combat {
+  grid-column: 1 / -1;
+
+  min-height: 34px;
+
+  margin-top: 4px;
+  padding: 7px 12px;
+
+  color: rgba(205, 215, 200, 0.9);
+
+  background: rgba(12, 15, 13, 0.94);
+
+  border: 1px solid rgba(130, 140, 125, 0.32);
+
+  border-radius: 1px;
+
+  font-family: Georgia, "Times New Roman", serif;
+
+  font-size: 13px;
+
+  letter-spacing: 0.08em;
+
+  cursor: pointer;
+
+  transition:
+    background 120ms ease,
+    border-color 120ms ease;
+}
+
+.fui-wizardry-add-to-combat:hover {
+  background: rgba(35, 41, 36, 0.96);
+
+  border-color: rgba(190, 200, 180, 0.55);
+}
+
+/* =====================================================
+   DRAG SELECTION
+   ===================================================== */
+
+.fui-wizardry-selection-box {
+  position: fixed;
+
+  z-index: 999999;
+
+  pointer-events: none;
+
+  box-sizing: border-box;
+
+  border: 1px solid rgba(190, 205, 185, 0.8);
+
+  background: rgba(170, 185, 165, 0.08);
+
+  box-shadow: 0 0 8px rgba(180, 195, 175, 0.08);
+}

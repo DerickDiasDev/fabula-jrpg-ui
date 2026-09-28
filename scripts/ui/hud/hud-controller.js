@@ -12,10 +12,11 @@ import { setupCardInteraction } from "../interaction/card-interaction.js";
 import { getCurrentTheme, applyTheme } from "../theme/theme-manager.js";
 import { applyHudLayout } from "./hud-customization.js";
 
-import { getPartyMembers } from "../party/party-data.js";
+import { getPartyMembers, getCombatPartyMembers } from "../party/party-data.js";
 import { createPartyRenderer } from "../theme/party-renderer.js";
 import { selectCharacter } from "../interaction/character-interaction.js";
 import { createCommandRenderer } from "../theme/command-renderer.js";
+import { setupThemeInteraction } from "../theme/theme-interaction.js";
 
 export function removeFabulaUI() {
   const ui = document.querySelector("#fabula-jrpg-ui");
@@ -58,7 +59,9 @@ export function createFabulaUI() {
 
     <div class="fui-party-wrapper">
       <div class="fui-party-stats">
-        ${partyRenderer.render(getPartyMembers())}
+        ${partyRenderer.render(
+          isCombatActive ? getCombatPartyMembers() : getPartyMembers(),
+        )}
       </div>
     </div>
 `;
@@ -66,6 +69,7 @@ export function createFabulaUI() {
   document.body.appendChild(ui);
   applyTheme(theme, ui);
   setupCardInteraction(ui);
+  setupThemeInteraction(theme, ui);
 
   applyHudLayout(ui);
   ui.focus();
@@ -129,6 +133,7 @@ export function refreshFabulaUI(combat = game.combat) {
   if (!ui) {
     return;
   }
+  updatePartyRenderer(ui, combat);
 
   const commandWrapper = ui.querySelector(".fui-command-wrapper");
 
@@ -172,4 +177,23 @@ export function updateFabulaCommandActor(actor, token = null) {
     },
     ui,
   );
+}
+
+function updatePartyRenderer(ui, combat = game.combat) {
+  const partyStats = ui.querySelector(".fui-party-stats");
+
+  if (!partyStats) {
+    return;
+  }
+
+  const theme = getCurrentTheme();
+  const partyRenderer = createPartyRenderer(theme);
+
+  const members = combat?.active
+    ? getCombatPartyMembers(combat)
+    : getPartyMembers();
+
+  partyStats.innerHTML = partyRenderer.render(members);
+
+  setupThemeInteraction(theme, ui);
 }

@@ -8,7 +8,7 @@ const THEME_STYLES = {
     "confirm.css",
   ],
 
-  wizardry: [],
+  wizardry: ["party.css"],
 };
 
 const THEMES = {
@@ -33,7 +33,15 @@ const THEMES = {
   },
 };
 
-let currentThemeId = "octopath";
+function getConfiguredThemeId() {
+  return game.settings.get("fabula-jrpg-ui", "theme");
+}
+
+export function getCurrentTheme() {
+  const themeId = getConfiguredThemeId();
+
+  return THEMES[themeId] ?? THEMES.octopath;
+}
 
 function loadThemeStyles(themeId) {
   const styles = THEME_STYLES[themeId] ?? [];
@@ -55,10 +63,6 @@ function loadThemeStyles(themeId) {
   }
 }
 
-export function getCurrentTheme() {
-  return THEMES[currentThemeId];
-}
-
 export function applyTheme(theme = getCurrentTheme(), root = null) {
   const ui = root ?? document.querySelector("#fabula-jrpg-ui");
 
@@ -76,9 +80,7 @@ export function setCurrentTheme(themeId) {
     return;
   }
 
-  currentThemeId = themeId;
-
-  applyTheme(THEMES[themeId]);
+  game.settings.set("fabula-jrpg-ui", "theme", themeId);
 }
 
 export function getAvailableThemes() {

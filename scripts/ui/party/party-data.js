@@ -16,3 +16,21 @@ export function getPartyMemberByActor(actor) {
     getPartyMembers().find((member) => member.actor.id === actor.id) ?? null
   );
 }
+
+// =====================================================
+// COMBAT PARTY
+// =====================================================
+
+export function getCombatPartyMembers(combat = game.combat) {
+  if (!combat) {
+    return [];
+  }
+
+  const combatActorIds = new Set(
+    combat.combatants.map((combatant) => combatant.actor?.id).filter(Boolean),
+  );
+
+  return getPartyMembers().filter((member) =>
+    combatActorIds.has(member.actor.id),
+  );
+}

@@ -6,13 +6,32 @@ import {
 import { registerHudSettings } from "./ui/hud/hud-customization.js";
 import { registerAudioSettings } from "./ui/shared/audio.js";
 
-import { getPartyMemberByActor } from "./ui/party/party-data.js";
+import {
+  getPartyMemberByActor,
+  getCombatPartyMembers,
+} from "./ui/party/party-data.js";
 
 import { selectCharacter } from "./ui/interaction/character-interaction.js";
 
 Hooks.once("init", () => {
   registerHudSettings();
   registerAudioSettings();
+
+  game.settings.register("fabula-jrpg-ui", "theme", {
+    name: "HUD Theme",
+    hint: "Select the visual theme used by the Fabula JRPG UI.",
+    scope: "world",
+    config: true,
+    type: String,
+    choices: {
+      octopath: "Octopath",
+      wizardry: "Wizardry",
+    },
+    default: "octopath",
+    onChange: (themeId) => {
+      window.location.reload();
+    },
+  });
 });
 
 Hooks.once("ready", () => {
