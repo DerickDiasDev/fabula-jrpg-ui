@@ -38,7 +38,7 @@ export function setupWizardryPartyInteraction(ui) {
   const partyMembers = getPartyMembers();
 
   const buttons = Array.from(
-    party.querySelectorAll(".fui-wizardry-party-member"),
+    party.querySelectorAll(".fui-wizardry-character-card"),
   );
 
   const addToCombatButton = party.querySelector(".fui-wizardry-add-to-combat");
@@ -127,7 +127,6 @@ export function setupWizardryPartyInteraction(ui) {
 
       if (!isMultiSelect) {
         selectedMembers.clear();
-
         selectedMembers.set(member.actor.id, member);
       }
 
@@ -143,10 +142,25 @@ export function setupWizardryPartyInteraction(ui) {
       }
 
       updateVisualSelection();
-
       syncSelection();
-
       setActiveMember(member);
+    });
+
+    button.addEventListener("dblclick", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+
+      const member = getMember(button);
+
+      if (!member) {
+        return;
+      }
+
+      if (!canSelectCharacter(member)) {
+        return;
+      }
+
+      member.actor.sheet?.render(true);
     });
   });
 
@@ -238,13 +252,6 @@ export function setupWizardryPartyInteraction(ui) {
       }
     });
 
-    addToCombatButton?.addEventListener("click", async (event) => {
-      event.preventDefault();
-      event.stopPropagation();
-
-      await addSelectedToCombat();
-    });
-
     updateVisualSelection();
 
     syncSelection();
@@ -260,6 +267,13 @@ export function setupWizardryPartyInteraction(ui) {
     document.body.style.userSelect = "";
   }
 
+  addToCombatButton?.addEventListener("click", async (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    await addSelectedToCombat();
+  });
+
   party.addEventListener("pointerdown", (event) => {
     // -------------------------------------------------
     // ONLY LEFT MOUSE BUTTON
@@ -273,7 +287,7 @@ export function setupWizardryPartyInteraction(ui) {
     // DON'T START DRAG ON A CHARACTER
     // -------------------------------------------------
 
-    if (event.target.closest(".fui-wizardry-party-member")) {
+    if (event.target.closest(".fui-wizardry-character-card")) {
       return;
     }
 

@@ -146,6 +146,17 @@ Hooks.on("controlToken", (token, controlled) => {
   selectCharacter(member, ui);
 });
 
-Hooks.on("deleteCombat", () => {
+Hooks.on("deleteCombat", async () => {
   refreshFabulaUI(null);
+
+  const temporaryTokens = canvas.scene?.tokens.filter(
+    (token) => token.flags?.["fabula-jrpg-ui"]?.temporaryCombatToken,
+  );
+
+  if (!temporaryTokens?.length) return;
+
+  await canvas.scene.deleteEmbeddedDocuments(
+    "Token",
+    temporaryTokens.map((token) => token.id),
+  );
 });
