@@ -4,6 +4,8 @@ All notable changes to Fabula JRPG UI will be documented in this file.
 
 ## [Unreleased]
 
+## [1.1.0-beta.1] - 2026-09-30
+
 ### Added
 
 - Persistent Party HUD outside of active Combat.
