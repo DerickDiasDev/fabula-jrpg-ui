@@ -8,7 +8,14 @@ const THEME_STYLES = {
     "confirm.css",
   ],
 
-  wizardry: ["party.css"],
+  wizardry: [
+    "party.css",
+    "command.css",
+    "action.css",
+    "target.css",
+    "target-select.css",
+    "confirm.css",
+  ],
 };
 
 const THEMES = {

@@ -1,8 +1,4 @@
 export function createCommandRenderer(theme) {
-  if (theme.id === "wizardry") {
-    return createWizardryCommandRenderer();
-  }
-
   return createOctopathCommandRenderer();
 }
 
@@ -40,14 +36,6 @@ function createOctopathCommandRenderer() {
           </button>
         </div>
       `;
-    },
-  };
-}
-
-function createWizardryCommandRenderer() {
-  return {
-    render() {
-      return "";
     },
   };
 }

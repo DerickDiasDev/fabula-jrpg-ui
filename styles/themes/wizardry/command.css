@@ -1,0 +1,197 @@
+@import url("https://fonts.googleapis.com/css2?family=Playpen+Sans:wght@300;400&display=swap");
+
+/* =========================================
+   COMMAND MENU
+   ========================================= */
+
+.fui-command {
+  width: 210px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 12px 20px;
+  background: transparent;
+  border: none;
+  outline: none;
+  opacity: 0.55;
+  transition: opacity 0.15s ease;
+  pointer-events: auto;
+}
+
+.fui-command:focus,
+.fui-command:focus-visible {
+  outline: none;
+}
+
+/* =========================================
+   ATIVO (com foco de teclado) — painel acende
+   ========================================= */
+
+.fui-command.fui-ui-focused {
+  opacity: 1;
+}
+
+/* =========================================
+   NOME DO PERSONAGEM (banner dinâmico)
+   ========================================= */
+
+.fui-command::after {
+  content: attr(data-actor-name);
+
+  position: absolute;
+
+  top: -18px;
+  left: 28px;
+
+  padding: 0;
+
+  font-family: "Playpen Sans", cursive;
+  font-size: 20px;
+  font-weight: 600;
+
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+
+  color: #eef1f7;
+
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+
+  background: none;
+  border: none;
+  box-shadow: none;
+
+  pointer-events: none;
+}
+
+/* =========================================
+   COMMAND MOLDURA (SVG do painel inteiro)
+   ========================================= */
+
+.fui-command::before {
+  content: "";
+
+  position: absolute;
+
+  inset: 0;
+
+  z-index: -1;
+
+  background-image: url("../../../assets/moldura-command-1.svg");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+
+  pointer-events: none;
+}
+
+/* =========================================
+   COMMAND BUTTONS
+   ========================================= */
+
+.fui-command > .fui-command-button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+
+  width: 100%;
+  height: 40px;
+  box-sizing: border-box;
+  padding: 0 18px;
+
+  border: 1px solid transparent;
+  border-radius: 12px;
+
+  background:
+    linear-gradient(
+        90deg,
+        rgba(22, 22, 22, 0.9) 0%,
+        rgba(117, 117, 117, 0) 100%
+      )
+      padding-box,
+    linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.8) 0%,
+        rgba(255, 255, 255, 0.05) 100%
+      )
+      border-box;
+
+  color: rgba(255, 255, 255, 0.85);
+  font-family: "Playpen Sans", cursive;
+  font-size: 16px;
+  font-weight: 300;
+  letter-spacing: -0.06em;
+  text-align: left;
+  cursor: pointer;
+
+  outline: none;
+
+  backdrop-filter: blur(8px) saturate(140%);
+  -webkit-backdrop-filter: blur(8px) saturate(140%);
+
+  transition:
+    width 0.12s ease,
+    box-shadow 0.12s ease,
+    background 0.12s ease;
+}
+
+.fui-command > .fui-command-button:focus,
+.fui-command > .fui-command-button:focus-visible {
+  outline: none;
+}
+
+/* =========================================
+   COMMAND HOVER
+   (só reage quando o painel está focado)
+   ========================================= */
+
+.fui-command.fui-ui-focused > .fui-command-button:hover {
+  background:
+    linear-gradient(rgba(40, 40, 44, 0.9), rgba(40, 40, 44, 0.9)) padding-box,
+    linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 1) 0%,
+        rgba(255, 255, 255, 0.1) 100%
+      )
+      border-box;
+}
+
+/* =========================================
+   COMMAND ACTIVE / SELECTED
+   ========================================= */
+
+.fui-command.fui-ui-focused > .fui-command-button.fui-active {
+  background:
+    linear-gradient(rgba(48, 48, 54, 0.95), rgba(48, 48, 54, 0.95)) padding-box,
+    linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 1) 0%,
+        rgba(255, 255, 255, 0.1) 100%
+      )
+      border-box;
+
+  color: #ffffff;
+}
+
+/* =========================================
+   SELECTED (hover do mouse OU fui-active — os
+   dois só contam com o painel focado)
+
+   O botão NÃO se move - quem indica o foco é
+   o .fui-cursor flutuante (ver
+   styles/cursor.css).
+   ========================================= */
+
+.fui-command.fui-ui-focused > .fui-command-button:hover,
+.fui-command.fui-ui-focused > .fui-command-button.fui-active {
+  box-shadow:
+    inset 0 0 13px 1px rgba(90, 130, 255, 0.65),
+    inset 0 0 10px 3px rgba(160, 90, 255, 0.5),
+    inset 0 2px 3px 1px rgba(255, 255, 255, 0.9);
+}
+
+/* =========================================
+   COMMAND BLOCKED
+   (classe opcional, ainda não aplicada a
+   nenhum botão)
+   ========================================= */

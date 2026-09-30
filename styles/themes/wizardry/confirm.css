@@ -1,0 +1,277 @@
+@import url("https://fonts.googleapis.com/css2?family=Playpen+Sans:wght@300;400;600&display=swap");
+
+/* =========================================
+   CONFIRM MENU
+   ========================================= */
+
+.fui-confirm-menu {
+  position: fixed;
+  z-index: 10002;
+  width: 220px;
+  height: 264.25px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 22px 20px 16px;
+  background: transparent;
+  border: none;
+  outline: none;
+  pointer-events: auto;
+}
+
+.fui-confirm-menu:focus,
+.fui-confirm-menu:focus-visible {
+  outline: none;
+}
+
+/* =========================================
+   FRAME
+   ========================================= */
+
+.fui-confirm-menu::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image: url("../../../assets/moldura-submenu.svg");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  pointer-events: none;
+}
+
+/* =========================================
+   TITLE
+   ========================================= */
+
+.fui-confirm-menu .fui-command-title {
+  position: absolute;
+  top: -18px;
+  left: 28px;
+  padding: 0;
+  font-family: "Playpen Sans", cursive;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  color: #eef1f7;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+  background: none;
+  border: none;
+  pointer-events: none;
+}
+
+/* =========================================
+   CONTENT
+   ========================================= */
+
+.fui-confirm-menu .fui-confirm-content {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+/* =========================================
+   ACTION
+   ========================================= */
+
+.fui-confirm-menu .fui-confirm-action {
+  flex: 0 0 28px;
+  display: flex;
+  align-items: center;
+  height: 28px;
+  min-height: 28px;
+  box-sizing: border-box;
+  padding: 0 4px;
+  font-family: "Playpen Sans", cursive;
+  font-size: 13px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.75);
+  line-height: 20px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* =========================================
+   TARGETS TITLE
+   ========================================= */
+
+.fui-confirm-menu .fui-confirm-targets-title {
+  flex: 0 0 22px;
+  height: 22px;
+  min-height: 22px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  padding: 0 4px;
+  font-family: "Playpen Sans", cursive;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+/* =========================================
+   TARGET AREA
+   Reserva espaço para 5 targets
+   ========================================= */
+
+.fui-confirm-menu .fui-confirm-targets {
+  flex: 0 0 90px;
+  width: 100%;
+  height: 90px;
+  min-height: 90px;
+  max-height: 90px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 0;
+  overflow: hidden;
+}
+
+/* =========================================
+   TARGET
+   ========================================= */
+
+.fui-confirm-menu .fui-confirm-target {
+  flex: 0 0 18px;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 18px;
+  min-height: 18px;
+  box-sizing: border-box;
+  padding: 0 4px;
+  font-family: "Playpen Sans", cursive;
+  font-size: 13px;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.8);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+/* =========================================
+   TARGET NAME
+   ========================================= */
+
+.fui-confirm-menu .fui-confirm-target-name {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.fui-confirm-menu .fui-confirm-target-name-inner {
+  display: inline-block;
+  white-space: nowrap;
+  will-change: transform;
+}
+
+/* =========================================
+   BUTTON CONTAINER
+   ========================================= */
+
+.fui-confirm-menu .fui-confirm-buttons {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 0;
+  margin-top: 0;
+}
+
+/* =========================================
+   BUTTON
+   ========================================= */
+
+.fui-confirm-menu .fui-confirm-button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: calc(100% - 10px);
+  height: 40px;
+  min-height: 40px;
+  flex: 0 0 40px;
+  box-sizing: border-box;
+  padding: 0 18px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background:
+    linear-gradient(
+        90deg,
+        rgba(22, 22, 22, 0.9) 0%,
+        rgba(117, 117, 117, 0) 100%
+      )
+      padding-box,
+    linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.8) 0%,
+        rgba(255, 255, 255, 0.05) 100%
+      )
+      border-box;
+  color: rgba(255, 255, 255, 0.85);
+  font-family: "Playpen Sans", cursive;
+  font-size: 16px;
+  font-weight: 300;
+  letter-spacing: -0.06em;
+  text-align: left;
+  cursor: pointer;
+  outline: none;
+  transition:
+    width 0.12s ease,
+    box-shadow 0.12s ease,
+    background 0.12s ease;
+}
+
+.fui-confirm-menu .fui-confirm-button:focus,
+.fui-confirm-menu .fui-confirm-button:focus-visible {
+  outline: none;
+}
+
+/* =========================================
+   HOVER
+   ========================================= */
+
+.fui-confirm-menu.fui-ui-focused .fui-confirm-button:hover {
+  background:
+    linear-gradient(rgba(40, 40, 44, 0.9), rgba(40, 40, 44, 0.9)) padding-box,
+    linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 1) 0%,
+        rgba(255, 255, 255, 0.1) 100%
+      )
+      border-box;
+
+  box-shadow:
+    inset 0 0 13px 1px rgba(90, 130, 255, 0.65),
+    inset 0 0 10px 3px rgba(160, 90, 255, 0.5),
+    inset 0 2px 3px 1px rgba(255, 255, 255, 0.9);
+}
+
+/* =========================================
+   ACTIVE
+   ========================================= */
+
+.fui-confirm-menu.fui-ui-focused .fui-confirm-button.fui-active {
+  background:
+    linear-gradient(rgba(48, 48, 54, 0.95), rgba(48, 48, 54, 0.95)) padding-box,
+    linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 1) 0%,
+        rgba(255, 255, 255, 0.1) 100%
+      )
+      border-box;
+  color: #ffffff;
+  box-shadow:
+    inset 0 0 13px 1px rgba(90, 130, 255, 0.65),
+    inset 0 0 10px 3px rgba(160, 90, 255, 0.5),
+    inset 0 2px 3px 1px rgba(255, 255, 255, 0.9);
+}

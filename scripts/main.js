@@ -24,10 +24,10 @@ Hooks.once("init", () => {
     config: true,
     type: String,
     choices: {
-      octopath: "Octopath",
       wizardry: "Wizardry",
+      octopath: "Octopath",
     },
-    default: "octopath",
+    default: "wizardry",
     onChange: (themeId) => {
       window.location.reload();
     },
