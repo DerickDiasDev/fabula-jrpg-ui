@@ -1,0 +1,296 @@
+@import url("https://fonts.googleapis.com/css2?family=Playpen+Sans:wght@300;400;600&display=swap");
+
+/* =========================================
+   ACTION MENU
+   ========================================= */
+
+.fui-action-menu {
+  position: fixed;
+  z-index: 20;
+  width: 220px;
+  height: 264.25px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 22px 20px 16px;
+  background: transparent;
+  border: none;
+  outline: none;
+  pointer-events: auto;
+}
+
+.fui-action-menu:focus,
+.fui-action-menu:focus-visible {
+  outline: none;
+}
+
+/* =========================================
+   FRAME
+   ========================================= */
+
+.fui-action-menu::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image: url("../../../assets/moldura-submenu.svg");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  pointer-events: none;
+}
+
+/* =========================================
+   SUBTITLE
+   ========================================= */
+
+.fui-action-menu .fui-action-subtitle {
+  margin-bottom: 8px;
+  padding: 0 4px;
+  font-family: "Playpen Sans", cursive;
+  font-size: 13px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.75);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* =========================================
+   ACTION LIST
+   ========================================= */
+
+.fui-action-menu .fui-action-list {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  flex-shrink: 0;
+  height: calc(40px * 5);
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+}
+
+.fui-action-menu .fui-action-list::-webkit-scrollbar {
+  display: none;
+}
+
+/* =========================================
+   SCROLLBAR
+   ========================================= */
+
+.fui-action-menu .fui-action-scrollbar {
+  position: absolute;
+  top: 45px;
+  right: 16px;
+  width: 7px;
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.12s ease;
+}
+
+.fui-action-menu .fui-action-scrollbar-track {
+  position: relative;
+  width: 3px;
+  flex: 1;
+  background: transparent;
+}
+
+.fui-action-menu .fui-action-scrollbar-thumb {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 40px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.fui-action-menu.fui-ui-focused .fui-action-scrollbar {
+  opacity: 1;
+}
+
+.fui-action-menu .fui-action-scrollbar-arrow {
+  width: 0;
+  height: 0;
+  flex: 0 0 auto;
+  opacity: 0.65;
+}
+
+.fui-action-menu .fui-action-scrollbar-arrow-up {
+  margin-bottom: 3px;
+  border-left: 3px solid transparent;
+  border-right: 3px solid transparent;
+  border-bottom: 4px solid rgba(255, 255, 255, 0.85);
+}
+
+.fui-action-menu .fui-action-scrollbar-arrow-down {
+  margin-top: 3px;
+  border-left: 3px solid transparent;
+  border-right: 3px solid transparent;
+  border-top: 4px solid rgba(255, 255, 255, 0.85);
+}
+
+/* =========================================
+   ACTION BUTTON
+   ========================================= */
+
+.fui-action-menu .fui-action-button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  width: calc(100% - 10px);
+  height: 40px;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  padding: 0 18px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background:
+    linear-gradient(
+        90deg,
+        rgba(22, 22, 22, 0.9) 0%,
+        rgba(117, 117, 117, 0) 100%
+      )
+      padding-box,
+    linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.8) 0%,
+        rgba(255, 255, 255, 0.05) 100%
+      )
+      border-box;
+  color: rgba(255, 255, 255, 0.85);
+  font-family: "Playpen Sans", cursive;
+  font-size: 16px;
+  font-weight: 300;
+  letter-spacing: -0.06em;
+  text-align: left;
+  cursor: pointer;
+  outline: none;
+  transition:
+    width 0.12s ease,
+    box-shadow 0.12s ease,
+    background 0.12s ease;
+}
+
+.fui-action-menu .fui-action-button:focus,
+.fui-action-menu .fui-action-button:focus-visible {
+  outline: none;
+}
+
+/* =========================================
+   HOVER
+   ========================================= */
+
+.fui-action-menu.fui-ui-focused .fui-action-button:hover {
+  background:
+    linear-gradient(rgba(40, 40, 44, 0.9), rgba(40, 40, 44, 0.9)) padding-box,
+    linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 1) 0%,
+        rgba(255, 255, 255, 0.1) 100%
+      )
+      border-box;
+
+  box-shadow:
+    inset 0 0 13px 1px rgba(90, 130, 255, 0.65),
+    inset 0 0 10px 3px rgba(160, 90, 255, 0.5),
+    inset 0 2px 3px 1px rgba(255, 255, 255, 0.9);
+}
+
+/* =========================================
+   ACTIVE
+   ========================================= */
+
+.fui-action-menu.fui-ui-focused .fui-action-button.fui-active {
+  background:
+    linear-gradient(rgba(48, 48, 54, 0.95), rgba(48, 48, 54, 0.95)) padding-box,
+    linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 1) 0%,
+        rgba(255, 255, 255, 0.1) 100%
+      )
+      border-box;
+
+  color: #ffffff;
+
+  box-shadow:
+    inset 0 0 13px 1px rgba(90, 130, 255, 0.65),
+    inset 0 0 10px 3px rgba(160, 90, 255, 0.5),
+    inset 0 2px 3px 1px rgba(255, 255, 255, 0.9);
+}
+
+/* =========================================
+   ACTION ICON
+   ========================================= */
+
+.fui-action-menu .fui-action-item-icon {
+  width: 22px;
+  height: 22px;
+  flex: 0 0 22px;
+  border-radius: 4px;
+  object-fit: cover;
+}
+
+/* =========================================
+   ACTION NAME
+   ========================================= */
+
+.fui-action-menu .fui-action-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.fui-action-menu .fui-action-name-inner {
+  display: inline-block;
+  will-change: transform;
+}
+
+/* =========================================
+   MARQUEE
+   ========================================= */
+
+.fui-action-menu .fui-action-button.fui-marquee .fui-action-name-inner {
+  animation: fui-marquee-scroll var(--fui-marquee-duration, 3s) linear infinite;
+}
+
+@keyframes fui-marquee-scroll {
+  0%,
+  15% {
+    transform: translateX(0);
+  }
+
+  85%,
+  100% {
+    transform: translateX(var(--fui-marquee-distance, 0px));
+  }
+}
+
+/* =========================================
+   COST
+   ========================================= */
+
+.fui-action-menu .fui-action-cost {
+  flex: 0 0 auto;
+  max-width: 68px;
+  margin-left: auto;
+  padding-right: 1px;
+  padding-left: 3px;
+  color: rgba(255, 255, 255, 0.55);
+  font-family: "Playpen Sans", cursive;
+  font-size: 11px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

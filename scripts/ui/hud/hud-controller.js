@@ -1,20 +1,28 @@
-import {
-  createCharacterCard,
-  updateActiveCombatant,
-  updateCharacterCard,
-} from "../party/character-card.js";
+import { updateActiveCombatant } from "../party/character-card.js";
 
 import {
   setupCommandMenu,
   updateCommandActor,
 } from "../command/command-menu.js";
 
+import { setupCardInteraction } from "../interaction/card-interaction.js";
+
+import { getCurrentTheme, applyTheme } from "../theme/theme-manager.js";
+
 import { applyHudLayout } from "./hud-customization.js";
 
-import { closeActiveSubmenu } from "../menus/menu-utils.js";
+import { getPartyMembers, getCombatPartyMembers } from "../party/party-data.js";
+
+import { createPartyRenderer } from "../theme/party-renderer.js";
+
+import { selectCharacter } from "../interaction/character-interaction.js";
+
+import { createCommandRenderer } from "../theme/command-renderer.js";
+
+import { setupThemeInteraction } from "../theme/theme-interaction.js";
 
 // =====================================================
-// REMOVE HUD
+// REMOVE FABULA UI
 // =====================================================
 
 export function removeFabulaUI() {
@@ -34,105 +42,72 @@ export function removeFabulaUI() {
 }
 
 // =====================================================
-// CREATE HUD
+// CREATE FABULA UI
 // =====================================================
 
 export function createFabulaUI() {
-  // Nunca criar HUD duplicada.
   if (document.querySelector("#fabula-jrpg-ui")) {
     return;
   }
 
-  if (!game.combat?.active) {
-    return;
-  }
-
-  // ===================================================
-  // PARTY ACTORS
-  // ===================================================
-
-  const actors = game.combat.combatants.contents
-    .map((combatant) => combatant.actor)
-    .filter((actor) => actor?.type === "character");
-
-  // ===================================================
-  // INITIAL COMMAND ACTOR
-  // ===================================================
-
   const currentActor = game.combat?.combatant?.actor ?? null;
+
   const currentActorName = currentActor?.name ?? "";
 
-  // ===================================================
-  // CREATE HUD
-  // ===================================================
+  const isCombatActive = game.combat?.active ?? false;
 
   const ui = document.createElement("div");
 
   ui.id = "fabula-jrpg-ui";
+
+  const theme = getCurrentTheme();
+
+  ui.dataset.theme = theme.id;
+
+  const partyRenderer = createPartyRenderer(theme);
+
+  const commandRenderer = createCommandRenderer(theme);
+
   ui.tabIndex = 0;
 
   ui.innerHTML = `
-    <div class="fui-command-wrapper">
-      <div
-        class="fui-command"
-        data-actor-name="${currentActorName}"
-      >
-        <button class="fui-command-button fui-active">
-          <span>Attack</span>
-        </button>
-
-        <button class="fui-command-button">
-          <span>Skill</span>
-        </button>
-
-        <button class="fui-command-button">
-          <span>Study</span>
-        </button>
-
-        <button class="fui-command-button">
-          <span>Guard</span>
-        </button>
-
-        <button class="fui-command-button">
-          <span>Item</span>
-        </button>
-
-        <button class="fui-command-button">
-          <span>Equipment</span>
-        </button>
-
-        <button class="fui-command-button">
-          <span>Hinder</span>
-        </button>
-
-        <button class="fui-command-button">
-          <span>Objective</span>
-        </button>
-      </div>
+    <div
+      class="fui-command-wrapper"
+      ${isCombatActive ? "" : "hidden"}
+    >
+      ${commandRenderer.render(currentActorName)}
     </div>
 
     <div class="fui-party-wrapper">
       <div class="fui-party-stats">
-        ${actors.map(createCharacterCard).join("")}
+        ${partyRenderer.render(
+          isCombatActive ? getCombatPartyMembers() : getPartyMembers(),
+        )}
       </div>
     </div>
   `;
 
   document.body.appendChild(ui);
 
-  // ===================================================
-  // HUD LAYOUT
-  // ===================================================
+  applyTheme(theme, ui);
+
+  setupCardInteraction(ui);
+
+  setupThemeInteraction(theme, ui);
 
   applyHudLayout(ui);
 
   ui.focus();
 
   // ===================================================
-  // KEYBOARD
+  // KEYBOARD HANDLER
   // ===================================================
 
   const keydownHandler = (event) => {
+    if (!game.combat?.active) {
+      return;
+    }
+
     if (event.key.toLowerCase() !== "f") {
       return;
     }
@@ -164,7 +139,9 @@ export function createFabulaUI() {
     }
 
     commandMenu.tabIndex = 0;
+
     commandMenu.focus();
+
     commandMenu.classList.add("fui-ui-focused");
   };
 
@@ -172,29 +149,39 @@ export function createFabulaUI() {
 
   document.addEventListener("keydown", keydownHandler);
 
-  // ===================================================
-  // COMMAND MENU
-  // ===================================================
-
   setupCommandMenu(ui);
 
   // ===================================================
-  // INITIAL STATE
+  // INITIAL COMBAT STATE
   // ===================================================
 
-  updateActiveCombatant(game.combat, ui);
-  updateCommandActor(currentActor, ui);
+  if (game.combat?.active) {
+    updateActiveCombatant(game.combat, ui);
+
+    updateCommandActor(currentActor, ui);
+  }
 }
 
 // =====================================================
-// REFRESH HUD
+// REFRESH FABULA UI
 // =====================================================
 
-export function refreshFabulaUI(combat) {
-  if (!combat?.active) {
-    removeFabulaUI();
-    return;
-  }
+export function refreshFabulaUI(combat = game.combat) {
+  console.log("=== REFRESH FABULA UI ===");
+  console.log("combat:", combat);
+  console.log(
+    "combatants:",
+    combat?.combatants?.contents?.map((combatant) => ({
+      id: combatant.id,
+      actorId: combatant.actorId,
+      actorName: combatant.actor?.name,
+      tokenId: combatant.tokenId,
+    })),
+  );
+  console.log(
+    "combat party:",
+    getCombatPartyMembers(combat).map((member) => member.actor.name),
+  );
 
   createFabulaUI();
 
@@ -204,12 +191,25 @@ export function refreshFabulaUI(combat) {
     return;
   }
 
-  // Atualiza somente o personagem
-  // cujo turno está ativo.
-  //
-  // NÃO altera o Command Actor.
+  updatePartyRenderer(ui, combat);
+
+  const commandWrapper = ui.querySelector(".fui-command-wrapper");
+
+  if (commandWrapper) {
+    commandWrapper.hidden = !combat?.active;
+  }
+
+  if (!combat?.active) {
+    return;
+  }
+
+  applyHudLayout(ui);
 
   updateActiveCombatant(combat, ui);
+
+  const currentActor = combat.combatant?.actor ?? null;
+
+  updateCommandActor(currentActor, ui);
 }
 
 // =====================================================
@@ -219,24 +219,57 @@ export function refreshFabulaUI(combat) {
 export function updateFabulaActorCard(actor) {
   const ui = document.querySelector("#fabula-jrpg-ui");
 
-  if (!ui) {
+  if (!ui || !actor) {
     return;
   }
 
-  updateCharacterCard(actor, ui);
+  const theme = getCurrentTheme();
+
+  const partyRenderer = createPartyRenderer(theme);
+
+  partyRenderer.updateCharacterCard(actor, ui);
 }
 
 // =====================================================
 // UPDATE COMMAND ACTOR
 // =====================================================
 
-export function updateFabulaCommandActor(actor) {
+export function updateFabulaCommandActor(actor, token = null) {
   const ui = document.querySelector("#fabula-jrpg-ui");
 
   if (!ui || !actor) {
     return;
   }
 
-  closeActiveSubmenu(ui);
-  updateCommandActor(actor, ui);
+  selectCharacter(
+    {
+      actor,
+      token,
+    },
+    ui,
+  );
+}
+
+// =====================================================
+// UPDATE PARTY RENDERER
+// =====================================================
+
+function updatePartyRenderer(ui, combat = game.combat) {
+  const partyStats = ui.querySelector(".fui-party-stats");
+
+  if (!partyStats) {
+    return;
+  }
+
+  const theme = getCurrentTheme();
+
+  const partyRenderer = createPartyRenderer(theme);
+
+  const members = combat?.active
+    ? getCombatPartyMembers(combat)
+    : getPartyMembers();
+
+  partyStats.innerHTML = partyRenderer.render(members);
+
+  setupThemeInteraction(theme, ui);
 }

@@ -2,45 +2,49 @@
 // CREATE CHARACTER CARD
 // =====================================================
 
-export function createCharacterCard(actor) {
+export function createCharacterCard(member) {
+  const actor = member.actor;
   const isKo = actor.statuses?.has("ko");
   const hp = actor.system.resources.hp;
   const mp = actor.system.resources.mp;
   const ip = actor.system.resources.ip;
 
   return `
+  <div
+    class="fui-character-card${isKo ? " fui-ko" : ""}"
+    data-actor-id="${actor.id}"
+  >
     <div
-      class="fui-character-card${isKo ? " fui-ko" : ""}"
-      data-actor-id="${actor.id}"
-    >
-      <div class="fui-character-portrait">
-        <img
-          src="${actor.img}"
-          alt="${actor.name}"
-        />
+      class="fui-character-selection"
+      aria-hidden="true"
+    ></div>
 
+    <div class="fui-character-portrait">
+      <img
+        src="${actor.img}"
+        alt="${actor.name}"
+      />
       <div class="fui-character-status-effects">
         ${createStatusEffects(actor)}
       </div>
-      </div>
-
-      <div class="fui-character-resources">
-        <div class="fui-character-name-row">
-          <span class="fui-character-name">
-            ${actor.name}
-          </span>
-
-          <span class="fui-character-level">
-            NV. ${actor.system.level.value}
-          </span>
-        </div>
-
-        ${createBarResource("hp", hp)}
-        ${createBarResource("mp", mp)}
-        ${createIpResource(ip)}
-      </div>
     </div>
-  `;
+
+    <div class="fui-character-resources">
+      <div class="fui-character-name-row">
+        <span class="fui-character-name">
+          ${actor.name}
+        </span>
+        <span class="fui-character-level">
+          NV. ${actor.system.level.value}
+        </span>
+      </div>
+
+      ${createBarResource("hp", hp)}
+      ${createBarResource("mp", mp)}
+      ${createIpResource(ip)}
+    </div>
+  </div>
+`;
 }
 
 // =====================================================

@@ -1,0 +1,675 @@
+@import url("https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;500;600&display=swap");
+
+/* =====================================================
+   WIZARDRY PARTY
+   Tema separado do Octopath. Nada aqui usa .fui-character-*.
+
+   Medidas baseadas no Frame_66.png (349 x 107):
+   - card (w-card-background.png) = 349 x 81, colado embaixo
+   - 26px acima do card ficam livres para o portrait "vazar"
+     e para o nome
+   - todas as posições internas são relativas ao
+     .fui-wizardry-character (349 x 107)
+   ===================================================== */
+
+.fui-wizardry-party {
+  --w-char-width: 349px;
+  --w-char-height: 107px;
+  --w-card-height: 81px;
+
+  --w-ink: #ebeaea;
+  --w-ink-dim: #f1d39c;
+  --w-ink-ko: #6f6a5f;
+  --w-accent: #e9d9a0;
+  --w-crisis: #f5675a;
+
+  position: relative;
+  width: max-content;
+
+  font-family: "Crimson Pro", "Cormorant Garamond", Georgia, serif;
+  color: var(--w-ink);
+
+  pointer-events: none;
+}
+
+/* =====================================================
+   GRID (3 colunas fixas, quem controla é o CSS)
+   ===================================================== */
+
+.fui-wizardry-party-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 28px 12px;
+  width: calc(3 * var(--w-char-width) + 2 * 12px);
+}
+
+/* =====================================================
+   CHARACTER
+   ===================================================== */
+
+.fui-wizardry-character {
+  position: relative;
+
+  width: var(--w-char-width);
+  height: var(--w-char-height);
+
+  pointer-events: none;
+}
+
+/* =====================================================
+   NAME
+   ===================================================== */
+
+.fui-wizardry-character-name {
+  position: absolute;
+  top: -1px;
+  left: 110px;
+  z-index: 6;
+
+  /* 16px de respiro à esquerda para o cursor ▶ do turno ativo */
+  box-sizing: border-box;
+  max-width: 226px;
+  padding-left: 16px;
+  overflow: hidden;
+
+  font-size: 25px;
+  font-weight: 600;
+  line-height: 28px;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+
+  color: var(--w-ink);
+  text-shadow:
+    1px 1px 0 #000,
+    -1px 1px 0 #000,
+    1px -1px 0 #000,
+    -1px -1px 0 #000,
+    0 2px 4px rgba(0, 0, 0, 0.85);
+
+  pointer-events: none;
+}
+
+/* =====================================================
+   CARD (botão que cobre o personagem inteiro)
+   ===================================================== */
+
+.fui-wizardry-character-card {
+  position: absolute;
+  inset: 0;
+
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+
+  appearance: none;
+  -webkit-appearance: none;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  outline: none;
+
+  font: inherit;
+  color: inherit;
+  text-align: left;
+
+  overflow: visible;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+/* moldura (trapézio) colada embaixo */
+.fui-wizardry-character-card::before {
+  content: "";
+
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--w-card-height);
+  z-index: 0;
+
+  background: url("../../../assets/themes/wizardry/w-card-background.png")
+    no-repeat center / 100% 100%;
+
+  transition: filter 90ms linear;
+  pointer-events: none;
+}
+
+/* =====================================================
+   PORTRAIT
+   Vaza 20px acima do card, como na referência.
+   ===================================================== */
+
+.fui-wizardry-character-portrait {
+  position: absolute;
+  left: 20px;
+  top: 6px;
+  z-index: 3;
+
+  width: 100px;
+  height: 100px;
+
+  overflow: visible;
+  pointer-events: none;
+}
+
+.fui-wizardry-character-portrait img {
+  display: block;
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+  object-position: center top;
+
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+
+  /* leve contorno para separar da moldura escura */
+  filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.9));
+
+  pointer-events: none;
+}
+
+/* =====================================================
+   BODY (só agrupa; filhos se posicionam pelo character)
+   ===================================================== */
+
+.fui-wizardry-character-body {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+
+  pointer-events: none;
+}
+
+/* =====================================================
+   RESOURCES
+   Os wrappers não ocupam espaço: cada recurso se
+   posiciona de forma absoluta no character.
+   ===================================================== */
+
+.fui-wizardry-character-resources {
+  position: absolute;
+  inset: 0;
+}
+
+.fui-wizardry-resource {
+  position: absolute;
+  height: 24px;
+}
+
+/* HP: 165 x 24 (mesmo tamanho de w-hp.png) */
+.fui-wizardry-resource-hp {
+  left: 152px;
+  top: 31px;
+  width: 165px;
+}
+
+/* MP e PI: 75 x 24 (mesmo tamanho de w-mp.png / w-pi.png) */
+.fui-wizardry-resource-mp {
+  left: 152px;
+  top: 56px;
+  width: 80px;
+}
+
+.fui-wizardry-resource-ip {
+  left: 240px;
+  top: 56px;
+  width: 77px;
+}
+
+/* ---- header: label pequeno + valor grande sobre a barra ---- */
+
+.fui-wizardry-resource-header {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+
+  pointer-events: none;
+}
+
+.fui-wizardry-resource-label {
+  position: absolute;
+  left: 1px;
+  top: -1px;
+
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 11px;
+  letter-spacing: 0.03em;
+
+  color: var(--w-ink);
+  text-shadow: 1px 1px 0 #000;
+}
+
+.fui-wizardry-resource-value {
+  position: absolute;
+  right: 0;
+  top: -14px;
+
+  font-size: 30px;
+  font-weight: 500;
+  line-height: 34px;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+
+  color: var(--w-ink);
+  text-shadow:
+    1px 1px 0 #000,
+    -1px 0 0 #000,
+    0 -1px 0 #000,
+    0 2px 3px rgba(0, 0, 0, 0.8);
+}
+
+.fui-wizardry-value-max {
+  font-size: 18px;
+}
+
+/* =====================================================
+   BARRA (HP / MP)
+   Os PNGs são a pincelada cheia. Trilho = a mesma
+   pincelada apagada; fill = pincelada recortada pela
+   largura inline (width: N%).
+   ===================================================== */
+
+.fui-wizardry-resource-bar {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.fui-wizardry-resource-bar::before {
+  content: "";
+
+  position: absolute;
+  inset: 0;
+
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-size: 100% 100%;
+
+  /* parte "vazia" da barra */
+  opacity: 0.22;
+  filter: grayscale(1) brightness(0.7);
+}
+
+.fui-wizardry-resource-fill {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+
+  background-repeat: no-repeat;
+  background-position: left center;
+
+  transition: width 140ms ease-out;
+  pointer-events: none;
+}
+
+.fui-wizardry-resource-hp .fui-wizardry-resource-bar::before,
+.fui-wizardry-resource-hp .fui-wizardry-resource-fill {
+  background-image: url("../../../assets/themes/wizardry/w-hp.png");
+}
+
+.fui-wizardry-resource-hp .fui-wizardry-resource-fill {
+  background-size: 165px 24px;
+}
+
+.fui-wizardry-resource-mp .fui-wizardry-resource-bar::before,
+.fui-wizardry-resource-mp .fui-wizardry-resource-fill {
+  background-image: url("../../../assets/themes/wizardry/w-mp.png");
+}
+
+.fui-wizardry-resource-mp .fui-wizardry-resource-fill {
+  background-size: 75px 24px;
+}
+
+/* ---- marcador de 50% do HP (crise) ---- */
+
+.fui-wizardry-resource-crisis-marker {
+  position: absolute;
+  left: 50%;
+  top: 6px;
+  bottom: 6px;
+  z-index: 2;
+
+  width: 2px;
+  margin-left: -1px;
+
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.55);
+
+  pointer-events: none;
+}
+
+/* ---- HP em crise (<= 50%) ---- */
+
+.fui-wizardry-resource-hp.fui-resource-critical .fui-wizardry-resource-fill {
+  filter: hue-rotate(-140deg) saturate(2.2) brightness(0.85);
+}
+
+.fui-wizardry-resource-hp.fui-resource-critical .fui-wizardry-resource-value {
+  color: var(--w-crisis);
+}
+
+/* =====================================================
+   PI (IP)
+   w-pi.png é a pincelada; os pontos ficam por cima.
+   ===================================================== */
+
+.fui-wizardry-resource-ip .fui-wizardry-resource-bar::before,
+.fui-wizardry-resource-ip .fui-wizardry-resource-fill {
+  background-image: url("../../../assets/themes/wizardry/w-pi.png");
+}
+
+.fui-wizardry-resource-ip .fui-wizardry-resource-bar::before,
+.fui-wizardry-resource-ip .fui-wizardry-resource-fill {
+  background-size: 75px 24px;
+}
+
+/* =====================================================
+   ATRIBUTOS (dados)
+   Colunas de 47px centradas em x = 165 / 212 / 259 / 306.
+   O valor numérico (8) vira "D8" via ::before.
+   ===================================================== */
+
+.fui-wizardry-character-attributes {
+  position: absolute;
+  left: 142px;
+  top: 76px;
+
+  display: flex;
+  gap: 0;
+}
+
+.fui-wizardry-attribute {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  width: 47px;
+  height: 30px;
+
+  /* pincelada atrás do label */
+  background: url("../../../assets/themes/wizardry/w-dice-background.png")
+    no-repeat center 0 / 35px 28px;
+}
+
+.fui-wizardry-attribute-label {
+  margin-top: 0px;
+
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 12px;
+  letter-spacing: 0.03em;
+  text-transform: capitalize;
+
+  color: var(--w-ink-dim);
+  text-shadow: 1px 1px 0 #000;
+}
+
+.fui-wizardry-attribute-value {
+  display: flex;
+  justify-content: center;
+  font-size: 26px;
+  font-weight: 500;
+  line-height: 14px;
+
+  color: var(--w-ink);
+  text-shadow:
+    1px 1px 0 #000,
+    -1px 0 0 #000,
+    0 -1px 0 #000,
+    0 2px 3px rgba(0, 0, 0, 0.8);
+}
+
+.fui-wizardry-attribute-value::before {
+  content: "D";
+}
+
+.fui-wizardry-mp-long .fui-wizardry-resource-mp {
+  width: 90px;
+}
+.fui-wizardry-mp-long .fui-wizardry-resource-ip {
+  left: 248px;
+  width: 69px;
+}
+
+.fui-wizardry-mp-long .fui-wizardry-resource-mp .fui-wizardry-resource-value,
+.fui-wizardry-mp-long .fui-wizardry-resource-ip .fui-wizardry-resource-value {
+  font-size: 24px;
+  line-height: 26px;
+  top: -5px;
+}
+
+.fui-wizardry-mp-long .fui-wizardry-value-max {
+  font-size: 16px;
+}
+
+.fui-wizardry-resource-hp .fui-wizardry-resource-bar::before {
+  background-size: 165px 24px;
+}
+.fui-wizardry-resource-mp .fui-wizardry-resource-bar::before {
+  background-size: 75px 24px;
+}
+
+.fui-wizardry-attribute-modifier {
+  position: absolute;
+  top: 0px;
+  right: 2px;
+  z-index: 3;
+  font-family: Arial, sans-serif;
+  font-size: 10px;
+  line-height: 10px;
+  font-weight: 700;
+  text-shadow:
+    1px 1px 0 #000,
+    -1px 0 0 #000;
+}
+
+.fui-wizardry-attribute-modifier-up {
+  color: #55d66a;
+}
+
+.fui-wizardry-attribute-modifier-down {
+  color: #e85b5b;
+}
+
+/* =====================================================
+   STATUS EFFECTS
+   Pendurados embaixo do card, alinhados à esquerda.
+   ===================================================== */
+
+.fui-wizardry-character-status-effects {
+  position: absolute;
+  left: -30px;
+  top: 104px;
+  z-index: 10;
+
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 3px;
+
+  pointer-events: none;
+}
+
+.fui-wizardry-status-icon {
+  position: relative;
+
+  width: 18px;
+  height: 18px;
+
+  pointer-events: auto;
+}
+
+.fui-wizardry-status-icon img {
+  display: block;
+  width: 18px;
+  height: 18px;
+
+  object-fit: contain;
+  border: 1px solid rgba(0, 0, 0, 0.9);
+  border-radius: 0;
+  background: rgba(0, 0, 0, 0.55);
+  box-sizing: border-box;
+}
+
+.fui-wizardry-status-tooltip {
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 4px);
+  z-index: 20;
+
+  display: none;
+  padding: 2px 7px;
+
+  font-size: 13px;
+  line-height: 16px;
+  white-space: nowrap;
+
+  color: var(--w-ink);
+  background: rgba(10, 14, 13, 0.95);
+  border: 1px solid #3f5550;
+
+  pointer-events: none;
+}
+
+.fui-wizardry-status-icon:hover .fui-wizardry-status-tooltip {
+  display: block;
+}
+
+/* =====================================================
+   HOVER / FOCUS / SELECTED / ACTIVE TURN / ALVO
+   ===================================================== */
+
+.fui-wizardry-character-card:hover::before {
+  filter: brightness(1.7) saturate(1.2);
+}
+
+.fui-wizardry-character-card:focus-visible::before,
+.fui-wizardry-character-card.fui-wizardry-selected::before,
+.fui-wizardry-character-card.fui-target-selected::before {
+  filter: brightness(1.9) drop-shadow(0 0 2px var(--w-accent));
+}
+
+.fui-wizardry-character-card:active::before {
+  filter: brightness(1.3);
+}
+
+.fui-wizardry-character-card.fui-target-focused::before {
+  filter: brightness(2.1) drop-shadow(0 0 3px #fff);
+}
+
+/* =====================================================
+   ACTIVE TURN
+   ===================================================== */
+
+.fui-wizardry-character.fui-active-turn .fui-wizardry-character-card::before,
+.fui-wizardry-character-card.fui-active-turn::before {
+  background-image: url("../../../assets/themes/wizardry/w-card-background-active.png");
+
+  filter: drop-shadow(0 0 3px rgba(44, 160, 149, 0.9))
+    drop-shadow(0 0 8px rgba(44, 160, 149, 0.7))
+    drop-shadow(0 0 16px rgba(44, 160, 149, 0.45));
+}
+
+/* =====================================================
+   KO
+   ===================================================== */
+
+.fui-wizardry-character.fui-ko .fui-wizardry-character-portrait img {
+  filter: grayscale(1) brightness(0.5);
+}
+
+.fui-wizardry-character.fui-ko .fui-wizardry-character-card::before {
+  filter: grayscale(1) brightness(0.65);
+}
+
+.fui-wizardry-character.fui-ko .fui-wizardry-resource-fill,
+.fui-wizardry-character.fui-ko .fui-wizardry-resource-ip {
+  filter: grayscale(1) brightness(0.6);
+}
+
+.fui-wizardry-character.fui-ko .fui-wizardry-attribute {
+  filter: grayscale(1) brightness(0.6);
+}
+
+.fui-wizardry-character.fui-ko .fui-wizardry-character-name,
+.fui-wizardry-character.fui-ko .fui-wizardry-resource-label,
+.fui-wizardry-character.fui-ko .fui-wizardry-resource-value,
+.fui-wizardry-character.fui-ko .fui-wizardry-attribute-label,
+.fui-wizardry-character.fui-ko .fui-wizardry-attribute-value {
+  color: var(--w-ink-ko);
+}
+
+.fui-wizardry-character.fui-ko .fui-wizardry-character-card:hover::before {
+  filter: grayscale(1) brightness(0.9);
+}
+
+/* =====================================================
+   CAIXA DE SELEÇÃO POR ARRASTO
+   (criada pelo party-interaction.js no document.body)
+   ===================================================== */
+
+.fui-wizardry-selection-box {
+  position: fixed;
+  z-index: 10000;
+
+  background: rgba(233, 217, 160, 0.12);
+  border: 1px solid rgba(233, 217, 160, 0.8);
+
+  pointer-events: none;
+}
+
+/* =====================================================
+   ADD TO COMBAT (só GM)
+   ===================================================== */
+
+.fui-wizardry-add-to-combat {
+  display: block;
+  margin: 30px 0 0;
+  padding: 5px 16px;
+
+  font-family: inherit;
+  font-size: 15px;
+  letter-spacing: 0.04em;
+  line-height: 20px;
+
+  color: var(--w-ink);
+  background: rgba(20, 30, 28, 0.92);
+  border: 1px solid #2d4641;
+  border-radius: 0;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.6);
+  text-shadow: 1px 1px 0 #000;
+
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.fui-wizardry-add-to-combat:hover {
+  color: var(--w-accent);
+  background: rgba(38, 56, 52, 0.95);
+  border-color: var(--w-accent);
+}
+
+.fui-wizardry-add-to-combat:focus-visible {
+  outline: 1px solid var(--w-accent);
+  outline-offset: 2px;
+}
+
+.fui-wizardry-add-to-combat:active {
+  background: rgba(14, 22, 20, 0.95);
+}

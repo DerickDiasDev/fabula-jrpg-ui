@@ -1,4 +1,4 @@
-import { openTargetSelectMenu } from "./target-select-menu.js";
+import { openTargetSelectMenu } from "../target/target-select-menu.js";
 import { showMenu, hideMenu, getActiveSubmenu } from "./menu-utils.js";
 import { createHudCursor } from "../shared/hud-cursor.js";
 import { playUISound } from "../shared/audio.js";

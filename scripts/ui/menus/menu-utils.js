@@ -132,13 +132,10 @@ export function closeActiveSubmenu(ui) {
   const activeSubmenu = getActiveSubmenu(ui);
 
   if (!activeSubmenu) {
-    destroyCanvasCursor(ui);
     return false;
   }
 
   destroySubmenu(activeSubmenu);
-
-  destroyCanvasCursor(ui);
 
   const commandMenu = ui.querySelector(".fui-command");
 
@@ -148,25 +145,4 @@ export function closeActiveSubmenu(ui) {
   }
 
   return true;
-}
-
-// =====================================================
-// CANVAS CURSOR
-// =====================================================
-
-export function setCanvasCursor(ui, canvasCursor) {
-  if (!ui) {
-    return;
-  }
-
-  ui._fabulaCanvasCursor = canvasCursor;
-}
-
-export function destroyCanvasCursor(ui) {
-  if (!ui) {
-    return;
-  }
-
-  ui._fabulaCanvasCursor?.destroy();
-  ui._fabulaCanvasCursor = null;
 }

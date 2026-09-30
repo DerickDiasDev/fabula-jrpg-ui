@@ -52,7 +52,7 @@
   position: absolute;
   inset: -8px;
   z-index: -1;
-  background-image: url("../assets/moldura.svg");
+  background-image: url("../../../assets/moldura.svg");
   background-size: 100% 100%;
   background-repeat: no-repeat;
   pointer-events: none;
@@ -64,7 +64,7 @@
 }
 
 .fui-character-card.fui-active-turn::before {
-  background-image: url("../assets/moldura-active.svg");
+  background-image: url("../../../assets/moldura-active.svg");
 }
 
 .fui-character-name-row {
@@ -346,4 +346,68 @@
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
 
   pointer-events: none;
+}
+
+/* =====================================================
+   CHARACTER SELECTION
+   ===================================================== */
+
+.fui-character-selection {
+  position: absolute;
+  inset: -5px;
+  z-index: 10;
+  pointer-events: none;
+  opacity: 0;
+  transform: scale(1.015);
+  transition: opacity 0.2s ease;
+  background:
+    linear-gradient(#fff, #fff) left top / 18px 2px no-repeat,
+    linear-gradient(#fff, #fff) right top / 18px 2px no-repeat,
+    linear-gradient(#fff, #fff) left bottom / 18px 2px no-repeat,
+    linear-gradient(#fff, #fff) right bottom / 18px 2px no-repeat,
+    linear-gradient(#fff, #fff) left top / 2px 18px no-repeat,
+    linear-gradient(#fff, #fff) right top / 2px 18px no-repeat,
+    linear-gradient(#fff, #fff) left bottom / 2px 18px no-repeat,
+    linear-gradient(#fff, #fff) right bottom / 2px 18px no-repeat;
+}
+
+.fui-character-card.fui-character-selected .fui-character-selection {
+  opacity: 0.9;
+  animation: fui-character-selection-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes fui-character-selection-pulse {
+  0%,
+  100% {
+    transform: scale(1.015);
+    opacity: 0.65;
+  }
+
+  50% {
+    transform: scale(1.035);
+    opacity: 1;
+  }
+}
+
+/* =====================================================
+   TARGET SELECTION
+   ===================================================== */
+
+.fui-character-card.fui-target-focused {
+  transform: translateY(-6px);
+}
+
+.fui-character-card.fui-target-focused::before {
+  background-image: url("../../../assets/moldura-active.svg");
+}
+
+.fui-character-card.fui-target-selected {
+  filter: brightness(1.12);
+}
+
+.fui-character-card.fui-target-selected .fui-character-portrait {
+  border-color: rgba(255, 224, 102, 0.8);
+  box-shadow:
+    0 0 8px rgba(255, 224, 102, 0.45),
+    inset 0 0 10px rgba(255, 224, 102, 0.15);
 }

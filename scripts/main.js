@@ -1,44 +1,50 @@
 import {
   refreshFabulaUI,
-  removeFabulaUI,
   updateFabulaActorCard,
-  updateFabulaCommandActor,
 } from "./ui/hud/hud-controller.js";
 
 import { registerHudSettings } from "./ui/hud/hud-customization.js";
 import { registerAudioSettings } from "./ui/shared/audio.js";
-// =====================================================
-// FOUNDry READY
-// =====================================================
+
+import {
+  getPartyMemberByActor,
+  getCombatPartyMembers,
+} from "./ui/party/party-data.js";
+
+import { selectCharacter } from "./ui/interaction/character-interaction.js";
 
 Hooks.once("init", () => {
   registerHudSettings();
   registerAudioSettings();
+
+  game.settings.register("fabula-jrpg-ui", "theme", {
+    name: "HUD Theme",
+    hint: "Select the visual theme used by the Fabula JRPG UI.",
+    scope: "world",
+    config: true,
+    type: String,
+    choices: {
+      wizardry: "Wizardry",
+      octopath: "Octopath",
+    },
+    default: "wizardry",
+    onChange: (themeId) => {
+      window.location.reload();
+    },
+  });
 });
 
 Hooks.once("ready", () => {
   refreshFabulaUI(game.combat);
 });
 
-// =====================================================
-// COMBAT START
-// =====================================================
-
 Hooks.on("combatStart", (combat) => {
   refreshFabulaUI(combat);
 });
 
-// =====================================================
-// COMBAT UPDATES
-// =====================================================
-
 Hooks.on("updateCombat", (combat) => {
   refreshFabulaUI(combat);
 });
-
-// =====================================================
-// ACTOR / STATUS UPDATES
-// =====================================================
 
 Hooks.on("updateActor", (updatedActor) => {
   updateFabulaActorCard(updatedActor);
@@ -74,22 +80,10 @@ Hooks.on("deleteActiveEffect", (effect) => {
   updateFabulaActorCard(actor);
 });
 
-// =====================================================
-// TOKEN SELECTION
-// =====================================================
-
 Hooks.on("controlToken", (token, controlled) => {
-  // -------------------------------------------------
-  // IGNORA DESELEÇÃO
-  // -------------------------------------------------
-
   if (!controlled) {
     return;
   }
-
-  // -------------------------------------------------
-  // ACTOR
-  // -------------------------------------------------
 
   const actor = token?.actor;
 
@@ -97,17 +91,9 @@ Hooks.on("controlToken", (token, controlled) => {
     return;
   }
 
-  // -------------------------------------------------
-  // ACTOR TYPE
-  // -------------------------------------------------
-
   if (actor.type !== "character") {
     return;
   }
-
-  // -------------------------------------------------
-  // OWNERSHIP
-  // -------------------------------------------------
 
   const isOwner = actor.testUserPermission(game.user, "OWNER");
 
@@ -115,15 +101,7 @@ Hooks.on("controlToken", (token, controlled) => {
     return;
   }
 
-  // -------------------------------------------------
-  // CONTROLLED TOKENS
-  // -------------------------------------------------
-
   const controlledTokens = canvas.tokens.controlled ?? [];
-
-  // -------------------------------------------------
-  // FILTER OWNED TOKENS
-  // -------------------------------------------------
 
   const ownedTokens = controlledTokens.filter((controlledToken) => {
     const controlledActor = controlledToken?.actor;
@@ -139,40 +117,46 @@ Hooks.on("controlToken", (token, controlled) => {
     return controlledActor.testUserPermission(game.user, "OWNER");
   });
 
-  // -------------------------------------------------
-  // MULTIPLE OWNED TOKENS
-  // -------------------------------------------------
-
   if (ownedTokens.length > 1) {
     foundry.ui.notifications.warn(
       "Selecione apenas um personagem para usar o Command Menu.",
     );
-
     return;
   }
-
-  // -------------------------------------------------
-  // NO OWNED TOKEN
-  // -------------------------------------------------
 
   if (ownedTokens.length === 0) {
     return;
   }
 
-  // -------------------------------------------------
-  // SINGLE OWNED TOKEN
-  // -------------------------------------------------
-
   const selectedToken = ownedTokens[0];
   const selectedActor = selectedToken.actor;
 
-  updateFabulaCommandActor(selectedActor);
+  const ui = document.querySelector("#fabula-jrpg-ui");
+
+  if (!ui) {
+    return;
+  }
+
+  const member = getPartyMemberByActor(selectedActor);
+
+  if (!member) {
+    return;
+  }
+
+  selectCharacter(member, ui);
 });
 
-// =====================================================
-// COMBAT END
-// =====================================================
+Hooks.on("deleteCombat", async () => {
+  refreshFabulaUI(null);
 
-Hooks.on("deleteCombat", () => {
-  removeFabulaUI();
+  const temporaryTokens = canvas.scene?.tokens.filter(
+    (token) => token.flags?.["fabula-jrpg-ui"]?.temporaryCombatToken,
+  );
+
+  if (!temporaryTokens?.length) return;
+
+  await canvas.scene.deleteEmbeddedDocuments(
+    "Token",
+    temporaryTokens.map((token) => token.id),
+  );
 });
