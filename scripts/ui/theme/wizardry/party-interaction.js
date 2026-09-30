@@ -151,14 +151,14 @@ export function setupWizardryPartyInteraction(ui) {
       event.stopPropagation();
 
       const member = getMember(button);
+      if (!member?.actor) return;
 
-      if (!member) {
-        return;
-      }
+      const canViewSheet = member.actor.testUserPermission(
+        game.user,
+        "OBSERVER",
+      );
 
-      if (!canSelectCharacter(member)) {
-        return;
-      }
+      if (!canViewSheet) return;
 
       member.actor.sheet?.render(true);
     });
