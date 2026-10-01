@@ -44,6 +44,12 @@
   width: calc(3 * var(--w-char-width) + 2 * 12px);
 }
 
+/* com exatamente 4 personagens: 2 por linha (2 + 2), em vez de 3 + 1 */
+
+.fui-wizardry-party-grid:has(> .fui-wizardry-character:nth-child(4):last-child) {
+  width: calc(2 * var(--w-char-width) + 12px);
+}
+
 /* =====================================================
    CHARACTER
    ===================================================== */
