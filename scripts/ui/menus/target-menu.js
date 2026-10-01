@@ -2,6 +2,7 @@ import { openTargetSelectMenu } from "../target/target-select-menu.js";
 import { showMenu, hideMenu, getActiveSubmenu } from "./menu-utils.js";
 import { createHudCursor } from "../shared/hud-cursor.js";
 import { playUISound } from "../shared/audio.js";
+import { escapeHTML } from "../shared/html.js";
 
 export function openTargetCountMenu({ actor, action, actionType, ui }) {
   const previousMenu = getActiveSubmenu(ui) || ui.querySelector(".fui-command");
@@ -49,7 +50,7 @@ export function openTargetCountMenu({ actor, action, actionType, ui }) {
     </div>
 
     <div class="fui-target-action">
-      ${actionLabel}${action ? ` / ${action.name}` : ""}
+      ${actionLabel}${action ? ` / ${escapeHTML(action.name)}` : ""}
     </div>
 
     <button

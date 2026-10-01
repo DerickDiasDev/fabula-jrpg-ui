@@ -1,26 +1,18 @@
+import { getPartyCard, getPartyCards } from "../party/party-card.js";
+
 // =====================================================
 // CARD TARGET VISUAL
 // =====================================================
 
-function getCardByActorId(actorId) {
-  if (!actorId) {
-    return null;
-  }
-
-  return document.querySelector(
-    `.fui-character-card[data-actor-id="${actorId}"]`,
-  );
-}
-
 function getCard(combatantId) {
   const combatant = game.combat?.combatants.get(combatantId);
 
-  return getCardByActorId(combatant?.actor?.id);
+  return getPartyCard(combatant?.actor?.id);
 }
 
 export function createCardTargetVisual() {
   function setFocusedTarget(combatantId) {
-    document.querySelectorAll(".fui-character-card").forEach((card) => {
+    getPartyCards().forEach((card) => {
       card.classList.remove("fui-target-focused");
     });
 
@@ -34,7 +26,7 @@ export function createCardTargetVisual() {
   function setSelectedTargets(combatantIds) {
     const selectedIds = new Set(combatantIds);
 
-    document.querySelectorAll(".fui-character-card").forEach((card) => {
+    getPartyCards().forEach((card) => {
       const actorId = card.dataset.actorId;
 
       const combatant = game.combat?.combatants.contents.find(
@@ -49,7 +41,7 @@ export function createCardTargetVisual() {
   }
 
   function destroy() {
-    document.querySelectorAll(".fui-character-card").forEach((card) => {
+    getPartyCards().forEach((card) => {
       card.classList.remove("fui-target-focused", "fui-target-selected");
     });
   }

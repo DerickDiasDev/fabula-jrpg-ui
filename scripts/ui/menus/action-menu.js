@@ -6,6 +6,8 @@ import { createHudCursor } from "../shared/hud-cursor.js";
 
 import { playUISound } from "../shared/audio.js";
 
+import { escapeHTML } from "../shared/html.js";
+
 // =====================================================
 // ACTION COST
 // =====================================================
@@ -86,12 +88,12 @@ function createActionMenuHTML(actions, actionType) {
             >
               <img
                 class="fui-action-item-icon"
-                src="${action.img}"
+                src="${escapeHTML(action.img)}"
               />
 
               <span class="fui-action-name">
                 <span class="fui-action-name-inner">
-                  ${action.name}
+                  ${escapeHTML(action.name)}
                 </span>
               </span>
 

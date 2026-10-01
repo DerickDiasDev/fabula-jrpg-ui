@@ -68,16 +68,30 @@ function getCommandFromButton(button) {
     .toUpperCase();
 }
 
-function getActorOrWarn() {
-  if (selectedActor) {
-    return selectedActor;
+function canControlActor(actor) {
+  if (game.user.isGM) {
+    return true;
   }
 
-  foundry.ui.notifications.warn("Nenhum personagem selecionado.");
+  return actor.testUserPermission(game.user, "OWNER");
+}
 
-  console.warn("Fabula JRPG UI | Command Menu: nenhum Actor selecionado.");
+function getActorOrWarn() {
+  if (!selectedActor) {
+    foundry.ui.notifications.warn("Nenhum personagem selecionado.");
 
-  return null;
+    console.warn("Fabula JRPG UI | Command Menu: nenhum Actor selecionado.");
+
+    return null;
+  }
+
+  if (!canControlActor(selectedActor)) {
+    foundry.ui.notifications.warn("Você não controla este personagem.");
+
+    return null;
+  }
+
+  return selectedActor;
 }
 
 function openItemActionMenu({ actor, ui, itemType, actionType, emptyMessage }) {

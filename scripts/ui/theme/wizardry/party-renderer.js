@@ -1,3 +1,5 @@
+import { escapeHTML } from "../../shared/html.js";
+
 // =====================================================
 // WIZARDRY PARTY RENDERER
 // =====================================================
@@ -50,6 +52,28 @@ export function updateWizardryCharacterCard(actor) {
   // ---------------------------------------------------
 
   card.classList.toggle("fui-ko", actor.statuses?.has("ko"));
+
+  card.classList.toggle("fui-wizardry-mp-long", mp.max >= 100);
+
+  // ---------------------------------------------------
+  // NAME / PORTRAIT
+  // ---------------------------------------------------
+
+  const name = card.querySelector(".fui-wizardry-character-name");
+
+  if (name) {
+    name.textContent = actor.name;
+  }
+
+  const portrait = card.querySelector(".fui-wizardry-character-portrait img");
+
+  if (portrait) {
+    if (portrait.getAttribute("src") !== actor.img) {
+      portrait.setAttribute("src", actor.img);
+    }
+
+    portrait.alt = actor.name;
+  }
 
   // ---------------------------------------------------
   // HP
@@ -244,18 +268,19 @@ function createWizardryCharacterCard(member) {
       data-actor-id="${actor.id}"
     >
       <div class="fui-wizardry-character-name">
-        ${actor.name}
+        ${escapeHTML(actor.name)}
       </div>
 
       <button
         type="button"
         class="fui-wizardry-character-card"
         data-actor-id="${actor.id}"
+        data-fui-party-card
       >
         <div class="fui-wizardry-character-portrait">
           <img
-            src="${actor.img}"
-            alt="${actor.name}"
+            src="${escapeHTML(actor.img)}"
+            alt="${escapeHTML(actor.name)}"
           />
 
           <div class="fui-wizardry-character-status-effects">
@@ -489,12 +514,12 @@ function createStatusEffects(actor) {
         <div class="fui-wizardry-status-icon">
 
           <img
-            src="${effect.img}"
-            alt="${statusName}"
+            src="${escapeHTML(effect.img)}"
+            alt="${escapeHTML(statusName)}"
           />
 
           <span class="fui-wizardry-status-tooltip">
-            ${statusName}
+            ${escapeHTML(statusName)}
           </span>
 
         </div>

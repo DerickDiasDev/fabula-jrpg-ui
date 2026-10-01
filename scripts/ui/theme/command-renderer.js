@@ -1,3 +1,5 @@
+import { escapeHTML } from "../shared/html.js";
+
 export function createCommandRenderer(theme) {
   return createOctopathCommandRenderer();
 }
@@ -8,7 +10,7 @@ function createOctopathCommandRenderer() {
       return `
         <div
           class="fui-command"
-          data-actor-name="${currentActorName}"
+          data-actor-name="${escapeHTML(currentActorName)}"
         >
           <button class="fui-command-button fui-active">
             <span>Attack</span>

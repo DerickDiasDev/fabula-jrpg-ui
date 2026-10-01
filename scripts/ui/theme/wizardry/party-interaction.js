@@ -1,6 +1,11 @@
-import { getPartyMembers } from "../../party/party-data.js";
+import { getPartyMemberByActor } from "../../party/party-data.js";
 
-import { updateCommandActor } from "../../command/command-menu.js";
+import {
+  updateCommandActor,
+  getCommandActor,
+} from "../../command/command-menu.js";
+
+import { closeActiveSubmenu } from "../../menus/menu-utils.js";
 
 import { syncTokenSelection } from "../../combat/token-selection.js";
 
@@ -23,40 +28,67 @@ function canSelectCharacter(member) {
 // =====================================================
 // WIZARDRY PARTY INTERACTION
 // =====================================================
+//
+// Configurada uma única vez por HUD. Os listeners ficam no
+// container .fui-party-stats (que não é recriado) e no
+// document, e a seleção sobrevive às re-renderizações dos
+// cards. Após cada re-render, o hud-controller chama
+// refreshWizardryPartyInteraction().
+// =====================================================
 
 export function setupWizardryPartyInteraction(ui) {
-  if (!ui) {
+  const partyStats = ui?.querySelector(".fui-party-stats");
+
+  if (!partyStats || partyStats._fabulaWizardryParty) {
     return;
   }
-
-  const party = ui.querySelector(".fui-wizardry-party");
-
-  if (!party) {
-    return;
-  }
-
-  const partyMembers = getPartyMembers();
-
-  const buttons = Array.from(
-    party.querySelectorAll(".fui-wizardry-character-card"),
-  );
-
-  const addToCombatButton = party.querySelector(".fui-wizardry-add-to-combat");
 
   const selectedMembers = new Map();
+
+  // ===================================================
+  // CARDS
+  // ===================================================
+
+  function getButtons() {
+    return Array.from(
+      partyStats.querySelectorAll(".fui-wizardry-character-card"),
+    );
+  }
 
   // ===================================================
   // UPDATE VISUAL SELECTION
   // ===================================================
 
   function updateVisualSelection() {
-    buttons.forEach((button) => {
+    getButtons().forEach((button) => {
       button.classList.toggle(
         "fui-wizardry-selected",
         selectedMembers.has(button.dataset.actorId),
       );
     });
   }
+
+  // ===================================================
+  // REFRESH AFTER RE-RENDER
+  // ===================================================
+
+  function refresh() {
+    const renderedActorIds = new Set(
+      getButtons().map((button) => button.dataset.actorId),
+    );
+
+    for (const actorId of selectedMembers.keys()) {
+      if (!renderedActorIds.has(actorId)) {
+        selectedMembers.delete(actorId);
+      }
+    }
+
+    updateVisualSelection();
+  }
+
+  partyStats._fabulaWizardryParty = {
+    refresh,
+  };
 
   // ===================================================
   // SYNC FOUNDRY TOKENS
@@ -72,11 +104,18 @@ export function setupWizardryPartyInteraction(ui) {
   // SET ACTIVE COMMAND ACTOR
   // ===================================================
 
+  // Um submenu aberto guarda o Actor de quando foi aberto,
+  // então trocar de personagem fecha o fluxo em andamento.
   function setActiveMember(member) {
     if (!member?.actor) {
       return;
     }
 
+    if (getCommandActor() === member.actor) {
+      return;
+    }
+
+    closeActiveSubmenu(ui);
     updateCommandActor(member.actor, ui);
   }
 
@@ -95,73 +134,97 @@ export function setupWizardryPartyInteraction(ui) {
   // ===================================================
 
   function getMember(button) {
-    const actorId = button.dataset.actorId;
+    const actor = game.actors.get(button.dataset.actorId);
 
-    return (
-      partyMembers.find((partyMember) => partyMember.actor.id === actorId) ??
-      null
-    );
+    return getPartyMemberByActor(actor);
   }
 
   // ===================================================
-  // CLICK SELECTION
+  // CLICK SELECTION / ADD TO COMBAT
   // ===================================================
 
-  buttons.forEach((button) => {
-    button.addEventListener("click", (event) => {
-      const member = getMember(button);
+  partyStats.addEventListener("click", async (event) => {
+    const addToCombatButton = event.target.closest(
+      ".fui-wizardry-add-to-combat",
+    );
 
-      if (!member) {
-        return;
-      }
-
-      if (!canSelectCharacter(member)) {
-        return;
-      }
-
-      const isMultiSelect = event.ctrlKey || event.metaKey;
-
-      // -------------------------------------------------
-      // NORMAL CLICK
-      // -------------------------------------------------
-
-      if (!isMultiSelect) {
-        selectedMembers.clear();
-        selectedMembers.set(member.actor.id, member);
-      }
-
-      // -------------------------------------------------
-      // CTRL / CMD CLICK
-      // -------------------------------------------------
-      else {
-        if (selectedMembers.has(member.actor.id)) {
-          selectedMembers.delete(member.actor.id);
-        } else {
-          selectedMembers.set(member.actor.id, member);
-        }
-      }
-
-      updateVisualSelection();
-      syncSelection();
-      setActiveMember(member);
-    });
-
-    button.addEventListener("dblclick", (event) => {
+    if (addToCombatButton) {
       event.preventDefault();
       event.stopPropagation();
 
-      const member = getMember(button);
-      if (!member?.actor) return;
+      await addSelectedToCombat();
 
-      const canViewSheet = member.actor.testUserPermission(
-        game.user,
-        "OBSERVER",
-      );
+      return;
+    }
 
-      if (!canViewSheet) return;
+    const button = event.target.closest(".fui-wizardry-character-card");
 
-      member.actor.sheet?.render(true);
-    });
+    if (!button) {
+      return;
+    }
+
+    const member = getMember(button);
+
+    if (!member) {
+      return;
+    }
+
+    if (!canSelectCharacter(member)) {
+      return;
+    }
+
+    const isMultiSelect = event.ctrlKey || event.metaKey;
+
+    // -------------------------------------------------
+    // NORMAL CLICK
+    // -------------------------------------------------
+
+    if (!isMultiSelect) {
+      selectedMembers.clear();
+      selectedMembers.set(member.actor.id, member);
+    }
+
+    // -------------------------------------------------
+    // CTRL / CMD CLICK
+    // -------------------------------------------------
+    else {
+      if (selectedMembers.has(member.actor.id)) {
+        selectedMembers.delete(member.actor.id);
+      } else {
+        selectedMembers.set(member.actor.id, member);
+      }
+    }
+
+    updateVisualSelection();
+    syncSelection();
+
+    // Ctrl+clique que desmarca não troca o ator do Command.
+    if (selectedMembers.has(member.actor.id)) {
+      setActiveMember(member);
+    }
+  });
+
+  partyStats.addEventListener("dblclick", (event) => {
+    const button = event.target.closest(".fui-wizardry-character-card");
+
+    if (!button) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    const member = getMember(button);
+    if (!member?.actor) return;
+
+    const canViewSheet = member.actor.testUserPermission(
+      game.user,
+      "OBSERVER",
+    );
+
+    if (!canViewSheet) return;
+
+    member.actor.sheet?.render(true);
   });
 
   // ===================================================
@@ -232,7 +295,7 @@ export function setupWizardryPartyInteraction(ui) {
 
     let lastSelectedMember = null;
 
-    buttons.forEach((button) => {
+    getButtons().forEach((button) => {
       const member = getMember(button);
 
       if (!member) {
@@ -267,14 +330,7 @@ export function setupWizardryPartyInteraction(ui) {
     document.body.style.userSelect = "";
   }
 
-  addToCombatButton?.addEventListener("click", async (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-
-    await addSelectedToCombat();
-  });
-
-  party.addEventListener("pointerdown", (event) => {
+  partyStats.addEventListener("pointerdown", (event) => {
     // -------------------------------------------------
     // ONLY LEFT MOUSE BUTTON
     // -------------------------------------------------
@@ -284,10 +340,32 @@ export function setupWizardryPartyInteraction(ui) {
     }
 
     // -------------------------------------------------
-    // DON'T START DRAG ON A CHARACTER
+    // ONLY WHILE THE WIZARDRY PARTY IS RENDERED
+    // -------------------------------------------------
+    //
+    // .fui-wizardry-party tem pointer-events: none, então
+    // nas áreas vazias o alvo do evento é o próprio
+    // .fui-party-stats, e não um elemento dentro da Party.
     // -------------------------------------------------
 
-    if (event.target.closest(".fui-wizardry-character-card")) {
+    if (!partyStats.querySelector(".fui-wizardry-party")) {
+      return;
+    }
+
+    // No modo de edição do HUD, arrastar move a Party.
+    if (ui.classList.contains("fui-hud-editing")) {
+      return;
+    }
+
+    // -------------------------------------------------
+    // DON'T START DRAG ON A CHARACTER OR BUTTON
+    // -------------------------------------------------
+
+    if (
+      event.target.closest(
+        ".fui-wizardry-character-card, .fui-wizardry-add-to-combat",
+      )
+    ) {
       return;
     }
 
@@ -365,4 +443,14 @@ export function setupWizardryPartyInteraction(ui) {
 
     dragState = null;
   });
+}
+
+// =====================================================
+// REFRESH AFTER RE-RENDER
+// =====================================================
+
+export function refreshWizardryPartyInteraction(ui) {
+  const partyStats = ui?.querySelector(".fui-party-stats");
+
+  partyStats?._fabulaWizardryParty?.refresh();
 }

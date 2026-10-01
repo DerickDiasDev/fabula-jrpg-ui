@@ -1,3 +1,5 @@
+import { escapeHTML } from "../shared/html.js";
+
 // =====================================================
 // ACTION LABEL
 // =====================================================
@@ -30,7 +32,7 @@ function createTargetButton(combatant) {
     >
       <span class="fui-target-name">
         <span class="fui-target-name-inner">
-          ${combatant.actor?.name ?? "Unknown"}
+          ${escapeHTML(combatant.actor?.name ?? "Unknown")}
         </span>
       </span>
     </button>
@@ -89,7 +91,7 @@ export function createTargetMenuHTML({
     </div>
 
     <div class="fui-target-action">
-      ${actionLabel}${action ? ` / ${action.name}` : ""}
+      ${actionLabel}${action ? ` / ${escapeHTML(action.name)}` : ""}
     </div>
 
     <div class="fui-target-list">

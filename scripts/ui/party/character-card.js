@@ -1,3 +1,6 @@
+import { escapeHTML } from "../shared/html.js";
+import { getPartyCard, getPartyCards } from "./party-card.js";
+
 // =====================================================
 // CREATE CHARACTER CARD
 // =====================================================
@@ -13,6 +16,7 @@ export function createCharacterCard(member) {
   <div
     class="fui-character-card${isKo ? " fui-ko" : ""}"
     data-actor-id="${actor.id}"
+    data-fui-party-card
   >
     <div
       class="fui-character-selection"
@@ -21,8 +25,8 @@ export function createCharacterCard(member) {
 
     <div class="fui-character-portrait">
       <img
-        src="${actor.img}"
-        alt="${actor.name}"
+        src="${escapeHTML(actor.img)}"
+        alt="${escapeHTML(actor.name)}"
       />
       <div class="fui-character-status-effects">
         ${createStatusEffects(actor)}
@@ -32,7 +36,7 @@ export function createCharacterCard(member) {
     <div class="fui-character-resources">
       <div class="fui-character-name-row">
         <span class="fui-character-name">
-          ${actor.name}
+          ${escapeHTML(actor.name)}
         </span>
         <span class="fui-character-level">
           NV. ${actor.system.level.value}
@@ -131,11 +135,11 @@ function createStatusEffects(actor) {
       return `
         <div class="fui-status-icon">
           <img
-            src="${effect.img}"
-            alt="${statusName}"
+            src="${escapeHTML(effect.img)}"
+            alt="${escapeHTML(statusName)}"
           />
           <span class="fui-status-tooltip">
-            ${statusName}
+            ${escapeHTML(statusName)}
           </span>
         </div>
       `;
@@ -220,6 +224,28 @@ function updateStatusEffects(card, actor) {
 }
 
 // =====================================================
+// NAME / PORTRAIT UPDATES
+// =====================================================
+
+function updateIdentity(card, actor) {
+  const name = card.querySelector(".fui-character-name");
+
+  if (name) {
+    name.textContent = actor.name;
+  }
+
+  const portrait = card.querySelector(".fui-character-portrait img");
+
+  if (portrait) {
+    if (portrait.getAttribute("src") !== actor.img) {
+      portrait.setAttribute("src", actor.img);
+    }
+
+    portrait.alt = actor.name;
+  }
+}
+
+// =====================================================
 // CHARACTER CARD
 // =====================================================
 
@@ -233,6 +259,7 @@ export function updateCharacterCard(actor, ui) {
   updateBarResource(card, "mp", mp);
   updateIpResource(card, ip);
   updateStatusEffects(card, actor);
+  updateIdentity(card, actor);
 
   card.classList.toggle("fui-ko", actor.statuses?.has("ko"));
 }
@@ -242,11 +269,11 @@ export function updateCharacterCard(actor, ui) {
 // =====================================================
 
 export function updateActiveCombatant(combat, ui) {
-  ui.querySelectorAll(".fui-character-card").forEach((card) => {
+  getPartyCards(ui).forEach((card) => {
     card.classList.remove("fui-active-turn");
   });
 
-  const combatantId = combat.current?.combatantId;
+  const combatantId = combat?.current?.combatantId;
 
   if (!combatantId) {
     return;
@@ -258,7 +285,7 @@ export function updateActiveCombatant(combat, ui) {
     return;
   }
 
-  const card = ui.querySelector(`[data-actor-id="${combatant.actor.id}"]`);
+  const card = getPartyCard(combatant.actor.id, ui);
 
   if (!card) {
     return;

@@ -375,84 +375,104 @@ async function saveDraggedPosition(element, type) {
   await saveHudLayout(layout);
 }
 
-class FabulaHudConfig extends FormApplication {
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
-      id: "fabula-jrpg-ui-hud-config",
+const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
+class FabulaHudConfig extends HandlebarsApplicationMixin(ApplicationV2) {
+  static DEFAULT_OPTIONS = {
+    id: "fabula-jrpg-ui-hud-config",
+
+    tag: "form",
+
+    window: {
       title: "Fabula JRPG UI — HUD Customization",
+    },
 
-      template: "modules/fabula-jrpg-ui/templates/hud-customization.hbs",
-
+    position: {
       width: 420,
-
       height: "auto",
+    },
 
+    form: {
+      handler: onSubmitHudConfig,
       closeOnSubmit: false,
-    });
-  }
+    },
 
-  getData() {
+    actions: {
+      "edit-position": onEditHudPosition,
+      "reset-position": onResetHudPosition,
+    },
+  };
+
+  static PARTS = {
+    form: {
+      template: "modules/fabula-jrpg-ui/templates/hud-customization.hbs",
+    },
+  };
+
+  async _prepareContext(options) {
     return {
       layout: getHudLayout(),
     };
   }
 
-  async _updateObject(event, formData) {
-    const layout = getHudLayout();
+  _onRender(context, options) {
+    super._onRender(context, options);
 
-    for (const type of ["command", "party"]) {
-      const field = `${type}Scale`;
+    setupScaleSlider(this.element, "command", "Command");
 
-      if (formData[field] !== undefined) {
-        layout[type].scale = Number(formData[field]);
-      }
-    }
+    setupScaleSlider(this.element, "party", "Party");
+  }
+}
 
-    await saveHudLayout(layout);
+// =====================================================
+// HUD CONFIG HANDLERS
+// =====================================================
+//
+// Chamados pelo ApplicationV2 com `this` sendo a janela.
+// =====================================================
 
-    const ui = document.querySelector("#fabula-jrpg-ui");
+async function onSubmitHudConfig(event, form, formData) {
+  const data = formData.object;
 
-    if (ui) {
-      applyHudLayout(ui);
+  const layout = getHudLayout();
+
+  for (const type of ["command", "party"]) {
+    const field = `${type}Scale`;
+
+    if (data[field] !== undefined) {
+      layout[type].scale = Number(data[field]);
     }
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
+  await saveHudLayout(layout);
 
-    const root = html[0] ?? html;
+  const ui = document.querySelector("#fabula-jrpg-ui");
 
-    setupScaleSlider(root, "command", "Command");
-
-    setupScaleSlider(root, "party", "Party");
-
-    root
-      .querySelector('[data-action="edit-position"]')
-      ?.addEventListener("click", () => {
-        this.close();
-
-        const ui = document.querySelector("#fabula-jrpg-ui");
-
-        if (ui) {
-          enterHudEditMode(ui);
-        }
-      });
-
-    root
-      .querySelector('[data-action="reset-position"]')
-      ?.addEventListener("click", async () => {
-        await resetHudLayout();
-
-        const ui = document.querySelector("#fabula-jrpg-ui");
-
-        if (ui) {
-          applyHudLayout(ui);
-        }
-
-        this.render();
-      });
+  if (ui) {
+    applyHudLayout(ui);
   }
+}
+
+function onEditHudPosition() {
+  this.close();
+
+  const ui = document.querySelector("#fabula-jrpg-ui");
+
+  if (ui) {
+    enterHudEditMode(ui);
+  }
+}
+
+async function onResetHudPosition() {
+  await resetHudLayout();
+
+  const ui = document.querySelector("#fabula-jrpg-ui");
+
+  if (ui) {
+    applyHudLayout(ui);
+  }
+
+  this.render();
 }
 
 function setupScaleSlider(root, type, label) {

@@ -19,7 +19,23 @@ import { selectCharacter } from "../interaction/character-interaction.js";
 
 import { createCommandRenderer } from "../theme/command-renderer.js";
 
-import { setupThemeInteraction } from "../theme/theme-interaction.js";
+import {
+  setupThemeInteraction,
+  refreshThemeInteraction,
+} from "../theme/theme-interaction.js";
+
+// =====================================================
+// COMBAT STATE
+// =====================================================
+//
+// `combat.active` indica apenas que o encontro é o ativo da
+// cena; o combate só está em andamento depois de iniciado
+// (round > 0). Command HUD e Party filtrada dependem disso.
+// =====================================================
+
+function isCombatRunning(combat) {
+  return Boolean(combat?.active && combat?.started);
+}
 
 // =====================================================
 // REMOVE FABULA UI
@@ -54,7 +70,7 @@ export function createFabulaUI() {
 
   const currentActorName = currentActor?.name ?? "";
 
-  const isCombatActive = game.combat?.active ?? false;
+  const isCombatActive = isCombatRunning(game.combat);
 
   const ui = document.createElement("div");
 
@@ -63,8 +79,6 @@ export function createFabulaUI() {
   const theme = getCurrentTheme();
 
   ui.dataset.theme = theme.id;
-
-  const partyRenderer = createPartyRenderer(theme);
 
   const commandRenderer = createCommandRenderer(theme);
 
@@ -79,11 +93,7 @@ export function createFabulaUI() {
     </div>
 
     <div class="fui-party-wrapper">
-      <div class="fui-party-stats">
-        ${partyRenderer.render(
-          isCombatActive ? getCombatPartyMembers() : getPartyMembers(),
-        )}
-      </div>
+      <div class="fui-party-stats"></div>
     </div>
   `;
 
@@ -91,6 +101,11 @@ export function createFabulaUI() {
 
   applyTheme(theme, ui);
 
+  updatePartyRenderer(ui, game.combat);
+
+  // As interações da Party usam delegação de eventos no
+  // container .fui-party-stats, que nunca é recriado; por
+  // isso são configuradas uma única vez.
   setupCardInteraction(ui);
 
   setupThemeInteraction(theme, ui);
@@ -104,7 +119,7 @@ export function createFabulaUI() {
   // ===================================================
 
   const keydownHandler = (event) => {
-    if (!game.combat?.active) {
+    if (!isCombatRunning(game.combat)) {
       return;
     }
 
@@ -155,7 +170,7 @@ export function createFabulaUI() {
   // INITIAL COMBAT STATE
   // ===================================================
 
-  if (game.combat?.active) {
+  if (isCombatRunning(game.combat)) {
     updateActiveCombatant(game.combat, ui);
 
     updateCommandActor(currentActor, ui);
@@ -196,14 +211,20 @@ export function refreshFabulaUI(combat = game.combat) {
   const commandWrapper = ui.querySelector(".fui-command-wrapper");
 
   if (commandWrapper) {
-    commandWrapper.hidden = !combat?.active;
+    commandWrapper.hidden = !isCombatRunning(combat);
   }
 
-  if (!combat?.active) {
+  // A Party é re-renderizada acima com uma lista que pode
+  // mudar de tamanho (ex.: fim de combate), então o layout
+  // precisa ser recalculado dentro e fora de combate.
+  applyHudLayout(ui);
+
+  // Os cards podem sobreviver ao fim do combate (mesma lista
+  // de membros), então o destaque de turno é limpo aqui.
+  if (!isCombatRunning(combat)) {
+    updateActiveCombatant(null, ui);
     return;
   }
-
-  applyHudLayout(ui);
 
   updateActiveCombatant(combat, ui);
 
@@ -265,11 +286,23 @@ function updatePartyRenderer(ui, combat = game.combat) {
 
   const partyRenderer = createPartyRenderer(theme);
 
-  const members = combat?.active
+  const members = isCombatRunning(combat)
     ? getCombatPartyMembers(combat)
     : getPartyMembers();
 
+  // Com a mesma lista de membros os cards existentes continuam
+  // válidos: os dados deles são atualizados pelos hooks de
+  // Actor/ActiveEffect. Re-renderizar só quando a lista muda
+  // preserva seleção e estados visuais entre turnos.
+  const memberIds = members.map((member) => member.actor.id).join(",");
+
+  if (partyStats.dataset.memberIds === memberIds) {
+    return;
+  }
+
+  partyStats.dataset.memberIds = memberIds;
+
   partyStats.innerHTML = partyRenderer.render(members);
 
-  setupThemeInteraction(theme, ui);
+  refreshThemeInteraction(theme, ui);
 }

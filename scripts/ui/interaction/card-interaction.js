@@ -3,7 +3,7 @@ import {
   openCharacterSheet,
 } from "./character-interaction.js";
 
-import { getPartyMembers } from "../party/party-data.js";
+import { getPartyMemberByActor } from "../party/party-data.js";
 
 // =====================================================
 // CHARACTER OWNERSHIP
@@ -20,52 +20,62 @@ function canSelectCharacter(member) {
 }
 
 // =====================================================
+// GET MEMBER
+// =====================================================
+
+function getCardMember(card) {
+  const actor = game.actors.get(card?.dataset.actorId);
+
+  return getPartyMemberByActor(actor);
+}
+
+// =====================================================
 // CHARACTER CARD INTERACTION
+// =====================================================
+//
+// Os listeners ficam no container .fui-party-stats, que não
+// é recriado quando os cards são re-renderizados.
 // =====================================================
 
 export function setupCardInteraction(ui) {
-  if (!ui) {
+  const partyStats = ui?.querySelector(".fui-party-stats");
+
+  if (!partyStats || partyStats._fabulaCardInteraction) {
     return;
   }
 
-  const cards = ui.querySelectorAll(".fui-character-card");
+  partyStats._fabulaCardInteraction = true;
 
-  if (cards.length === 0) {
-    return;
-  }
+  partyStats.addEventListener("click", (event) => {
+    const card = event.target.closest(".fui-character-card");
 
-  const partyMembers = getPartyMembers();
-
-  cards.forEach((card) => {
-    const actorId = card.dataset.actorId;
-
-    if (!actorId) {
+    if (!card) {
       return;
     }
 
-    const member = partyMembers.find(
-      (partyMember) => partyMember.actor.id === actorId,
+    const member = getCardMember(card);
+
+    if (!canSelectCharacter(member)) {
+      return;
+    }
+
+    selectCharacter(member, ui);
+  });
+
+  partyStats.addEventListener("dblclick", (event) => {
+    const portrait = event.target.closest(
+      ".fui-character-card .fui-character-portrait",
     );
 
-    if (!member) {
+    if (!portrait) {
       return;
     }
 
-    card.addEventListener("click", () => {
-      if (!canSelectCharacter(member)) {
-        return;
-      }
+    event.preventDefault();
+    event.stopPropagation();
 
-      selectCharacter(member, ui);
-    });
+    const member = getCardMember(portrait.closest(".fui-character-card"));
 
-    const portrait = card.querySelector(".fui-character-portrait");
-
-    portrait?.addEventListener("dblclick", (event) => {
-      event.preventDefault();
-      event.stopPropagation();
-
-      openCharacterSheet(member);
-    });
+    openCharacterSheet(member);
   });
 }
