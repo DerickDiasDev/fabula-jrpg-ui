@@ -5,39 +5,38 @@ export function createCommandRenderer(theme) {
 }
 
 function createOctopathCommandRenderer() {
+  function renderButtons(commands = []) {
+    return commands
+      .map(
+        (command, index) => `
+          <button
+            class="fui-command-button ${index === 0 ? "fui-active" : ""}"
+            data-command="${escapeHTML(command.id)}"
+            ${
+              command.description
+                ? `data-description="${escapeHTML(command.description)}"`
+                : ""
+            }
+          >
+            <span>${escapeHTML(command.label)}</span>
+          </button>
+        `,
+      )
+      .join("");
+  }
+
   return {
-    render(currentActorName = "") {
+    render(currentActorName = "", commands = []) {
       return `
         <div
           class="fui-command"
           data-actor-name="${escapeHTML(currentActorName)}"
         >
-          <button class="fui-command-button fui-active">
-            <span>Attack</span>
-          </button>
-          <button class="fui-command-button">
-            <span>Skill</span>
-          </button>
-          <button class="fui-command-button">
-            <span>Study</span>
-          </button>
-          <button class="fui-command-button">
-            <span>Guard</span>
-          </button>
-          <button class="fui-command-button">
-            <span>Item</span>
-          </button>
-          <button class="fui-command-button">
-            <span>Equipment</span>
-          </button>
-          <button class="fui-command-button">
-            <span>Hinder</span>
-          </button>
-          <button class="fui-command-button">
-            <span>Objective</span>
-          </button>
+          ${renderButtons(commands)}
         </div>
       `;
     },
+
+    renderButtons,
   };
 }

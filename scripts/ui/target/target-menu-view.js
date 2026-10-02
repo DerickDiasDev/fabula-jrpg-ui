@@ -1,24 +1,5 @@
 import { escapeHTML } from "../shared/html.js";
-
-// =====================================================
-// ACTION LABEL
-// =====================================================
-
-function getActionLabel(actionType) {
-  if (actionType === "skill") {
-    return "Skill";
-  }
-
-  if (actionType === "item") {
-    return "Item";
-  }
-
-  if (actionType === "study") {
-    return "Study";
-  }
-
-  return "Attack";
-}
+import { getActionLabel } from "../actions/action-labels.js";
 
 // =====================================================
 // TARGET BUTTON

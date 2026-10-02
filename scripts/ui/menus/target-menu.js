@@ -3,6 +3,7 @@ import { showMenu, hideMenu, getActiveSubmenu } from "./menu-utils.js";
 import { createHudCursor } from "../shared/hud-cursor.js";
 import { playUISound } from "../shared/audio.js";
 import { escapeHTML } from "../shared/html.js";
+import { getActionLabel } from "../actions/action-labels.js";
 
 export function openTargetCountMenu({ actor, action, actionType, ui }) {
   const previousMenu = getActiveSubmenu(ui) || ui.querySelector(".fui-command");
@@ -28,14 +29,7 @@ export function openTargetCountMenu({ actor, action, actionType, ui }) {
   targetMenu.style.left = `${previousRect.left}px`;
   targetMenu.style.top = `${previousRect.top}px`;
 
-  const actionLabel =
-    actionType === "skill"
-      ? "Skill"
-      : actionType === "item"
-        ? "Item"
-        : actionType === "study"
-          ? "Study"
-          : "Attack";
+  const actionLabel = getActionLabel(actionType);
 
   targetMenu.innerHTML = `
     <div class="fui-command-title">

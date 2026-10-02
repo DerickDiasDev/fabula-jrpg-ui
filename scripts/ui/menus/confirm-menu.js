@@ -3,16 +3,7 @@ import { executeAction } from "../actions/execute-action.js";
 import { createHudCursor } from "../shared/hud-cursor.js";
 import { playUISound } from "../shared/audio.js";
 import { escapeHTML } from "../shared/html.js";
-
-// =====================================================
-// ACTION LABELS
-// =====================================================
-
-const ACTION_LABELS = {
-  attack: "Attack",
-  skill: "Skill",
-  item: "Item",
-};
+import { getActionLabel } from "../actions/action-labels.js";
 
 // =====================================================
 // TARGETS
@@ -24,14 +15,6 @@ function getTargetCombatants(targetIds) {
   return targetIds
     .map((id) => combatants.find((combatant) => combatant.id === id))
     .filter((combatant) => combatant?.actor);
-}
-
-// =====================================================
-// ACTION LABEL
-// =====================================================
-
-function getActionLabel(actionType) {
-  return ACTION_LABELS[actionType] ?? actionType.toUpperCase();
 }
 
 // =====================================================

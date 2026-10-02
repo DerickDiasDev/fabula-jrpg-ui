@@ -1,7 +1,10 @@
 import {
   refreshFabulaUI,
   updateFabulaActorCard,
+  updateFabulaCommandActor,
 } from "./ui/hud/hud-controller.js";
+
+import { isNpcCommandActor } from "./ui/command/npc-actor.js";
 
 import { registerHudSettings } from "./ui/hud/hud-customization.js";
 import { registerAudioSettings } from "./ui/shared/audio.js";
@@ -134,6 +137,22 @@ Hooks.on("controlToken", (token, controlled) => {
   const actor = token?.actor;
 
   if (!actor) {
+    return;
+  }
+
+  // Command de NPC: o GM pode abri-lo selecionando o token
+  // do NPC, inclusive fora do turno dele.
+  if (isNpcCommandActor(actor)) {
+    if (!game.user.isGM) {
+      return;
+    }
+
+    if ((canvas.tokens.controlled ?? []).length > 1) {
+      return;
+    }
+
+    updateFabulaCommandActor(actor, token);
+
     return;
   }
 

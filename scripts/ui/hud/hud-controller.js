@@ -19,6 +19,8 @@ import { selectCharacter } from "../interaction/character-interaction.js";
 
 import { createCommandRenderer } from "../theme/command-renderer.js";
 
+import { PLAYER_COMMANDS } from "../command/command-list.js";
+
 import {
   setupThemeInteraction,
   refreshThemeInteraction,
@@ -89,7 +91,7 @@ export function createFabulaUI() {
       class="fui-command-wrapper"
       ${isCombatActive ? "" : "hidden"}
     >
-      ${commandRenderer.render(currentActorName)}
+      ${commandRenderer.render(currentActorName, PLAYER_COMMANDS)}
     </div>
 
     <div class="fui-party-wrapper">
@@ -149,7 +151,7 @@ export function createFabulaUI() {
 
     const commandMenu = ui.querySelector(".fui-command");
 
-    if (!commandMenu) {
+    if (!commandMenu || commandMenu.closest(".fui-command-restricted")) {
       return;
     }
 

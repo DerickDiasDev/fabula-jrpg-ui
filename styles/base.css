@@ -144,6 +144,13 @@
   pointer-events: auto;
 }
 
+/* Command de NPC para jogadores: escondido, exceto no modo
+   de edição do HUD (para o Command continuar posicionável). */
+#fabula-jrpg-ui:not(.fui-hud-editing)
+  .fui-command-wrapper.fui-command-restricted {
+  display: none;
+}
+
 /* =========================================
    PARTY WRAPPER
    ========================================= */
