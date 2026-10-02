@@ -18,6 +18,22 @@ import { getCombatantGroups, createTargetGroups } from "./target-groups.js";
 
 import { createTargetSelection } from "./target-selection.js";
 
+import { isNpcCommandActor } from "../command/npc-actor.js";
+
+// Sorteia até `count` itens distintos (Fisher-Yates parcial).
+function pickRandom(items, count) {
+  const pool = [...items];
+  const amount = Math.min(count, pool.length);
+
+  for (let i = 0; i < amount; i++) {
+    const j = i + Math.floor(Math.random() * (pool.length - i));
+
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+
+  return pool.slice(0, amount);
+}
+
 function updateTargetScrollbar(
   targetList,
   scrollbar,
@@ -134,12 +150,16 @@ export function openTargetSelectMenu({
 
   targetMenu.className = "fui-target-select-menu fui-submenu";
 
+  // Alvos aleatórios existem somente para o Command de NPC.
+  const canRandomize = isNpcCommandActor(actor);
+
   targetMenu.innerHTML = createTargetMenuHTML({
     action,
     actionType,
     targetCount,
     party,
     enemies,
+    showRandom: canRandomize,
   });
 
   ui.appendChild(targetMenu);
@@ -461,6 +481,43 @@ export function openTargetSelectMenu({
     });
   }
 
+  // Sorteia, sem repetir, a quantidade escolhida entre os
+  // alvos do grupo aberto e segue direto para o Confirm.
+  function selectRandomTargets() {
+    if (!canRandomize || isTransitioning || isGroupTransitioning) {
+      return;
+    }
+
+    const combatantIds = selection
+      .getActiveButtons()
+      .map((button) => button.dataset.combatantId);
+
+    if (combatantIds.length === 0) {
+      return;
+    }
+
+    selection.clear();
+
+    pickRandom(combatantIds, targetCount).forEach((combatantId) => {
+      selection.select(combatantId);
+    });
+
+    updateSelectedTargets();
+
+    playUISound("confirm");
+
+    openConfirmation();
+  }
+
+  targetMenu
+    .querySelector(".fui-target-random")
+    ?.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+
+      selectRandomTargets();
+    });
+
   function closeTargetSelectMenu() {
     resetTargetSelection();
 
@@ -604,6 +661,23 @@ export function openTargetSelectMenu({
       playUISound("cancel");
 
       closeTargetSelectMenu();
+
+      return;
+    }
+
+    // R = Random (sem modificadores, para não capturar
+    // atalhos como Ctrl+R).
+    if (
+      canRandomize &&
+      event.key.toLowerCase() === "r" &&
+      !event.ctrlKey &&
+      !event.metaKey &&
+      !event.altKey
+    ) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      selectRandomTargets();
 
       return;
     }

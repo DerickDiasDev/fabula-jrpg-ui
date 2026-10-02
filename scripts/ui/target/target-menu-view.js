@@ -56,6 +56,7 @@ export function createTargetMenuHTML({
   targetCount,
   party,
   enemies,
+  showRandom = false,
 }) {
   const actionLabel = getActionLabel(actionType);
 
@@ -80,8 +81,24 @@ export function createTargetMenuHTML({
       ${createTargetGroup("enemies", "ENEMIES", enemies)}
     </div>
 
-    <div class="fui-target-count">
-      Selected: 0/${targetCount}
+    <div class="fui-target-footer">
+      ${
+        showRandom
+          ? `
+            <button
+              class="fui-target-random"
+              type="button"
+              title="Sorteia os alvos no grupo atual (R)"
+            >
+              Random
+            </button>
+          `
+          : ""
+      }
+
+      <div class="fui-target-count">
+        Selected: 0/${targetCount}
+      </div>
     </div>
 
     <div class="fui-target-scrollbar">
