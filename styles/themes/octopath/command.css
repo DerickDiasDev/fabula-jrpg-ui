@@ -68,18 +68,25 @@
    COMMAND MOLDURA (SVG do painel inteiro)
    ========================================= */
 
+/* 9-slice: os cantos do SVG (recorte e camada deslocada)
+   ficam com 20px fixos e só o meio estica, para a moldura
+   acompanhar qualquer quantidade de comandos. O inset
+   horizontal mantém a largura que a moldura tinha com 8
+   comandos. */
 .fui-command::before {
   content: "";
 
   position: absolute;
 
-  inset: 0;
+  inset: 0 11px;
 
   z-index: -1;
 
-  background-image: url("../../../assets/moldura-command-1.svg");
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
+  box-sizing: border-box;
+
+  border: 20px solid transparent;
+  border-image: url("../../../assets/moldura-command-1.svg") 20 fill / 20px
+    stretch;
 
   pointer-events: none;
 }
