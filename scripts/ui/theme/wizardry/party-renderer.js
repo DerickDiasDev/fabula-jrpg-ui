@@ -59,7 +59,7 @@ export function updateWizardryCharacterCard(actor) {
   // NAME / PORTRAIT
   // ---------------------------------------------------
 
-  const name = card.querySelector(".fui-wizardry-character-name");
+  const name = card.querySelector(".fui-wizardry-character-name-text");
 
   if (name) {
     name.textContent = actor.name;
@@ -268,7 +268,7 @@ function createWizardryCharacterCard(member) {
       data-actor-id="${actor.id}"
     >
       <div class="fui-wizardry-character-name">
-        ${escapeHTML(actor.name)}
+        <span class="fui-wizardry-character-name-text">${escapeHTML(actor.name)}</span>
       </div>
 
       <button

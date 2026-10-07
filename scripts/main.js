@@ -8,6 +8,7 @@ import { isNpcCommandActor } from "./ui/command/npc-actor.js";
 
 import { registerHudSettings } from "./ui/hud/hud-customization.js";
 import { registerAudioSettings } from "./ui/shared/audio.js";
+import { registerPartyMinimizeSettings } from "./ui/party/party-minimize.js";
 
 import {
   getPartyMemberByActor,
@@ -21,6 +22,7 @@ import { hideAllSubmenus } from "./ui/menus/menu-utils.js";
 Hooks.once("init", () => {
   registerHudSettings();
   registerAudioSettings();
+  registerPartyMinimizeSettings();
 
   game.settings.register("fabula-jrpg-ui", "theme", {
     name: "HUD Theme",

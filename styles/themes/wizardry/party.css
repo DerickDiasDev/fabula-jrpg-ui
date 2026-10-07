@@ -79,12 +79,16 @@
   padding-left: 16px;
   overflow: hidden;
 
+  /* o texto encolhe com reticências; o indicador de turno
+     (::after) é um item fixo e nunca é cortado */
+  display: flex;
+  align-items: center;
+
   font-size: 25px;
   font-weight: 600;
   line-height: 28px;
   letter-spacing: 0.01em;
   white-space: nowrap;
-  text-overflow: ellipsis;
 
   color: var(--w-ink);
   text-shadow:
@@ -95,6 +99,12 @@
     0 2px 4px rgba(0, 0, 0, 0.85);
 
   pointer-events: none;
+}
+
+.fui-wizardry-character-name-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* =====================================================
@@ -678,4 +688,38 @@
 
 .fui-wizardry-add-to-combat:active {
   background: rgba(14, 22, 20, 0.95);
+}
+
+/* indicador de turno: depois do nome. O elemento compartilhado
+   só guarda o estado; o círculo é desenhado em ::after do nome. */
+.fui-wizardry-character-card > .fui-turn-indicator {
+  display: none;
+}
+
+.fui-wizardry-character:has(.fui-turn-indicator:not([hidden]))
+  .fui-wizardry-character-name::after {
+  content: "";
+  display: inline-block;
+  box-sizing: border-box;
+  width: 10px;
+  height: 10px;
+  flex: none;
+  margin-left: 8px;
+  background: #ff9a1f;
+  border: 1.5px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 6px 2px rgba(255, 154, 31, 0.85);
+}
+
+/* o nome tem overflow: hidden; o respiro à direita evita que o
+   glow da bolinha seja cortado na borda */
+.fui-wizardry-character:has(.fui-turn-indicator:not([hidden]))
+  .fui-wizardry-character-name {
+  padding-right: 12px;
+}
+
+.fui-wizardry-character:has(.fui-turn-indicator.fui-turn-spent)
+  .fui-wizardry-character-name::after {
+  background: transparent;
+  box-shadow: none;
 }

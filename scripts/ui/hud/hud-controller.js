@@ -1,5 +1,12 @@
 import { updateActiveCombatant } from "../party/character-card.js";
 
+import { updateTurnIndicators } from "../party/party-turn-state.js";
+
+import {
+  applyPartyMinimized,
+  setupPartyMinimizeToggle,
+} from "../party/party-minimize.js";
+
 import {
   setupCommandMenu,
   updateCommandActor,
@@ -56,6 +63,8 @@ export function removeFabulaUI() {
     delete ui._fabulaKeydownHandler;
   }
 
+  ui._fabulaPartyResizeObserver?.disconnect();
+
   ui.remove();
 }
 
@@ -95,6 +104,14 @@ export function createFabulaUI() {
     </div>
 
     <div class="fui-party-wrapper">
+      <button
+        type="button"
+        class="fui-party-minimize-toggle"
+        aria-pressed="false"
+      >
+        <i class="fas fa-chevron-down"></i>
+      </button>
+
       <div class="fui-party-stats"></div>
     </div>
   `;
@@ -112,7 +129,13 @@ export function createFabulaUI() {
 
   setupThemeInteraction(theme, ui);
 
+  applyPartyMinimized(ui);
+
+  setupPartyMinimizeToggle(ui, () => applyHudLayout(ui));
+
   applyHudLayout(ui);
+
+  observePartyResize(ui);
 
   ui.focus();
 
@@ -180,6 +203,44 @@ export function createFabulaUI() {
 }
 
 // =====================================================
+// PARTY RESIZE
+// =====================================================
+//
+// applyHudLayout fixa o tamanho do wrapper da Party a partir
+// do tamanho medido do conteúdo. Se o conteúdo muda depois
+// (imagens, fontes, estilos que terminam de carregar), o
+// wrapper fica com tamanho velho e o botão de minimizar,
+// ancorado no canto dele, sai do lugar. Reaplicar o layout
+// quando o conteúdo muda de tamanho mantém os dois em sincronia.
+// =====================================================
+
+function observePartyResize(ui) {
+  const partyStats = ui.querySelector(".fui-party-stats");
+
+  if (!partyStats || typeof ResizeObserver === "undefined") {
+    return;
+  }
+
+  let frame = null;
+
+  const observer = new ResizeObserver(() => {
+    if (frame !== null) {
+      return;
+    }
+
+    frame = requestAnimationFrame(() => {
+      frame = null;
+
+      applyHudLayout(ui);
+    });
+  });
+
+  observer.observe(partyStats);
+
+  ui._fabulaPartyResizeObserver = observer;
+}
+
+// =====================================================
 // REFRESH FABULA UI
 // =====================================================
 
@@ -225,10 +286,12 @@ export function refreshFabulaUI(combat = game.combat) {
   // de membros), então o destaque de turno é limpo aqui.
   if (!isCombatRunning(combat)) {
     updateActiveCombatant(null, ui);
+    updateTurnIndicators(null, ui);
     return;
   }
 
   updateActiveCombatant(combat, ui);
+  updateTurnIndicators(combat, ui);
 
   const currentActor = combat.combatant?.actor ?? null;
 
