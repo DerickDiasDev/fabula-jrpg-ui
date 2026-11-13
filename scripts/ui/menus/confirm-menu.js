@@ -2,16 +2,8 @@ import { showMenu, hideMenu } from "./menu-utils.js";
 import { executeAction } from "../actions/execute-action.js";
 import { createHudCursor } from "../shared/hud-cursor.js";
 import { playUISound } from "../shared/audio.js";
-
-// =====================================================
-// ACTION LABELS
-// =====================================================
-
-const ACTION_LABELS = {
-  attack: "Attack",
-  skill: "Skill",
-  item: "Item",
-};
+import { escapeHTML } from "../shared/html.js";
+import { getActionLabel } from "../actions/action-labels.js";
 
 // =====================================================
 // TARGETS
@@ -26,14 +18,6 @@ function getTargetCombatants(targetIds) {
 }
 
 // =====================================================
-// ACTION LABEL
-// =====================================================
-
-function getActionLabel(actionType) {
-  return ACTION_LABELS[actionType] ?? actionType.toUpperCase();
-}
-
-// =====================================================
 // TARGET HTML
 // =====================================================
 
@@ -44,7 +28,7 @@ function createTargetHTML(targets) {
         <div class="fui-confirm-target">
           <span class="fui-confirm-target-name">
             <span class="fui-confirm-target-name-inner">
-              ${combatant.actor.name}
+              ${escapeHTML(combatant.actor.name)}
             </span>
           </span>
         </div>
@@ -75,7 +59,7 @@ function createConfirmMenuHTML({ action, actionType, targets }) {
 
     <div class="fui-confirm-content">
       <div class="fui-confirm-action">
-        ${actionLabel} / ${action.name}
+        ${actionLabel} / ${escapeHTML(action.name)}
       </div>
 
       <div class="fui-confirm-targets-title">

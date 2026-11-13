@@ -1,22 +1,5 @@
-// =====================================================
-// ACTION LABEL
-// =====================================================
-
-function getActionLabel(actionType) {
-  if (actionType === "skill") {
-    return "Skill";
-  }
-
-  if (actionType === "item") {
-    return "Item";
-  }
-
-  if (actionType === "study") {
-    return "Study";
-  }
-
-  return "Attack";
-}
+import { escapeHTML } from "../shared/html.js";
+import { getActionLabel } from "../actions/action-labels.js";
 
 // =====================================================
 // TARGET BUTTON
@@ -30,7 +13,7 @@ function createTargetButton(combatant) {
     >
       <span class="fui-target-name">
         <span class="fui-target-name-inner">
-          ${combatant.actor?.name ?? "Unknown"}
+          ${escapeHTML(combatant.actor?.name ?? "Unknown")}
         </span>
       </span>
     </button>
@@ -73,6 +56,7 @@ export function createTargetMenuHTML({
   targetCount,
   party,
   enemies,
+  showRandom = false,
 }) {
   const actionLabel = getActionLabel(actionType);
 
@@ -89,7 +73,7 @@ export function createTargetMenuHTML({
     </div>
 
     <div class="fui-target-action">
-      ${actionLabel}${action ? ` / ${action.name}` : ""}
+      ${actionLabel}${action ? ` / ${escapeHTML(action.name)}` : ""}
     </div>
 
     <div class="fui-target-list">
@@ -97,8 +81,24 @@ export function createTargetMenuHTML({
       ${createTargetGroup("enemies", "ENEMIES", enemies)}
     </div>
 
-    <div class="fui-target-count">
-      Selected: 0/${targetCount}
+    <div class="fui-target-footer">
+      ${
+        showRandom
+          ? `
+            <button
+              class="fui-target-random"
+              type="button"
+              title="Sorteia os alvos no grupo atual (R)"
+            >
+              Random
+            </button>
+          `
+          : ""
+      }
+
+      <div class="fui-target-count">
+        Selected: 0/${targetCount}
+      </div>
     </div>
 
     <div class="fui-target-scrollbar">

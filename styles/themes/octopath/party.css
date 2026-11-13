@@ -411,3 +411,30 @@
     0 0 8px rgba(255, 224, 102, 0.45),
     inset 0 0 10px rgba(255, 224, 102, 0.15);
 }
+
+/* indicador de turno: depois do nome. O elemento compartilhado
+   só guarda o estado; o círculo é desenhado em ::after do nome. */
+.fui-character-card > .fui-turn-indicator {
+  display: none;
+}
+
+.fui-character-card:has(.fui-turn-indicator:not([hidden]))
+  .fui-character-name::after {
+  content: "";
+  display: inline-block;
+  box-sizing: border-box;
+  width: 10px;
+  height: 10px;
+  margin-left: 6px;
+  vertical-align: middle;
+  background: #ff9a1f;
+  border: 1.5px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 6px 2px rgba(255, 154, 31, 0.85);
+}
+
+.fui-character-card:has(.fui-turn-indicator.fui-turn-spent)
+  .fui-character-name::after {
+  background: transparent;
+  box-shadow: none;
+}

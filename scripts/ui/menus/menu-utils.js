@@ -129,20 +129,14 @@ export function closeActiveSubmenu(ui) {
     return false;
   }
 
-  const activeSubmenu = getActiveSubmenu(ui);
-
-  if (!activeSubmenu) {
+  if (!getActiveSubmenu(ui)) {
     return false;
   }
 
-  destroySubmenu(activeSubmenu);
-
-  const commandMenu = ui.querySelector(".fui-command");
-
-  if (commandMenu) {
-    commandMenu.classList.add("fui-ui-focused");
-    commandMenu.focus();
-  }
+  // Os submenus anteriores do fluxo ficam escondidos (para o
+  // "voltar") e guardam o Actor de quando foram abertos; por
+  // isso o fluxo inteiro é desmontado, não só o visível.
+  returnToCommand(ui);
 
   return true;
 }

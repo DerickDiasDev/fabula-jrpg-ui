@@ -1,6 +1,16 @@
-import { openActionMenu } from "../menus/action-menu.js";
+import { openItemActionMenu } from "../menus/action-menu.js";
 
 import { createHudCursor } from "../shared/hud-cursor.js";
+
+import { PLAYER_COMMANDS, NPC_COMMANDS } from "./command-list.js";
+
+import { NPC_COMMAND_HANDLERS } from "./npc-commands.js";
+
+import { isNpcCommandActor } from "./npc-actor.js";
+
+import { createCommandRenderer } from "../theme/command-renderer.js";
+
+import { getCurrentTheme } from "../theme/theme-manager.js";
 
 import {
   executeGuard,
@@ -21,12 +31,46 @@ import { playUISound } from "../shared/audio.js";
 
 let selectedActor = null;
 
+// Controle dos botões do Command, criado em setupCommandMenu.
+let commandMenuController = null;
+
+// =====================================================
+// COMMAND SETS
+// =====================================================
+//
+// O conjunto de comandos depende do Actor do Command:
+// NPCs (exceto companions) usam o Command de NPC, que é
+// exclusivo do GM; os demais usam o Command de personagem.
+// =====================================================
+
+function getCommandSetId(actor) {
+  return isNpcCommandActor(actor) ? "npc" : "player";
+}
+
+function getCommandSet(setId) {
+  if (setId === "npc") {
+    return { commands: NPC_COMMANDS, handlers: NPC_COMMAND_HANDLERS };
+  }
+
+  return { commands: PLAYER_COMMANDS, handlers: PLAYER_COMMAND_HANDLERS };
+}
+
+// Jogadores não veem o Command de NPC; o Command volta
+// quando selecionam um personagem.
+function updateCommandAvailability(commandMenu, setId) {
+  const restricted = setId === "npc" && !game.user.isGM;
+
+  commandMenu
+    .closest(".fui-command-wrapper")
+    ?.classList.toggle("fui-command-restricted", restricted);
+}
+
 // =====================================================
 // SET / GET SELECTED ACTOR
 // =====================================================
 
 export function updateCommandActor(actor, ui) {
-  const commandMenu = ui.querySelector(".fui-command");
+  const commandMenu = ui?.querySelector(".fui-command");
 
   if (!commandMenu) {
     return;
@@ -35,6 +79,18 @@ export function updateCommandActor(actor, ui) {
   selectedActor = actor ?? null;
 
   commandMenu.dataset.actorName = selectedActor?.name ?? "";
+
+  const setId = getCommandSetId(selectedActor);
+
+  if (commandMenu.dataset.commandSet !== setId) {
+    commandMenu.dataset.commandSet = setId;
+
+    commandMenuController?.setCommands(getCommandSet(setId).commands);
+  }
+
+  updateCommandAvailability(commandMenu, setId);
+
+  commandMenuController?.refreshCursor();
 }
 
 export function getCommandActor() {
@@ -46,15 +102,7 @@ export function getCommandActor() {
 // =====================================================
 
 export function clearCommandActor(ui) {
-  selectedActor = null;
-
-  const commandMenu = ui?.querySelector(".fui-command");
-
-  if (!commandMenu) {
-    return;
-  }
-
-  commandMenu.dataset.actorName = "";
+  updateCommandActor(null, ui);
 }
 
 // =====================================================
@@ -62,38 +110,38 @@ export function clearCommandActor(ui) {
 // =====================================================
 
 function getCommandFromButton(button) {
-  return button
-    ?.querySelector("span:last-child")
-    ?.textContent.trim()
-    .toUpperCase();
+  return button?.dataset.command ?? null;
+}
+
+function canControlActor(actor) {
+  if (game.user.isGM) {
+    return true;
+  }
+
+  // O Command de NPC é exclusivo do GM.
+  if (isNpcCommandActor(actor)) {
+    return false;
+  }
+
+  return actor.testUserPermission(game.user, "OWNER");
 }
 
 function getActorOrWarn() {
-  if (selectedActor) {
-    return selectedActor;
+  if (!selectedActor) {
+    foundry.ui.notifications.warn("Nenhum personagem selecionado.");
+
+    console.warn("Fabula JRPG UI | Command Menu: nenhum Actor selecionado.");
+
+    return null;
   }
 
-  foundry.ui.notifications.warn("Nenhum personagem selecionado.");
+  if (!canControlActor(selectedActor)) {
+    foundry.ui.notifications.warn("Você não controla este personagem.");
 
-  console.warn("Fabula JRPG UI | Command Menu: nenhum Actor selecionado.");
-
-  return null;
-}
-
-function openItemActionMenu({ actor, ui, itemType, actionType, emptyMessage }) {
-  const actions = actor.items.contents.filter((item) => item.type === itemType);
-
-  if (actions.length === 0) {
-    foundry.ui.notifications.warn(emptyMessage);
-    return;
+    return null;
   }
 
-  openActionMenu({
-    actor,
-    actions,
-    actionType,
-    ui,
-  });
+  return selectedActor;
 }
 
 // =====================================================
@@ -101,20 +149,12 @@ function openItemActionMenu({ actor, ui, itemType, actionType, emptyMessage }) {
 // =====================================================
 
 function executeAttack(actor, ui) {
-  const weapons = actor.items.filter((item) =>
-    ["weapon", "customWeapon"].includes(item.type),
-  );
-
-  if (weapons.length === 0) {
-    foundry.ui.notifications.warn("Nenhuma arma disponível.");
-    return;
-  }
-
-  openActionMenu({
+  openItemActionMenu({
     actor,
-    actions: weapons,
-    actionType: "attack",
     ui,
+    itemTypes: ["weapon", "customWeapon"],
+    actionType: "attack",
+    emptyMessage: "Nenhuma arma disponível.",
   });
 }
 
@@ -126,7 +166,7 @@ function executeSkill(actor, ui) {
   openItemActionMenu({
     actor,
     ui,
-    itemType: "spell",
+    itemTypes: ["spell"],
     actionType: "skill",
     emptyMessage: "Nenhuma Skill disponível.",
   });
@@ -140,35 +180,26 @@ function executeItem(actor, ui) {
   openItemActionMenu({
     actor,
     ui,
-    itemType: "consumable",
+    itemTypes: ["consumable"],
     actionType: "item",
     emptyMessage: "Nenhum Item disponível.",
   });
 }
 
 // =====================================================
-// SIMPLE COMMANDS
+// COMMAND HANDLERS
 // =====================================================
 
-function executeSimpleCommand(command, actor, ui) {
-  const handlers = {
-    GUARD: executeGuard,
-    HINDER: executeHinder,
-    OBJECTIVE: executeObjective,
-    STUDY: executeStudy,
-    EQUIPMENT: executeEquipment,
-  };
-
-  const handler = handlers[command];
-
-  if (!handler) {
-    return false;
-  }
-
-  handler(actor, ui);
-
-  return true;
-}
+const PLAYER_COMMAND_HANDLERS = {
+  attack: executeAttack,
+  skill: executeSkill,
+  item: executeItem,
+  guard: executeGuard,
+  hinder: executeHinder,
+  objective: executeObjective,
+  study: executeStudy,
+  equipment: executeEquipment,
+};
 
 // =====================================================
 // EXECUTE COMMAND
@@ -193,38 +224,22 @@ function executeCommand(ui, selectedIndex, buttons) {
     return;
   }
 
+  const { handlers } = getCommandSet(getCommandSetId(selectedActor));
+
+  const handler = handlers[command];
+
+  if (!handler) {
+    console.warn(`Fabula JRPG UI | Command desconhecido: ${command}`);
+    return;
+  }
+
   const actor = getActorOrWarn();
 
   if (!actor) {
     return;
   }
 
-  // ===================================================
-  // ACTION MENUS
-  // ===================================================
-
-  if (command === "ATTACK") {
-    executeAttack(actor, ui);
-    return;
-  }
-
-  if (command === "SKILL") {
-    executeSkill(actor, ui);
-    return;
-  }
-
-  if (command === "ITEM") {
-    executeItem(actor, ui);
-    return;
-  }
-
-  // ===================================================
-  // SIMPLE COMMANDS
-  // ===================================================
-
-  if (executeSimpleCommand(command, actor, ui)) {
-    return;
-  }
+  handler(actor, ui);
 }
 
 // =====================================================
@@ -238,15 +253,49 @@ export function setupCommandMenu(ui) {
     return;
   }
 
-  const buttons = Array.from(
-    commandMenu.querySelectorAll(".fui-command-button"),
-  );
+  // Os botões são consultados a cada evento (delegação no
+  // .fui-command), para que o conjunto de comandos possa ser
+  // trocado sem reconfigurar os listeners.
+  function getButtons() {
+    return Array.from(commandMenu.querySelectorAll(".fui-command-button"));
+  }
 
   const tooltip = ui.querySelector(".fui-command-tooltip");
 
   const cursor = createHudCursor(commandMenu);
 
+  const commandRenderer = createCommandRenderer(getCurrentTheme());
+
   let selectedIndex = 0;
+
+  // O HTML inicial é renderizado com o Command de personagem.
+  commandMenu.dataset.commandSet ??= "player";
+
+  commandMenuController = {
+    // Troca os botões mantendo o cursor (último filho do
+    // .fui-command) e os listeners delegados.
+    setCommands(commands) {
+      getButtons().forEach((button) => button.remove());
+
+      cursor.element.insertAdjacentHTML(
+        "beforebegin",
+        commandRenderer.renderButtons(commands),
+      );
+
+      selectedIndex = 0;
+
+      updateSelection();
+    },
+
+    // O cursor é posicionado pela geometria do botão, que
+    // não existe enquanto o Command está escondido.
+    refreshCursor() {
+      requestAnimationFrame(() => {
+        cursor.update(getButtons()[selectedIndex]);
+      });
+    },
+  };
+
   commandMenu.addEventListener("mouseenter", () => {
     commandMenu.classList.add("fui-ui-focused");
     commandMenu.focus();
@@ -265,6 +314,8 @@ export function setupCommandMenu(ui) {
   // ===================================================
 
   function updateSelection() {
+    const buttons = getButtons();
+
     buttons.forEach((button, index) => {
       button.classList.toggle("fui-active", index === selectedIndex);
     });
@@ -286,6 +337,8 @@ export function setupCommandMenu(ui) {
     if (activeSubmenu) {
       return;
     }
+
+    const buttons = getButtons();
 
     if (event.key === "ArrowDown") {
       event.preventDefault();
@@ -344,26 +397,53 @@ export function setupCommandMenu(ui) {
   // MOUSE / CLICK
   // ===================================================
 
-  buttons.forEach((button, index) => {
-    button.addEventListener("mouseenter", () => {
-      if (selectedIndex === index) {
-        return;
-      }
+  function getButtonFromEvent(event) {
+    const button = event.target.closest(".fui-command-button");
 
-      selectedIndex = index;
+    if (!button || button.parentElement !== commandMenu) {
+      return null;
+    }
 
-      updateSelection();
-      playUISound("navigate");
-    });
+    return button;
+  }
 
-    button.addEventListener("click", () => {
-      selectedIndex = index;
+  // mouseenter não propaga; mouseover sim, e também dispara
+  // ao passar pelos filhos do botão, por isso o índice é
+  // comparado antes de atualizar.
+  commandMenu.addEventListener("mouseover", (event) => {
+    const button = getButtonFromEvent(event);
 
-      updateSelection();
-      playUISound("confirm");
+    if (!button) {
+      return;
+    }
 
-      executeCommand(ui, selectedIndex, buttons);
-    });
+    const index = getButtons().indexOf(button);
+
+    if (index === -1 || selectedIndex === index) {
+      return;
+    }
+
+    selectedIndex = index;
+
+    updateSelection();
+    playUISound("navigate");
+  });
+
+  commandMenu.addEventListener("click", (event) => {
+    const button = getButtonFromEvent(event);
+
+    if (!button) {
+      return;
+    }
+
+    const buttons = getButtons();
+
+    selectedIndex = buttons.indexOf(button);
+
+    updateSelection();
+    playUISound("confirm");
+
+    executeCommand(ui, selectedIndex, buttons);
   });
 
   // ===================================================
@@ -373,6 +453,6 @@ export function setupCommandMenu(ui) {
   updateSelection();
 
   requestAnimationFrame(() => {
-    cursor.update(buttons[selectedIndex]);
+    cursor.update(getButtons()[selectedIndex]);
   });
 }

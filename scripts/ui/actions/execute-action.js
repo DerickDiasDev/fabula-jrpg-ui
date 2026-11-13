@@ -49,6 +49,21 @@ export async function executeAction({
   targetIds,
   ui,
 }) {
+  // Qualquer saída (sucesso, validação ou erro) fecha os
+  // submenus para não deixar o HUD em estado intermediário.
+  try {
+    await runAction({
+      actor,
+      action,
+      actionType,
+      targetIds,
+    });
+  } finally {
+    returnToCommand(ui);
+  }
+}
+
+async function runAction({ actor, action, actionType, targetIds }) {
   if (!actor) {
     console.error("EXECUTE: ator não encontrado.");
     return;
@@ -62,6 +77,7 @@ export async function executeAction({
   const targetTokens = getTargetTokens(targetIds);
 
   if (targetTokens.length === 0) {
+    foundry.ui.notifications.warn("Nenhum alvo encontrado na cena atual.");
     console.error("EXECUTE: nenhum alvo encontrado.");
     return;
   }
@@ -74,8 +90,6 @@ export async function executeAction({
     } else {
       await executeRoll(action);
     }
-
-    returnToCommand(ui);
   } finally {
     clearFoundryTargets();
   }

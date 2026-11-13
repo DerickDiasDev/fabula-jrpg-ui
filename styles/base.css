@@ -144,6 +144,13 @@
   pointer-events: auto;
 }
 
+/* Command de NPC para jogadores: escondido, exceto no modo
+   de edição do HUD (para o Command continuar posicionável). */
+#fabula-jrpg-ui:not(.fui-hud-editing)
+  .fui-command-wrapper.fui-command-restricted {
+  display: none;
+}
+
 /* =========================================
    PARTY WRAPPER
    ========================================= */
@@ -253,4 +260,128 @@
   outline: none;
   box-shadow: none;
   filter: brightness(1.2);
+}
+
+/* =========================================
+   TARGET SELECT FOOTER / RANDOM
+   ========================================= */
+
+.fui-target-select-menu .fui-target-footer {
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.fui-target-select-menu .fui-target-footer .fui-target-count {
+  margin-left: auto;
+}
+
+.fui-target-random {
+  flex: 0 0 auto;
+  width: auto;
+  height: 20px;
+  margin: 0;
+  padding: 0 8px;
+
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 4px;
+  background: rgba(17, 21, 35, 0.45);
+
+  color: rgba(255, 255, 255, 0.8);
+  font-family: "Playpen Sans", cursive;
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0.04em;
+
+  cursor: pointer;
+  pointer-events: auto;
+
+  transition:
+    background 0.08s ease,
+    filter 0.08s ease;
+}
+
+.fui-target-random:hover,
+.fui-target-random:focus-visible {
+  outline: none;
+  box-shadow: none;
+  background: rgba(255, 255, 255, 0.12);
+  filter: brightness(1.2);
+}
+
+/* =========================================
+   PARTY MINIMIZE TOGGLE
+   ========================================= */
+
+.fui-party-minimize-toggle {
+  position: absolute;
+  top: -22px;
+  right: 0;
+  z-index: 20;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 20px;
+  margin: 0;
+  padding: 0;
+
+  font-size: 11px;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.85);
+
+  background: rgba(12, 16, 24, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 4px;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.fui-party-minimize-toggle:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Minimizada: os cards ficam invisíveis mas continuam
+   ocupando espaço, então o botão não muda de lugar. O
+   wrapper deixa de capturar cliques (só o botão captura);
+   no modo de edição do HUD ele volta a ser arrastável. */
+.fui-party-wrapper.fui-party-minimized .fui-party-stats {
+  visibility: hidden;
+}
+
+#fabula-jrpg-ui:not(.fui-hud-editing) .fui-party-wrapper.fui-party-minimized {
+  pointer-events: none;
+}
+
+/* =========================================
+   TURN INDICATOR (já agiu na rodada)
+   Círculo laranja com borda branca: cheio = ainda não
+   agiu, vazio = já agiu. Cada tema posiciona no card.
+   ========================================= */
+
+.fui-turn-indicator {
+  position: absolute;
+  z-index: 7;
+  box-sizing: border-box;
+  width: 10px;
+  height: 10px;
+
+  background: #ff9a1f;
+  border: 1.5px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 6px 2px rgba(255, 154, 31, 0.85);
+
+  pointer-events: none;
+}
+
+.fui-turn-indicator[hidden] {
+  display: none;
+}
+
+.fui-turn-indicator.fui-turn-spent {
+  background: transparent;
+  box-shadow: none;
 }

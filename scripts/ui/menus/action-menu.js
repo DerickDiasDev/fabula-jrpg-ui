@@ -6,12 +6,14 @@ import { createHudCursor } from "../shared/hud-cursor.js";
 
 import { playUISound } from "../shared/audio.js";
 
+import { escapeHTML } from "../shared/html.js";
+
 // =====================================================
 // ACTION COST
 // =====================================================
 
 function getActionCost(action, actionType) {
-  if (actionType === "skill") {
+  if (actionType === "skill" || actionType === "spell") {
     const cost = action.system.cost;
 
     if (!cost) {
@@ -86,12 +88,12 @@ function createActionMenuHTML(actions, actionType) {
             >
               <img
                 class="fui-action-item-icon"
-                src="${action.img}"
+                src="${escapeHTML(action.img)}"
               />
 
               <span class="fui-action-name">
                 <span class="fui-action-name-inner">
-                  ${action.name}
+                  ${escapeHTML(action.name)}
                 </span>
               </span>
 
@@ -211,6 +213,38 @@ function updateActionMarquee(actionButtons) {
     } else {
       clearMarquee(button);
     }
+  });
+}
+
+// =====================================================
+// OPEN ITEM ACTION MENU
+// =====================================================
+//
+// Abre o Action menu com os itens do Actor dos tipos
+// informados, ou avisa quando não houver nenhum.
+// =====================================================
+
+export function openItemActionMenu({
+  actor,
+  ui,
+  itemTypes,
+  actionType,
+  emptyMessage,
+}) {
+  const actions = actor.items.contents.filter((item) =>
+    itemTypes.includes(item.type),
+  );
+
+  if (actions.length === 0) {
+    foundry.ui.notifications.warn(emptyMessage);
+    return;
+  }
+
+  openActionMenu({
+    actor,
+    actions,
+    actionType,
+    ui,
   });
 }
 
