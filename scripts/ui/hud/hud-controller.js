@@ -245,22 +245,6 @@ function observePartyResize(ui) {
 // =====================================================
 
 export function refreshFabulaUI(combat = game.combat) {
-  console.log("=== REFRESH FABULA UI ===");
-  console.log("combat:", combat);
-  console.log(
-    "combatants:",
-    combat?.combatants?.contents?.map((combatant) => ({
-      id: combatant.id,
-      actorId: combatant.actorId,
-      actorName: combatant.actor?.name,
-      tokenId: combatant.tokenId,
-    })),
-  );
-  console.log(
-    "combat party:",
-    getCombatPartyMembers(combat).map((member) => member.actor.name),
-  );
-
   createFabulaUI();
 
   const ui = document.querySelector("#fabula-jrpg-ui");

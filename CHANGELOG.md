@@ -4,6 +4,8 @@ All notable changes to Fabula JRPG UI will be documented in this file.
 
 ## [Unreleased]
 
+## [1.1.0-beta.2] - 2026-11-12
+
 ### Added
 
 - GM-only NPC Command. When the Command actor is an NPC, the menu switches to NPC commands (Attack, Spell, Skill, Guard, Hinder), following the Combat tab of the Project FU NPC sheet.
